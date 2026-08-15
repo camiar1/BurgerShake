@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class IngredientDropper : MonoBehaviour
 {
     [SerializeField] private Camera gameplayCamera;
+    [SerializeField] private ViewController viewController;
     [SerializeField] private float minX = -4f;
     [SerializeField] private float maxX = 4f;
     [SerializeField] private float dropY = 4f;
@@ -30,11 +31,22 @@ public class IngredientDropper : MonoBehaviour
         {
             gameplayCamera = Camera.main;
         }
+
+        if (viewController == null && gameplayCamera != null)
+        {
+            viewController = gameplayCamera.GetComponent<ViewController>();
+        }
     }
 
     private void Update()
     {
         if (selectedIngredient == null || gameplayCamera == null)
+        {
+            return;
+        }
+
+        if (viewController != null &&
+            (viewController.IsSliding || viewController.CurrentView != ViewController.FoodTruckView.Assembly))
         {
             return;
         }
