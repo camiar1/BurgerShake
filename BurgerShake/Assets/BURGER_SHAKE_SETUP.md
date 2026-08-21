@@ -1,105 +1,321 @@
-# Burger Shake foundation setup
+# Burger Shake architecture and Unity setup
 
-This branch contains only the reusable presentation pieces from the old Food Truck project plus new Burger Shake gameplay foundations. It deliberately does not import the old player, cooking, recipe, order, serving, customer-patience, or station logic.
+This project is structured around the current Burger Shake GDD: Suika-style ingredient dropping, touch-based scoring synergies, one customer challenge per day, customer restrictions/wants, run loss on a failed goal, and a shop between successful days.
 
-## 1. Two-view food truck setup
+The important architectural rule is **content lives in ScriptableObjects; gameplay flow lives in managers**. New ingredients, customers, scoring rules, restrictions, preferences, and upgrades should normally be addable without editing a manager.
 
-Create two world-space roots in the scene:
+## Scene hierarchy
 
-- `AssemblyView`
-- `CustomerWindowView`
+Recommended gameplay scene:
 
-Place them side-by-side in world space. Put an empty `CameraTarget` under each root at the position where the camera should sit for that view.
+```text
+Main Camera
+EventSystem
+GameManager
+  RunProgress
+  RunManager
+  GameplayModifiers
+  UpgradeManager
+  CustomerChallengeController
+  IngredientDraftManager
+  ScoreManager
+  ShopManager
+Canvas (World Space)
+  Viewport
+    ViewController
+    ViewKeyboardInput
+    StationStrip
+      AssemblyView
+        CanvasGroup
+        Background
+        PhysicsRoot
+          BlenderRoot
+            BlenderColliders
+              LeftWall
+              RightWall
+              BottomWall
+          IngredientContainer
+          IngredientDropper
+        ForegroundCanvas
+          BlenderFront
+          ScorePanel
+          IngredientChoices
+            Choice1
+            Choice2
+            Choice3
+      CustomerWindowView
+        CanvasGroup
+        Background
+        Customer
+        WindowUI
+```
 
-On the Main Camera add:
+The Canvas/StationStrip setup keeps the original Food Truck turning presentation. The Assembly and Customer Window are complete panels; the strip slides rather than showing/hiding HUD elements.
 
-- `ViewController`
-- `ViewKeyboardInput`
+## View setup
 
-Assign the Assembly and Customer Window camera targets in `ViewController`.
+Add `ViewController` and `ViewKeyboardInput` to `Viewport`.
+
+Assign `ViewController`:
+
+- Viewport -> `Viewport`
+- Station Strip -> `StationStrip`
+- Assembly View -> `AssemblyView`
+- Customer Window View -> `CustomerWindowView`
+- Assembly Canvas Group -> AssemblyView CanvasGroup
+- Customer Window Canvas Group -> CustomerWindowView CanvasGroup
+- Assembly Physics Root -> `PhysicsRoot`
 
 Controls:
 
-- A / Left Arrow: turn toward Assembly
-- D / Right Arrow: turn toward Customer Window
+- A / Left Arrow -> Assembly
+- D / Right Arrow -> Customer Window
 
-The cooking station has intentionally been removed.
+## Blender physics
 
-## 2. Blender physics setup
+Under `PhysicsRoot`, create `BlenderRoot` and three static `BoxCollider2D` children for the left wall, right wall and bottom. Do not add Rigidbody2D components to the walls.
 
-Under `AssemblyView`, create a `Blender` root with static `BoxCollider2D` objects for the left wall, right wall, and bottom. Do not add Rigidbody2D to the blender walls.
+Create `IngredientContainer` under `PhysicsRoot`. All spawned ingredients are parented here so they stay with the Assembly panel.
 
-Create an empty `IngredientDropper` object above the blender. Add `IngredientDropper.cs` and set `minX`, `maxX`, and `dropY` to match the inside of the blender.
+Create `IngredientDropper` above the blender and add `IngredientDropper.cs`.
 
-The dropper only responds while the player is facing the Assembly view.
+Assign:
 
-## 3. Ingredient prefab setup
+- Gameplay Camera -> Main Camera
+- View Controller -> Viewport's ViewController
+- Gameplay Modifiers -> GameManager's GameplayModifiers
+- Ingredient Container -> IngredientContainer
+- Min X / Max X / Drop Y -> match the blender opening
 
-Each physics ingredient prefab should contain:
+## Ingredient prefabs
 
-- `SpriteRenderer`
-- `Rigidbody2D` (Dynamic)
-- an appropriate `Collider2D`
-- `Ingredient.cs`
+Each ingredient prefab should contain:
+
+- SpriteRenderer
+- Rigidbody2D (Dynamic)
+- an appropriate Collider2D
+- Ingredient.cs
 
 Recommended Rigidbody2D starting values:
 
-- Gravity Scale: 1
-- Collision Detection: Continuous
-- Interpolate: Interpolate
-- Rotation: not frozen
+- Gravity Scale = 1
+- Collision Detection = Continuous
+- Interpolate = Interpolate
+- Rotation not frozen
 
-Create ingredient data with `Create > Burger Shake > Ingredient`. Assign its sprite and prefab, then configure base points, points per touch, base Mult, Mult per touch, tags, and draft weight.
+Ingredient prefabs do not need a Definition assigned permanently. `IngredientDropper` initializes the spawned instance with the selected IngredientDefinition.
 
-## 4. Three-choice draft setup
+## Ingredient data and scoring
 
-Create three UI Buttons. Add `IngredientChoiceButton.cs` to each and wire its icon, name text, scoring text, and Button reference.
+Create ingredient data with:
 
-Create a `GameManager` object with `IngredientDraftManager.cs`. Assign:
+`Create > Burger Shake > Ingredient`
 
-- the ingredient pool
-- the three choice buttons
-- the IngredientDropper
+Each IngredientDefinition contains:
 
-The manager rolls three distinct weighted choices, disables the choices after one is selected, and refreshes them after the chosen ingredient is dropped.
+- name / description
+- sprite / prefab
+- draft weight
+- tags
+- a list of reusable IngredientScoringRule assets
 
-## 5. Scoring
+Create scoring rules with:
 
-Add `ScoreManager.cs` to the GameManager.
+`Create > Burger Shake > Scoring Rule`
 
-Current prototype formula:
+A scoring rule has a target and reward. Current targets:
 
-`Total Score = total Points x total Mult`
+- Self
+- Touching Any
+- Touching Tag
+- Touching Ingredient
 
-Each ingredient currently contributes:
+Current rewards:
 
-- base points
-- points per physical ingredient touching it
-- base Mult
-- Mult per physical ingredient touching it
+- Points
+- Mult
 
-`Ingredient.cs` also exposes ingredient tags and `CountTouchingWithTag`, which is the intended hook for more advanced synergies such as Meat-only or Vegetable-only touch bonuses.
+Examples:
 
-## 6. Reusable UI polish
+- Pickle `+2 points`: target Self, reward Points, amount 2
+- Onion `+3 points for every Tomato touching it`: target TouchingIngredient, requiredIngredient Tomato, reward Points, amount 3
+- Pickle `+0.5 Mult for every Lettuce touching it`: target TouchingIngredient, requiredIngredient Lettuce, reward Mult, amount 0.5
 
-The following generic scripts were ported from the Food Truck project:
+Because rules are separate assets, the same rule can be reused and new rule types can be added without turning IngredientDefinition into a giant switch statement.
 
-- `UIButtonAnimator.cs`
-- `UIPanelAnimator.cs`
+## Ingredient draft
 
-They have no dependency on the old cooking gameplay and can be used on Burger Shake choice buttons, shop cards, score panels, and future overlays.
+Add `IngredientDraftManager` to GameManager.
 
-## Intentionally not migrated
+Assign:
 
-- Player / Chef movement
-- GameModeManager
-- Cooking station and cooking scripts
-- BurgerBuilder and assembly-order logic
-- Recipes
-- Customer orders and patience
-- Serving baskets / service window mechanics
-- Day ratings and stars
-- Old shop/progression logic
-- Old ingredient prefabs with cooking/drag components
+- Choice Buttons -> Choice1, Choice2, Choice3 (and additional buttons later if desired)
+- Dropper -> IngredientDropper
+- Gameplay Modifiers -> GameplayModifiers
 
-Reuse old artwork selectively, but build new Burger Shake prefabs around Rigidbody2D physics instead of copying old gameplay prefabs.
+The active ingredient pool is supplied by RunProgress through RunManager. The draft manager supports changing choice count through restrictions or upgrades.
+
+Each choice button needs `IngredientChoiceButton` and references for icon, name, scoring text and Button.
+
+## Score
+
+Add `ScoreManager` to GameManager.
+
+Current formula:
+
+`Total Score = Points x Mult`
+
+Mult starts at 1 plus any run-upgrade bonus. Each ingredient evaluates its list of scoring-rule assets based on its current physical contacts.
+
+## Run setup
+
+Create:
+
+`Create > Burger Shake > Run Definition`
+
+Configure:
+
+- Starting Ingredient Count (2-3 matches the GDD starting intent)
+- Starting Ingredients
+- Customer list in day order
+- Goal Multiplier By Day curve
+- Starting Coins
+
+Add `RunProgress` and `RunManager` to GameManager.
+
+Assign RunManager:
+
+- Run Definition -> your run asset
+- Progress -> RunProgress
+- Draft Manager -> IngredientDraftManager
+- Challenge Controller -> CustomerChallengeController
+
+Call `RunManager.StartRun()` from your future Start Run button / menu.
+
+Run states are:
+
+`Setup -> Customer -> Shop -> Customer ... -> Won/Lost`
+
+Failing a customer's target sends the run to Lost. Passing awards coins and moves to Shop unless it was the final customer.
+
+## Customer data
+
+Create customers with:
+
+`Create > Burger Shake > Customer`
+
+Each customer contains:
+
+- identity / portrait
+- base goal score
+- base coin reward
+- restrictions
+- optional preferences/wants
+
+Create restrictions with:
+
+`Create > Burger Shake > Customer Restriction`
+
+Current restriction types:
+
+- Blender Scale
+- Ingredient Scale
+- Draft Choice Count
+- Drop Limit
+
+Create wants with:
+
+`Create > Burger Shake > Customer Preference`
+
+Current preference types:
+
+- Ingredient Count
+- Tag Count
+- Score Over Goal
+
+Each satisfied preference awards its configured bonus coins.
+
+Add `GameplayModifiers` and `CustomerChallengeController` to GameManager.
+
+Assign CustomerChallengeController:
+
+- Score Manager -> ScoreManager
+- Gameplay Modifiers -> GameplayModifiers
+- Upgrade Manager -> UpgradeManager
+- Ingredient Dropper -> IngredientDropper
+- Blender Root -> the object whose scale controls blender size
+
+## Shop and run upgrades
+
+Add `ShopManager` and `UpgradeManager` to GameManager.
+
+ShopManager supports:
+
+- ingredient crates that roll ingredients not already owned
+- choosing one rolled ingredient and adding it to the run pool
+- purchasing persistent run upgrades
+
+Create upgrades with:
+
+`Create > Burger Shake > Run Upgrade`
+
+Current scalable upgrade effects:
+
+- Draft Choice Bonus
+- Starting Mult Bonus
+- Ingredient Scale Multiplier
+- Bonus Coins Per Win
+
+Assign ShopManager:
+
+- Progress -> RunProgress
+- Draft Manager -> IngredientDraftManager
+- Upgrade Manager -> UpgradeManager
+- All Ingredients -> all ingredients that can appear in crates
+- Available Upgrades -> the upgrade catalog
+
+Assign UpgradeManager:
+
+- Progress -> RunProgress
+- Gameplay Modifiers -> GameplayModifiers
+- Score Manager -> ScoreManager
+
+## Adding content later
+
+### New ingredient
+
+1. Make sprite and physics prefab.
+2. Create IngredientDefinition.
+3. Assign tags and scoring rules.
+4. Add it to ShopManager's ingredient catalog or starting run pool.
+
+No draft/scoring manager changes should be required.
+
+### New customer
+
+1. Create CustomerDefinition.
+2. Create/reuse restriction and preference assets.
+3. Add the customer to RunDefinition.
+
+No RunManager changes should be required.
+
+### New scoring idea
+
+If it fits an existing target/reward combination, create a new ScoringRule asset only. If it needs a genuinely new spatial condition (above, below, exact touch count, floor contact, etc.), add one new rule target/evaluator instead of adding ingredient-specific code.
+
+### New restriction or powerup
+
+Add a new enum effect plus one application case in GameplayModifiers / UpgradeManager. Customer and run data remain unchanged.
+
+## Deliberately excluded old Food Truck mechanics
+
+- walking Chef/player movement
+- Cooking station
+- cooking / patty preparation
+- burger recipe assembly
+- service baskets
+- customer patience
+- star/day-rating system
+- old order evaluator
+
+The new architecture keeps the Food Truck presentation but does not depend on those mechanics.
