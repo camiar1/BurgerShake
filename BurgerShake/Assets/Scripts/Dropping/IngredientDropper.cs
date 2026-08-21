@@ -6,6 +6,7 @@ public class IngredientDropper : MonoBehaviour
 {
     [SerializeField] private Camera gameplayCamera;
     [SerializeField] private ViewController viewController;
+    [SerializeField] private GameplayModifiers gameplayModifiers;
     [SerializeField] private float minX = -4f;
     [SerializeField] private float maxX = 4f;
     [SerializeField] private float dropY = 4f;
@@ -13,16 +14,29 @@ public class IngredientDropper : MonoBehaviour
 
     private IngredientDefinition selectedIngredient;
     private IngredientDraftManager draftManager;
+    private int dropsThisChallenge;
 
     public bool HasIngredient => selectedIngredient != null;
+    public int DropsThisChallenge => dropsThisChallenge;
 
     public void Initialize(IngredientDraftManager manager)
     {
         draftManager = manager;
     }
 
+    public void ResetChallenge()
+    {
+        selectedIngredient = null;
+        dropsThisChallenge = 0;
+    }
+
     public void SetIngredient(IngredientDefinition ingredient)
     {
+        if (HasReachedDropLimit())
+        {
+            return;
+        }
+
         selectedIngredient = ingredient;
     }
 
@@ -35,8 +49,7 @@ public class IngredientDropper : MonoBehaviour
 
         if (viewController == null)
         {
-            viewController =
-                FindFirstObjectByType<ViewController>();
+            viewController = FindFirstObjectByType<ViewController>();
         }
     }
 
@@ -75,20 +88,31 @@ public class IngredientDropper : MonoBehaviour
 
     private void DropIngredient()
     {
-        if (selectedIngredient == null || selectedIngredient.prefab == null)
+        if (selectedIngredient == null || selectedIngredient.prefab == null || HasReachedDropLimit())
         {
             return;
         }
 
         GameObject spawned = Instantiate(selectedIngredient.prefab, transform.position, Quaternion.identity, ingredientContainer);
-        Ingredient ingredient = spawned.GetComponent<Ingredient>();
 
+        float scaleMultiplier = gameplayModifiers != null ? gameplayModifiers.IngredientScale : 1f;
+        spawned.transform.localScale *= scaleMultiplier;
+
+        Ingredient ingredient = spawned.GetComponent<Ingredient>();
         if (ingredient != null)
         {
             ingredient.Initialize(selectedIngredient);
         }
 
+        dropsThisChallenge++;
         selectedIngredient = null;
         draftManager?.IngredientWasDropped();
+    }
+
+    private bool HasReachedDropLimit()
+    {
+        return gameplayModifiers != null &&
+               gameplayModifiers.DropLimit > 0 &&
+               dropsThisChallenge >= gameplayModifiers.DropLimit;
     }
 }
