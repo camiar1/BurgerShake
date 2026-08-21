@@ -9,6 +9,7 @@ public class IngredientDropper : MonoBehaviour
     [SerializeField] private float minX = -4f;
     [SerializeField] private float maxX = 4f;
     [SerializeField] private float dropY = 4f;
+    [SerializeField] private Transform ingredientContainer;
 
     private IngredientDefinition selectedIngredient;
     private IngredientDraftManager draftManager;
@@ -32,9 +33,10 @@ public class IngredientDropper : MonoBehaviour
             gameplayCamera = Camera.main;
         }
 
-        if (viewController == null && gameplayCamera != null)
+        if (viewController == null)
         {
-            viewController = gameplayCamera.GetComponent<ViewController>();
+            viewController =
+                FindFirstObjectByType<ViewController>();
         }
     }
 
@@ -78,7 +80,7 @@ public class IngredientDropper : MonoBehaviour
             return;
         }
 
-        GameObject spawned = Instantiate(selectedIngredient.prefab, transform.position, Quaternion.identity);
+        GameObject spawned = Instantiate(selectedIngredient.prefab, transform.position, Quaternion.identity, ingredientContainer);
         Ingredient ingredient = spawned.GetComponent<Ingredient>();
 
         if (ingredient != null)
