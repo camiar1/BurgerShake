@@ -5,6 +5,7 @@ public class CustomerChallengeController : MonoBehaviour
 {
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private GameplayModifiers gameplayModifiers;
+    [SerializeField] private UpgradeManager upgradeManager;
     [SerializeField] private IngredientDropper ingredientDropper;
     [SerializeField] private Transform blenderRoot;
 
@@ -20,6 +21,7 @@ public class CustomerChallengeController : MonoBehaviour
         GoalScore = Mathf.Max(1, goalScore);
 
         gameplayModifiers?.Apply(customer != null ? customer.restrictions : null);
+        upgradeManager?.ApplyOwnedUpgrades();
         ingredientDropper?.ResetChallenge();
         ApplyBlenderScale();
 
@@ -41,6 +43,8 @@ public class CustomerChallengeController : MonoBehaviour
 
         if (passed)
         {
+            earnedCoins += upgradeManager != null ? upgradeManager.BonusCoinsPerWin : 0;
+
             foreach (CustomerPreference preference in CurrentCustomer.preferences)
             {
                 if (preference != null && preference.IsSatisfied(GoalScore, scoreManager.TotalScore, ingredients))
