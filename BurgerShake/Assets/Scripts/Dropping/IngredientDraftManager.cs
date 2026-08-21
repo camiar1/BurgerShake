@@ -6,10 +6,12 @@ public class IngredientDraftManager : MonoBehaviour
     [SerializeField] private List<IngredientDefinition> ingredientPool = new List<IngredientDefinition>();
     [SerializeField] private IngredientChoiceButton[] choiceButtons;
     [SerializeField] private IngredientDropper dropper;
+    [SerializeField] private GameplayModifiers gameplayModifiers;
 
     private readonly List<IngredientDefinition> currentChoices = new List<IngredientDefinition>();
 
     public IReadOnlyList<IngredientDefinition> CurrentChoices => currentChoices;
+    public IReadOnlyList<IngredientDefinition> IngredientPool => ingredientPool;
 
     private void Awake()
     {
@@ -22,6 +24,33 @@ public class IngredientDraftManager : MonoBehaviour
     private void Start()
     {
         RefreshChoices();
+    }
+
+    public void SetIngredientPool(IEnumerable<IngredientDefinition> ingredients)
+    {
+        ingredientPool.Clear();
+
+        if (ingredients != null)
+        {
+            foreach (IngredientDefinition ingredient in ingredients)
+            {
+                if (ingredient != null && !ingredientPool.Contains(ingredient))
+                {
+                    ingredientPool.Add(ingredient);
+                }
+            }
+        }
+
+        RefreshChoices();
+    }
+
+    public void AddIngredientToPool(IngredientDefinition ingredient)
+    {
+        if (ingredient != null && !ingredientPool.Contains(ingredient))
+        {
+            ingredientPool.Add(ingredient);
+            RefreshChoices();
+        }
     }
 
     public void SelectIngredient(IngredientDefinition ingredient)
@@ -53,7 +82,11 @@ public class IngredientDraftManager : MonoBehaviour
             }
         }
 
-        int count = Mathf.Min(choiceButtons.Length, available.Count);
+        int requestedChoices = gameplayModifiers != null
+            ? gameplayModifiers.DraftChoiceCount
+            : choiceButtons.Length;
+
+        int count = Mathf.Min(requestedChoices, choiceButtons.Length, available.Count);
 
         for (int i = 0; i < count; i++)
         {
