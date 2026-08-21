@@ -17,11 +17,9 @@ public class IngredientDefinition : ScriptableObject
     [Header("Drafting")]
     [Min(0.01f)] public float draftWeight = 1f;
 
-    [Header("Scoring")]
-    public int basePoints = 10;
-    public int pointsPerTouch;
-    public float baseMult;
-    public float multPerTouch;
+    [Header("Scoring Rules")]
+    [Tooltip("Combine reusable scoring-rule assets to define this ingredient's behavior.")]
+    public List<IngredientScoringRule> scoringRules = new List<IngredientScoringRule>();
 
     [Header("Tags")]
     public List<IngredientTag> tags = new List<IngredientTag>();
