@@ -24,38 +24,62 @@ public class GameplayModifiers : MonoBehaviour
     {
         ResetToDefaults();
 
-        if (restrictions == null)
+        if (restrictions != null)
+        {
+            foreach (CustomerRestriction restriction in restrictions)
+            {
+                if (restriction == null)
+                {
+                    continue;
+                }
+
+                switch (restriction.type)
+                {
+                    case CustomerRestrictionType.BlenderScale:
+                        BlenderScale *= Mathf.Max(0.1f, restriction.floatValue);
+                        break;
+                    case CustomerRestrictionType.IngredientScale:
+                        IngredientScale *= Mathf.Max(0.1f, restriction.floatValue);
+                        break;
+                    case CustomerRestrictionType.DraftChoiceCount:
+                        DraftChoiceCount = Mathf.Max(1, restriction.intValue);
+                        break;
+                    case CustomerRestrictionType.DropLimit:
+                        DropLimit = Mathf.Max(1, restriction.intValue);
+                        break;
+                }
+            }
+        }
+
+        Changed?.Invoke();
+    }
+
+    public void ApplyRunUpgrades(IEnumerable<RunUpgradeDefinition> upgrades)
+    {
+        if (upgrades == null)
         {
             return;
         }
 
-        foreach (CustomerRestriction restriction in restrictions)
+        foreach (RunUpgradeDefinition upgrade in upgrades)
         {
-            if (restriction == null)
+            if (upgrade == null)
             {
                 continue;
             }
 
-            switch (restriction.type)
+            switch (upgrade.effectType)
             {
-                case CustomerRestrictionType.BlenderScale:
-                    BlenderScale *= Mathf.Max(0.1f, restriction.floatValue);
+                case RunUpgradeEffectType.DraftChoiceBonus:
+                    DraftChoiceCount += Mathf.RoundToInt(upgrade.amount);
                     break;
-
-                case CustomerRestrictionType.IngredientScale:
-                    IngredientScale *= Mathf.Max(0.1f, restriction.floatValue);
-                    break;
-
-                case CustomerRestrictionType.DraftChoiceCount:
-                    DraftChoiceCount = Mathf.Max(1, restriction.intValue);
-                    break;
-
-                case CustomerRestrictionType.DropLimit:
-                    DropLimit = Mathf.Max(1, restriction.intValue);
+                case RunUpgradeEffectType.IngredientScaleMultiplier:
+                    IngredientScale *= Mathf.Max(0.1f, upgrade.amount);
                     break;
             }
         }
 
+        DraftChoiceCount = Mathf.Max(1, DraftChoiceCount);
         Changed?.Invoke();
     }
 }
