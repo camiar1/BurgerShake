@@ -5,18 +5,26 @@ public class ScoreManager : MonoBehaviour
 {
     [SerializeField] private float startingMult = 1f;
 
+    private float startingMultBonus;
+
     public int Points { get; private set; }
     public float Mult { get; private set; }
     public int TotalScore { get; private set; }
 
     public event Action ScoreChanged;
 
+    public void SetStartingMultBonus(float bonus)
+    {
+        startingMultBonus = bonus;
+        RecalculateScore();
+    }
+
     public void RecalculateScore()
     {
         Ingredient[] ingredients = FindObjectsByType<Ingredient>(FindObjectsSortMode.None);
 
         int points = 0;
-        float mult = startingMult;
+        float mult = startingMult + startingMultBonus;
 
         foreach (Ingredient ingredient in ingredients)
         {
