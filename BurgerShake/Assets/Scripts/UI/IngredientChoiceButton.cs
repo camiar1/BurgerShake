@@ -1,3 +1,4 @@
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -69,28 +70,53 @@ public class IngredientChoiceButton : MonoBehaviour
 
     private string BuildScoringText(IngredientDefinition data)
     {
-        string text = data.basePoints + " pts";
-
-        if (data.pointsPerTouch != 0)
+        if (data.scoringRules == null || data.scoringRules.Count == 0)
         {
-            text += "\n" + Signed(data.pointsPerTouch) + " pts / touch";
+            return "No scoring rule";
         }
 
-        if (!Mathf.Approximately(data.baseMult, 0f))
+        StringBuilder builder = new StringBuilder();
+
+        foreach (IngredientScoringRule rule in data.scoringRules)
         {
-            text += "\n" + Signed(data.baseMult) + " Mult";
+            if (rule == null)
+            {
+                continue;
+            }
+
+            if (builder.Length > 0)
+            {
+                builder.AppendLine();
+            }
+
+            builder.Append(string.IsNullOrWhiteSpace(rule.description)
+                ? BuildFallbackRuleText(rule)
+                : rule.description);
         }
 
-        if (!Mathf.Approximately(data.multPerTouch, 0f))
-        {
-            text += "\n" + Signed(data.multPerTouch) + " Mult / touch";
-        }
-
-        return text;
+        return builder.ToString();
     }
 
-    private string Signed(float value)
+    private string BuildFallbackRuleText(IngredientScoringRule rule)
     {
-        return value >= 0f ? "+" + value : value.ToString();
+        string rewardText = rule.reward == ScoringReward.Points ? " pts" : " Mult";
+        string prefix = rule.amount >= 0f ? "+" : string.Empty;
+
+        switch (rule.target)
+        {
+            case ScoringTarget.Self:
+                return prefix + rule.amount + rewardText;
+            case ScoringTarget.TouchingAny:
+                return prefix + rule.amount + rewardText + " / touch";
+            case ScoringTarget.TouchingTag:
+                return prefix + rule.amount + rewardText + " / touching " + rule.requiredTag;
+            case ScoringTarget.TouchingIngredient:
+                string ingredientName = rule.requiredIngredient != null
+                    ? rule.requiredIngredient.ingredientName
+                    : "ingredient";
+                return prefix + rule.amount + rewardText + " / touching " + ingredientName;
+            default:
+                return prefix + rule.amount + rewardText;
+        }
     }
 }
