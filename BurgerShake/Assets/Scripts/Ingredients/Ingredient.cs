@@ -23,24 +23,24 @@ public class Ingredient : MonoBehaviour
         }
     }
 
-    public int CalculatePoints()
+    public ScoreValue EvaluateScore()
     {
+        ScoreValue total = default;
+
         if (definition == null)
         {
-            return 0;
+            return total;
         }
 
-        return definition.basePoints + (definition.pointsPerTouch * TouchingCount);
-    }
-
-    public float CalculateMult()
-    {
-        if (definition == null)
+        foreach (IngredientScoringRule rule in definition.scoringRules)
         {
-            return 0f;
+            if (rule != null)
+            {
+                total += rule.Evaluate(this);
+            }
         }
 
-        return definition.baseMult + (definition.multPerTouch * TouchingCount);
+        return total;
     }
 
     public int CountTouchingWithTag(IngredientTag tag)
@@ -50,6 +50,26 @@ public class Ingredient : MonoBehaviour
         foreach (Ingredient ingredient in touchingIngredients)
         {
             if (ingredient.Definition != null && ingredient.Definition.HasTag(tag))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public int CountTouchingIngredient(IngredientDefinition requiredIngredient)
+    {
+        if (requiredIngredient == null)
+        {
+            return 0;
+        }
+
+        int count = 0;
+
+        foreach (Ingredient ingredient in touchingIngredients)
+        {
+            if (ingredient.Definition == requiredIngredient)
             {
                 count++;
             }
