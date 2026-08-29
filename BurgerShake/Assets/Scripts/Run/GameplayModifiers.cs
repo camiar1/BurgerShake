@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class GameplayModifiers : MonoBehaviour
 {
+    [Header("Defaults")]
+    [SerializeField] private float defaultBlenderScale = 1f;
+    [SerializeField] private float defaultIngredientScale = 1f;
+    [SerializeField] private int defaultDraftChoiceCount = 3;
+    [SerializeField] private int defaultDropLimit = -1;
+
     public float BlenderScale { get; private set; } = 1f;
     public float IngredientScale { get; private set; } = 1f;
     public int DraftChoiceCount { get; private set; } = 3;
@@ -11,12 +17,18 @@ public class GameplayModifiers : MonoBehaviour
 
     public event Action Changed;
 
+    private void Awake()
+    {
+        ResetToDefaults();
+    }
+
     public void ResetToDefaults()
     {
-        BlenderScale = 1f;
-        IngredientScale = 1f;
-        DraftChoiceCount = 3;
-        DropLimit = -1;
+        BlenderScale = defaultBlenderScale;
+        IngredientScale = defaultIngredientScale;
+        DraftChoiceCount = defaultDraftChoiceCount;
+        DropLimit = defaultDropLimit;
+
         Changed?.Invoke();
     }
 

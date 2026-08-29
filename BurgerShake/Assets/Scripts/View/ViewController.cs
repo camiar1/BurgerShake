@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -37,13 +38,17 @@ public class ViewController : MonoBehaviour
         FoodTruckView.CustomerWindow;
 
     private FoodTruckView currentView;
+
     private bool isSliding;
 
     private float viewWidth;
     private float viewHeight;
 
     public FoodTruckView CurrentView => currentView;
+
     public bool IsSliding => isSliding;
+
+    public event Action<FoodTruckView> ViewChanged;
 
     private IEnumerator Start()
     {
@@ -54,13 +59,22 @@ public class ViewController : MonoBehaviour
         Canvas.ForceUpdateCanvases();
 
         RefreshLayout();
+
         SnapToView(currentView);
+
         UpdateViewInteraction();
+
+        SetAssemblyPhysicsSimulation(
+            currentView == FoodTruckView.Assembly
+        );
     }
 
     private void OnRectTransformDimensionsChange()
     {
-        if (!isActiveAndEnabled || viewport == null)
+        if (
+            !isActiveAndEnabled ||
+            viewport == null
+        )
         {
             return;
         }
@@ -73,6 +87,9 @@ public class ViewController : MonoBehaviour
         }
     }
 
+    // These are being kept for compatibility with
+    // the old input script, but the player should
+    // no longer use ViewKeyboardInput.
     public void TurnLeft(
         InputAction.CallbackContext context
     )
@@ -125,26 +142,30 @@ public class ViewController : MonoBehaviour
     public void GoToAssembly()
     {
         if (
-            !isSliding &&
-            currentView != FoodTruckView.Assembly
+            isSliding ||
+            currentView == FoodTruckView.Assembly
         )
         {
-            BeginSlide(FoodTruckView.Assembly);
+            return;
         }
+
+        BeginSlide(FoodTruckView.Assembly);
     }
 
     public void GoToCustomerWindow()
     {
         if (
-            !isSliding &&
-            currentView !=
+            isSliding ||
+            currentView ==
             FoodTruckView.CustomerWindow
         )
         {
-            BeginSlide(
-                FoodTruckView.CustomerWindow
-            );
+            return;
         }
+
+        BeginSlide(
+            FoodTruckView.CustomerWindow
+        );
     }
 
     private void BeginSlide(
@@ -164,8 +185,8 @@ public class ViewController : MonoBehaviour
 
         DisableAllInteraction();
 
-        // Don't let Rigidbody2D fight the moving
-        // parent hierarchy during the slide.
+        // Freeze ingredient physics while the
+        // entire truck view is moving.
         SetAssemblyPhysicsSimulation(false);
 
         Vector2 start =
@@ -202,10 +223,18 @@ public class ViewController : MonoBehaviour
             target;
 
         currentView = targetView;
+
         isSliding = false;
 
-        SetAssemblyPhysicsSimulation(true);
+        // Physics should only run while the
+        // Assembly view is actually active.
+        SetAssemblyPhysicsSimulation(
+            currentView == FoodTruckView.Assembly
+        );
+
         UpdateViewInteraction();
+
+        ViewChanged?.Invoke(currentView);
     }
 
     private void RefreshLayout()
@@ -280,7 +309,10 @@ public class ViewController : MonoBehaviour
         FoodTruckView view
     )
     {
-        if (view == FoodTruckView.Assembly)
+        if (
+            view ==
+            FoodTruckView.Assembly
+        )
         {
             return new Vector2(
                 viewWidth * 0.5f,
@@ -298,6 +330,11 @@ public class ViewController : MonoBehaviour
         FoodTruckView view
     )
     {
+        if (stationStrip == null)
+        {
+            return;
+        }
+
         stationStrip.anchoredPosition =
             GetStripPosition(view);
     }

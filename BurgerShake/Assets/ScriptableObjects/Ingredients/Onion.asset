@@ -14,11 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Onion
   description: 
-  sprite: {fileID: -2952729511022841031, guid: b42c4f248dc887a4592785d875363f91, type: 3}
-  prefab: {fileID: 4087950493650753132, guid: c38fb93010a58dd48be14a0fdbda006a, type: 3}
+  sprite: {fileID: 2442924053469280705, guid: 2974e56fa9d566443b7ef894b06c5a02, type: 3}
+  prefab: {fileID: 3612487842040495511, guid: 372ef3af60cbafd4cb1b48bd5c81809d, type: 3}
   draftWeight: 1
-  basePoints: 10
-  pointsPerTouch: 0
-  baseMult: 0
-  multPerTouch: 0
+  scoringRules: []
   tags: 010000000a000000
