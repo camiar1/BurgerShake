@@ -1,14 +1,12 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CustomerSpawner : MonoBehaviour
 {
-    [Header("Available Customers")]
-    [SerializeField]
-    private List<CustomerDefinition> customers =
-        new List<CustomerDefinition>();
+    [Header("Run")]
+    [SerializeField] private RunManager runManager;
 
     [Header("Customer Visual")]
     [SerializeField] private Image customerImage;
@@ -24,152 +22,328 @@ public class CustomerSpawner : MonoBehaviour
 
     [SerializeField]
     private AnimationCurve movementCurve =
-        AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        AnimationCurve.EaseInOut(
+            0f,
+            0f,
+            1f,
+            1f
+        );
 
     private CustomerDefinition activeCustomer;
 
-    private bool customerWaiting;
-    private bool customerMoving;
+    private Coroutine movementRoutine;
 
-    public CustomerDefinition ActiveCustomer => activeCustomer;
-    public bool CustomerWaiting => customerWaiting;
+    public CustomerDefinition ActiveCustomer =>
+        activeCustomer;
+
+    public bool CustomerWaiting
+    {
+        get;
+        private set;
+    }
+
+    public bool CustomerMoving
+    {
+        get;
+        private set;
+    }
+
+    public event Action<CustomerDefinition>
+        CustomerArrived;
+
+    public event Action
+        CustomerLeft;
+
+    private void Awake()
+    {
+        if (runManager == null)
+        {
+            runManager =
+                FindFirstObjectByType<RunManager>();
+        }
+
+        if (
+            customerRect == null &&
+            customerImage != null
+        )
+        {
+            customerRect =
+                customerImage.rectTransform;
+        }
+
+        if (customerImage != null)
+        {
+            customerImage.raycastTarget =
+                false;
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (runManager != null)
+        {
+            runManager.CustomerIntroStarted +=
+                HandleCustomerIntroStarted;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (runManager != null)
+        {
+            runManager.CustomerIntroStarted -=
+                HandleCustomerIntroStarted;
+        }
+
+        StopMovement();
+    }
 
     private void Start()
     {
         HideCustomerImmediately();
 
-        // Temporary for testing.
-        SpawnCustomer();
+        if (
+            runManager != null &&
+            runManager.State ==
+                RunState.CustomerIntro &&
+            runManager.CurrentCustomer != null
+        )
+        {
+            ShowCustomer(
+                runManager.CurrentCustomer
+            );
+        }
     }
 
-    public void SpawnCustomer()
+    private void HandleCustomerIntroStarted(
+        CustomerDefinition customer,
+        int goalScore
+    )
     {
-        if (customerWaiting || customerMoving)
-            return;
+        ShowCustomer(
+            customer
+        );
+    }
 
-        if (customers.Count == 0)
+    public void ShowCustomer(
+        CustomerDefinition customer
+    )
+    {
+        if (
+            customer == null ||
+            customerImage == null ||
+            customerRect == null ||
+            entryPoint == null ||
+            waitingPoint == null
+        )
         {
-            Debug.LogError("No customers assigned.");
             return;
         }
 
-        CustomerDefinition customer =
-            customers[Random.Range(0, customers.Count)];
+        StopMovement();
 
-        SpawnCustomer(customer);
-    }
+        activeCustomer =
+            customer;
 
-    public void SpawnCustomer(CustomerDefinition customer)
-    {
-        if (customer == null || customerWaiting || customerMoving)
-            return;
+        CustomerWaiting =
+            false;
 
-        StartCoroutine(EnterCustomerRoutine(customer));
-    }
+        CustomerMoving =
+            true;
 
-    private IEnumerator EnterCustomerRoutine(
-        CustomerDefinition customer)
-    {
-        customerMoving = true;
-        activeCustomer = customer;
-
-        ApplyCustomerVisual(customer);
-
-        Vector2 entryPosition =
-            entryPoint.anchoredPosition +
-            customer.visualOffset;
-
-        Vector2 waitingPosition =
-            waitingPoint.anchoredPosition +
-            customer.visualOffset;
-
-        customerRect.anchoredPosition = entryPosition;
-
-        customerImage.gameObject.SetActive(true);
-
-        yield return MoveCustomer(
-            entryPosition,
-            waitingPosition
+        ApplyCustomerVisual(
+            customer
         );
 
-        customerWaiting = true;
-        customerMoving = false;
+        Vector2 start =
+            GetPointPosition(
+                entryPoint,
+                customer
+            );
+
+        Vector2 destination =
+            GetPointPosition(
+                waitingPoint,
+                customer
+            );
+
+        customerRect.anchoredPosition =
+            start;
+
+        customerImage.gameObject
+            .SetActive(true);
+
+        movementRoutine =
+            StartCoroutine(
+                EnterRoutine(
+                    start,
+                    destination
+                )
+            );
     }
 
     public void CustomerLeaves()
     {
-        if (activeCustomer == null || customerMoving)
+        if (
+            activeCustomer == null ||
+            customerRect == null ||
+            exitPoint == null
+        )
+        {
+            CustomerLeft?.Invoke();
             return;
+        }
 
-        customerWaiting = false;
+        StopMovement();
 
-        StartCoroutine(ExitCustomerRoutine());
-    }
+        CustomerWaiting =
+            false;
 
-    private IEnumerator ExitCustomerRoutine()
-    {
-        customerMoving = true;
+        CustomerMoving =
+            true;
 
-        Vector2 startPosition =
+        Vector2 start =
             customerRect.anchoredPosition;
 
-        Vector2 exitPosition =
-            exitPoint.anchoredPosition +
-            activeCustomer.visualOffset;
+        Vector2 destination =
+            GetPointPosition(
+                exitPoint,
+                activeCustomer
+            );
 
+        movementRoutine =
+            StartCoroutine(
+                ExitRoutine(
+                    start,
+                    destination
+                )
+            );
+    }
+
+    private IEnumerator EnterRoutine(
+        Vector2 start,
+        Vector2 destination
+    )
+    {
         yield return MoveCustomer(
-            startPosition,
-            exitPosition
+            start,
+            destination
         );
 
-        customerImage.gameObject.SetActive(false);
+        CustomerMoving =
+            false;
 
-        activeCustomer = null;
-        customerMoving = false;
+        CustomerWaiting =
+            true;
+
+        movementRoutine =
+            null;
+
+        CustomerArrived?.Invoke(
+            activeCustomer
+        );
+    }
+
+    private IEnumerator ExitRoutine(
+        Vector2 start,
+        Vector2 destination
+    )
+    {
+        yield return MoveCustomer(
+            start,
+            destination
+        );
+
+        if (customerImage != null)
+        {
+            customerImage.gameObject
+                .SetActive(false);
+        }
+
+        activeCustomer =
+            null;
+
+        CustomerMoving =
+            false;
+
+        CustomerWaiting =
+            false;
+
+        movementRoutine =
+            null;
+
+        CustomerLeft?.Invoke();
     }
 
     private IEnumerator MoveCustomer(
-        Vector2 startPosition,
-        Vector2 targetPosition)
+        Vector2 start,
+        Vector2 destination
+    )
     {
         float duration =
-            Mathf.Max(0.01f, movementDuration);
+            Mathf.Max(
+                0.01f,
+                movementDuration
+            );
 
-        float elapsedTime = 0f;
+        float elapsed =
+            0f;
 
-        while (elapsedTime < duration)
+        while (elapsed < duration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsed +=
+                Time.unscaledDeltaTime;
 
-            float normalizedTime =
+            float normalized =
                 Mathf.Clamp01(
-                    elapsedTime / duration
+                    elapsed / duration
                 );
 
-            float curvedTime =
+            float curved =
                 movementCurve != null
-                    ? movementCurve.Evaluate(normalizedTime)
-                    : normalizedTime;
+                    ? movementCurve
+                        .Evaluate(normalized)
+                    : normalized;
 
             customerRect.anchoredPosition =
                 Vector2.LerpUnclamped(
-                    startPosition,
-                    targetPosition,
-                    curvedTime
+                    start,
+                    destination,
+                    curved
                 );
 
             yield return null;
         }
 
         customerRect.anchoredPosition =
-            targetPosition;
+            destination;
+    }
+
+    private Vector2 GetPointPosition(
+        RectTransform point,
+        CustomerDefinition customer
+    )
+    {
+        return
+            point.anchoredPosition +
+            customer.visualOffset;
     }
 
     private void ApplyCustomerVisual(
-        CustomerDefinition customer)
+        CustomerDefinition customer
+    )
     {
-        customerImage.sprite = customer.portrait;
-        customerImage.preserveAspect = true;
+        customerImage.sprite =
+            customer.portrait;
+
+        customerImage.enabled =
+            customer.portrait != null;
+
+        customerImage.preserveAspect =
+            true;
+
+        customerImage.raycastTarget =
+            false;
 
         float scale =
             Mathf.Max(
@@ -185,13 +359,39 @@ public class CustomerSpawner : MonoBehaviour
             );
     }
 
+    private void StopMovement()
+    {
+        if (movementRoutine != null)
+        {
+            StopCoroutine(
+                movementRoutine
+            );
+
+            movementRoutine =
+                null;
+        }
+
+        CustomerMoving =
+            false;
+    }
+
     private void HideCustomerImmediately()
     {
-        customerWaiting = false;
-        customerMoving = false;
-        activeCustomer = null;
+        StopMovement();
+
+        activeCustomer =
+            null;
+
+        CustomerWaiting =
+            false;
+
+        CustomerMoving =
+            false;
 
         if (customerImage != null)
-            customerImage.gameObject.SetActive(false);
+        {
+            customerImage.gameObject
+                .SetActive(false);
+        }
     }
 }

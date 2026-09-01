@@ -7,16 +7,31 @@ public class CustomerIntroUI : MonoBehaviour
     [Header("Run")]
     [SerializeField] private RunManager runManager;
 
-    [Header("Customer")]
-    [SerializeField] private Image customerPortrait;
+    [Header("Content")]
+    [SerializeField] private GameObject introContent;
+
+    [Header("Text")]
     [SerializeField] private TMP_Text customerNameText;
     [SerializeField] private TMP_Text dialogueText;
-
-    [Header("Challenge")]
     [SerializeField] private TMP_Text goalText;
 
     [Header("Controls")]
     [SerializeField] private Button readyButton;
+
+    [Header("Fallback Dialogue")]
+    [TextArea]
+    [SerializeField]
+    private string defaultDialogue =
+        "I've heard about these burger shakes. I'd love to give one a try!";
+
+    private void Awake()
+    {
+        if (runManager == null)
+        {
+            runManager =
+                FindFirstObjectByType<RunManager>();
+        }
+    }
 
     private void OnEnable()
     {
@@ -24,6 +39,9 @@ public class CustomerIntroUI : MonoBehaviour
         {
             runManager.CustomerIntroStarted +=
                 ShowCustomer;
+
+            runManager.StateChanged +=
+                HandleRunStateChanged;
         }
 
         if (readyButton != null)
@@ -40,6 +58,9 @@ public class CustomerIntroUI : MonoBehaviour
         {
             runManager.CustomerIntroStarted -=
                 ShowCustomer;
+
+            runManager.StateChanged -=
+                HandleRunStateChanged;
         }
 
         if (readyButton != null)
@@ -52,13 +73,13 @@ public class CustomerIntroUI : MonoBehaviour
 
     private void Start()
     {
-        // This handles cases where the run started
-        // before this UI finished its Start().
+        SetContentVisible(false);
+
         if (
             runManager != null &&
             runManager.CurrentCustomer != null &&
             runManager.State ==
-            RunState.CustomerIntro
+                RunState.CustomerIntro
         )
         {
             ShowCustomer(
@@ -78,6 +99,8 @@ public class CustomerIntroUI : MonoBehaviour
             return;
         }
 
+        SetContentVisible(true);
+
         if (customerNameText != null)
         {
             customerNameText.text =
@@ -86,8 +109,20 @@ public class CustomerIntroUI : MonoBehaviour
 
         if (dialogueText != null)
         {
-            dialogueText.text =
-                customer.description;
+            if (
+                string.IsNullOrWhiteSpace(
+                    customer.description
+                )
+            )
+            {
+                dialogueText.text =
+                    defaultDialogue;
+            }
+            else
+            {
+                dialogueText.text =
+                    customer.description;
+            }
         }
 
         if (goalText != null)
@@ -96,18 +131,10 @@ public class CustomerIntroUI : MonoBehaviour
                 $"Goal: {goalScore}";
         }
 
-        if (customerPortrait != null)
-        {
-            customerPortrait.sprite =
-                customer.portrait;
-
-            customerPortrait.enabled =
-                customer.portrait != null;
-        }
-
         if (readyButton != null)
         {
-            readyButton.interactable = true;
+            readyButton.interactable =
+                true;
         }
     }
 
@@ -120,9 +147,34 @@ public class CustomerIntroUI : MonoBehaviour
 
         if (readyButton != null)
         {
-            readyButton.interactable = false;
+            readyButton.interactable =
+                false;
         }
 
         runManager.BeginCurrentCustomer();
+    }
+
+    private void HandleRunStateChanged(
+        RunState state
+    )
+    {
+        if (
+            state != RunState.CustomerIntro
+        )
+        {
+            SetContentVisible(false);
+        }
+    }
+
+    private void SetContentVisible(
+        bool visible
+    )
+    {
+        if (introContent != null)
+        {
+            introContent.SetActive(
+                visible
+            );
+        }
     }
 }

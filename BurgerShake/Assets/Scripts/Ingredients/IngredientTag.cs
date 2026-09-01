@@ -1,6 +1,6 @@
 public enum IngredientTag
 {
-    Meat,
+    Protein,
     Vegetable,
     Dairy,
     Bread,
@@ -13,5 +13,6 @@ public enum IngredientTag
     Round,
     Long,
     Flat,
-    Special
+    Special,
+    Fruit
 }

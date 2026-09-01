@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public enum RunState
@@ -6,6 +7,7 @@ public enum RunState
     Setup,
     CustomerIntro,
     Assembly,
+    CustomerOutro,
     Shop,
     Won,
     Lost
@@ -17,35 +19,96 @@ public class RunManager : MonoBehaviour
     [SerializeField] private RunDefinition runDefinition;
     [SerializeField] private RunProgress progress;
 
+    [SerializeField]
+    private bool autoStartRun = true;
+
     [Header("Gameplay")]
     [SerializeField] private IngredientDraftManager draftManager;
     [SerializeField] private CustomerChallengeController challengeController;
 
     [Header("Views")]
     [SerializeField] private ViewController viewController;
+    [SerializeField] private CustomerSpawner customerSpawner;
 
-    public RunState State { get; private set; } = RunState.Setup;
+    [Header("Customer Intro")]
+    [SerializeField] private float customerIntroDelay = 0.5f;
 
-    public CustomerDefinition CurrentCustomer { get; private set; }
+    [Header("Customer Outro")]
+    [SerializeField] private float leaveDelay = 0.5f;
+    [SerializeField] private float postLeaveDelay = 0.3f;
 
-    public int CurrentGoalScore { get; private set; }
+    public RunState State
+    {
+        get;
+        private set;
+    } = RunState.Setup;
 
-    public event Action<RunState> StateChanged;
+    public CustomerDefinition CurrentCustomer
+    {
+        get;
+        private set;
+    }
 
-    public event Action<CustomerDefinition, int> CustomerIntroStarted;
+    public int CurrentGoalScore
+    {
+        get;
+        private set;
+    }
 
+    public bool RunStarted
+    {
+        get;
+        private set;
+    }
+
+    public event Action<RunState>
+        StateChanged;
+
+    public event Action<CustomerDefinition, int>
+        CustomerIntroStarted;
+
+    private bool waitingForCustomerWindow;
     private bool waitingForAssembly;
+    private bool waitingForOutroWindow;
+
+    private RunState stateAfterOutro;
+
+    private Coroutine introRoutine;
+    private Coroutine outroRoutine;
+
+    private void Awake()
+    {
+        if (viewController == null)
+        {
+            viewController =
+                FindFirstObjectByType<ViewController>();
+        }
+
+        if (customerSpawner == null)
+        {
+            customerSpawner =
+                FindFirstObjectByType<CustomerSpawner>();
+        }
+    }
 
     private void OnEnable()
     {
         if (challengeController != null)
         {
-            challengeController.ChallengeFinished += HandleChallengeFinished;
+            challengeController.ChallengeFinished +=
+                HandleChallengeFinished;
         }
 
         if (viewController != null)
         {
-            viewController.ViewChanged += HandleViewChanged;
+            viewController.ViewChanged +=
+                HandleViewChanged;
+        }
+
+        if (customerSpawner != null)
+        {
+            customerSpawner.CustomerLeft +=
+                HandleCustomerLeft;
         }
     }
 
@@ -53,29 +116,112 @@ public class RunManager : MonoBehaviour
     {
         if (challengeController != null)
         {
-            challengeController.ChallengeFinished -= HandleChallengeFinished;
+            challengeController.ChallengeFinished -=
+                HandleChallengeFinished;
         }
 
         if (viewController != null)
         {
-            viewController.ViewChanged -= HandleViewChanged;
+            viewController.ViewChanged -=
+                HandleViewChanged;
         }
+
+        if (customerSpawner != null)
+        {
+            customerSpawner.CustomerLeft -=
+                HandleCustomerLeft;
+        }
+
+        if (introRoutine != null)
+        {
+            StopCoroutine(
+                introRoutine
+            );
+
+            introRoutine = null;
+        }
+
+        if (outroRoutine != null)
+        {
+            StopCoroutine(
+                outroRoutine
+            );
+
+            outroRoutine = null;
+        }
+    }
+
+    private IEnumerator Start()
+    {
+        if (!autoStartRun)
+        {
+            yield break;
+        }
+
+        // Gives ViewController time to initialize.
+        yield return null;
+
+        StartRun();
     }
 
     public void StartRun()
     {
-        if (runDefinition == null || progress == null)
+        if (RunStarted)
+        {
+            return;
+        }
+
+        if (runDefinition == null)
         {
             Debug.LogError(
-                "RunManager is missing its RunDefinition or RunProgress reference."
+                "RunManager has no RunDefinition."
             );
 
             return;
         }
 
-        progress.BeginRun(runDefinition);
+        if (progress == null)
+        {
+            Debug.LogError(
+                "RunManager has no RunProgress."
+            );
 
-        draftManager?.SetIngredientPool(progress.Ingredients);
+            return;
+        }
+
+        if (
+            runDefinition.startingIngredients == null ||
+            runDefinition.startingIngredients.Count == 0
+        )
+        {
+            Debug.LogError(
+                "The RunDefinition has no starting ingredients."
+            );
+
+            return;
+        }
+
+        if (
+            runDefinition.customers == null ||
+            runDefinition.customers.Count == 0
+        )
+        {
+            Debug.LogError(
+                "The RunDefinition has no customers."
+            );
+
+            return;
+        }
+
+        RunStarted = true;
+
+        progress.BeginRun(
+            runDefinition
+        );
+
+        draftManager?.SetIngredientPool(
+            progress.Ingredients
+        );
 
         StartCurrentDay();
     }
@@ -84,64 +230,115 @@ public class RunManager : MonoBehaviour
     {
         if (
             runDefinition == null ||
-            progress == null ||
-            runDefinition.customers.Count == 0
+            progress == null
         )
         {
             return;
         }
 
-        int customerIndex = Mathf.Clamp(
-            progress.Day - 1,
-            0,
-            runDefinition.customers.Count - 1
-        );
+        if (
+            progress.Day >
+            runDefinition.customers.Count
+        )
+        {
+            SetState(
+                RunState.Won
+            );
 
-        CurrentCustomer = runDefinition.customers[customerIndex];
+            return;
+        }
+
+        int customerIndex =
+            progress.Day - 1;
+
+        CurrentCustomer =
+            runDefinition.customers[
+                customerIndex
+            ];
+
+        if (CurrentCustomer == null)
+        {
+            Debug.LogError(
+                $"Customer for Day {progress.Day} is missing."
+            );
+
+            return;
+        }
 
         float multiplier =
-            runDefinition.goalMultiplierByDay.Evaluate(progress.Day);
+            runDefinition
+                .goalMultiplierByDay
+                .Evaluate(
+                    progress.Day
+                );
 
-        CurrentGoalScore = Mathf.RoundToInt(
-            CurrentCustomer.baseGoalScore * multiplier
-        );
+        CurrentGoalScore =
+            Mathf.RoundToInt(
+                CurrentCustomer.baseGoalScore *
+                multiplier
+            );
 
+        waitingForCustomerWindow = false;
         waitingForAssembly = false;
+        waitingForOutroWindow = false;
 
-        SetState(RunState.CustomerIntro);
+        if (introRoutine != null)
+        {
+            StopCoroutine(
+                introRoutine
+            );
 
-        viewController?.GoToCustomerWindow();
+            introRoutine = null;
+        }
 
-        CustomerIntroStarted?.Invoke(
-            CurrentCustomer,
-            CurrentGoalScore
+        SetState(
+            RunState.CustomerIntro
         );
+
+        if (viewController == null)
+        {
+            BeginCustomerIntroDelay();
+            return;
+        }
+
+        if (
+            viewController.CurrentView ==
+                ViewController
+                    .FoodTruckView
+                    .CustomerWindow &&
+            !viewController.IsSliding
+        )
+        {
+            BeginCustomerIntroDelay();
+            return;
+        }
+
+        waitingForCustomerWindow = true;
+
+        viewController.GoToCustomerWindow();
     }
 
     public void BeginCurrentCustomer()
     {
-        if (State != RunState.CustomerIntro)
+        if (
+            State != RunState.CustomerIntro ||
+            CurrentCustomer == null
+        )
         {
             return;
         }
 
-        if (CurrentCustomer == null)
-        {
-            return;
-        }
-
-        // No ViewController assigned:
-        // just start gameplay immediately.
         if (viewController == null)
         {
             StartAssemblyGameplay();
             return;
         }
 
-        // Already in Assembly for some reason.
         if (
             viewController.CurrentView ==
-            ViewController.FoodTruckView.Assembly &&
+                ViewController
+                    .FoodTruckView
+                    .Assembly &&
             !viewController.IsSliding
         )
         {
@@ -156,17 +353,23 @@ public class RunManager : MonoBehaviour
 
     public void FinishCurrentCustomer()
     {
-        if (State != RunState.Assembly)
+        if (
+            State != RunState.Assembly
+        )
         {
             return;
         }
 
-        challengeController?.CompleteChallenge();
+        challengeController
+            ?.CompleteChallenge();
     }
 
     public void ContinueAfterShop()
     {
-        if (State != RunState.Shop || progress == null)
+        if (
+            State != RunState.Shop ||
+            progress == null
+        )
         {
             return;
         }
@@ -175,14 +378,20 @@ public class RunManager : MonoBehaviour
 
         if (
             runDefinition != null &&
-            progress.Day > runDefinition.customers.Count
+            progress.Day >
+                runDefinition.customers.Count
         )
         {
-            SetState(RunState.Won);
+            SetState(
+                RunState.Won
+            );
+
             return;
         }
 
-        draftManager?.SetIngredientPool(progress.Ingredients);
+        draftManager?.SetIngredientPool(
+            progress.Ingredients
+        );
 
         StartCurrentDay();
     }
@@ -192,21 +401,100 @@ public class RunManager : MonoBehaviour
     )
     {
         if (
-            !waitingForAssembly ||
-            view != ViewController.FoodTruckView.Assembly
+            waitingForCustomerWindow &&
+            view ==
+                ViewController
+                    .FoodTruckView
+                    .CustomerWindow
+        )
+        {
+            waitingForCustomerWindow = false;
+
+            BeginCustomerIntroDelay();
+
+            return;
+        }
+
+        if (
+            waitingForAssembly &&
+            view ==
+                ViewController
+                    .FoodTruckView
+                    .Assembly
+        )
+        {
+            StartAssemblyGameplay();
+
+            return;
+        }
+
+        if (
+            waitingForOutroWindow &&
+            view ==
+                ViewController
+                    .FoodTruckView
+                    .CustomerWindow
+        )
+        {
+            waitingForOutroWindow = false;
+
+            StartCustomerLeaveSequence();
+        }
+    }
+
+    private void BeginCustomerIntroDelay()
+    {
+        if (introRoutine != null)
+        {
+            StopCoroutine(
+                introRoutine
+            );
+        }
+
+        introRoutine =
+            StartCoroutine(
+                CustomerIntroDelayRoutine()
+            );
+    }
+
+    private IEnumerator CustomerIntroDelayRoutine()
+    {
+        if (customerIntroDelay > 0f)
+        {
+            yield return
+                new WaitForSecondsRealtime(
+                    customerIntroDelay
+                );
+        }
+
+        introRoutine = null;
+
+        PresentCustomerIntro();
+    }
+
+    private void PresentCustomerIntro()
+    {
+        if (
+            State != RunState.CustomerIntro ||
+            CurrentCustomer == null
         )
         {
             return;
         }
 
-        StartAssemblyGameplay();
+        CustomerIntroStarted?.Invoke(
+            CurrentCustomer,
+            CurrentGoalScore
+        );
     }
 
     private void StartAssemblyGameplay()
     {
         waitingForAssembly = false;
 
-        SetState(RunState.Assembly);
+        SetState(
+            RunState.Assembly
+        );
 
         challengeController?.BeginChallenge(
             CurrentCustomer,
@@ -221,30 +509,153 @@ public class RunManager : MonoBehaviour
     {
         if (!passed)
         {
-            SetState(RunState.Lost);
+            SetState(
+                RunState.Lost
+            );
+
             return;
         }
 
-        progress?.AddCoins(earnedCoins);
+        progress?.AddCoins(
+            earnedCoins
+        );
 
         if (
             runDefinition != null &&
             progress != null &&
-            progress.Day >= runDefinition.customers.Count
+            progress.Day >=
+                runDefinition.customers.Count
         )
         {
-            SetState(RunState.Won);
+            stateAfterOutro =
+                RunState.Won;
         }
         else
         {
-            SetState(RunState.Shop);
+            stateAfterOutro =
+                RunState.Shop;
         }
+
+        BeginCustomerOutro();
     }
 
-    private void SetState(RunState state)
+    private void BeginCustomerOutro()
+    {
+        SetState(
+            RunState.CustomerOutro
+        );
+
+        if (viewController == null)
+        {
+            StartCustomerLeaveSequence();
+
+            return;
+        }
+
+        if (
+            viewController.CurrentView ==
+                ViewController
+                    .FoodTruckView
+                    .CustomerWindow &&
+            !viewController.IsSliding
+        )
+        {
+            StartCustomerLeaveSequence();
+
+            return;
+        }
+
+        waitingForOutroWindow = true;
+
+        viewController.GoToCustomerWindow();
+    }
+
+    private void StartCustomerLeaveSequence()
+    {
+        if (outroRoutine != null)
+        {
+            StopCoroutine(
+                outroRoutine
+            );
+        }
+
+        outroRoutine =
+            StartCoroutine(
+                CustomerLeaveSequence()
+            );
+    }
+
+    private IEnumerator CustomerLeaveSequence()
+    {
+        if (leaveDelay > 0f)
+        {
+            yield return
+                new WaitForSecondsRealtime(
+                    leaveDelay
+                );
+        }
+
+        if (customerSpawner != null)
+        {
+            customerSpawner
+                .CustomerLeaves();
+
+            yield break;
+        }
+
+        HandleCustomerLeft();
+    }
+
+    private void HandleCustomerLeft()
+    {
+        if (
+            State !=
+            RunState.CustomerOutro
+        )
+        {
+            return;
+        }
+
+        if (outroRoutine != null)
+        {
+            StopCoroutine(
+                outroRoutine
+            );
+
+            outroRoutine = null;
+        }
+
+        outroRoutine =
+            StartCoroutine(
+                FinishOutroAfterDelay()
+            );
+    }
+
+    private IEnumerator FinishOutroAfterDelay()
+    {
+        if (postLeaveDelay > 0f)
+        {
+            yield return
+                new WaitForSecondsRealtime(
+                    postLeaveDelay
+                );
+        }
+
+        outroRoutine = null;
+
+        SetState(
+            stateAfterOutro
+        );
+    }
+
+    private void SetState(
+        RunState state
+    )
     {
         State = state;
 
-        StateChanged?.Invoke(State);
+        StateChanged?.Invoke(
+            State
+        );
     }
 }

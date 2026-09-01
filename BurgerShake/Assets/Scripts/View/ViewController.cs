@@ -48,10 +48,14 @@ public class ViewController : MonoBehaviour
 
     public bool IsSliding => isSliding;
 
+    public bool IsReady { get; private set; }
+
     public event Action<FoodTruckView> ViewChanged;
 
     private IEnumerator Start()
     {
+        IsReady = false;
+
         currentView = startingView;
 
         yield return null;
@@ -67,13 +71,16 @@ public class ViewController : MonoBehaviour
         SetAssemblyPhysicsSimulation(
             currentView == FoodTruckView.Assembly
         );
+
+        IsReady = true;
     }
 
     private void OnRectTransformDimensionsChange()
     {
         if (
             !isActiveAndEnabled ||
-            viewport == null
+            viewport == null ||
+            !IsReady
         )
         {
             return;
@@ -87,9 +94,10 @@ public class ViewController : MonoBehaviour
         }
     }
 
-    // These are being kept for compatibility with
-    // the old input script, but the player should
-    // no longer use ViewKeyboardInput.
+    // Legacy methods.
+    // Nothing in the current game should call these.
+    // They remain here so the old ViewKeyboardInput
+    // script does not cause compile errors.
     public void TurnLeft(
         InputAction.CallbackContext context
     )
@@ -149,7 +157,9 @@ public class ViewController : MonoBehaviour
             return;
         }
 
-        BeginSlide(FoodTruckView.Assembly);
+        BeginSlide(
+            FoodTruckView.Assembly
+        );
     }
 
     public void GoToCustomerWindow()
@@ -185,8 +195,6 @@ public class ViewController : MonoBehaviour
 
         DisableAllInteraction();
 
-        // Freeze ingredient physics while the
-        // entire truck view is moving.
         SetAssemblyPhysicsSimulation(false);
 
         Vector2 start =
@@ -226,10 +234,9 @@ public class ViewController : MonoBehaviour
 
         isSliding = false;
 
-        // Physics should only run while the
-        // Assembly view is actually active.
         SetAssemblyPhysicsSimulation(
-            currentView == FoodTruckView.Assembly
+            currentView ==
+            FoodTruckView.Assembly
         );
 
         UpdateViewInteraction();

@@ -14,53 +14,96 @@ public enum ScoringReward
     Mult
 }
 
-[CreateAssetMenu(fileName = "NewScoringRule", menuName = "Burger Shake/Scoring Rule")]
+[CreateAssetMenu(
+    fileName = "NewScoringRule",
+    menuName = "Burger Shake/Scoring Rule"
+)]
 public class IngredientScoringRule : ScriptableObject
 {
-    [TextArea] public string description;
+    [TextArea]
+    public string description;
 
     [Header("Condition")]
-    public ScoringTarget target = ScoringTarget.Self;
+    public ScoringTarget target =
+        ScoringTarget.Self;
+
     public IngredientTag requiredTag;
+
     public IngredientDefinition requiredIngredient;
 
     [Header("Reward")]
-    public ScoringReward reward = ScoringReward.Points;
+    public ScoringReward reward =
+        ScoringReward.Points;
+
     public float amount = 1f;
 
-    public ScoreValue Evaluate(Ingredient ingredient)
+    public virtual ScoreValue Evaluate(
+        Ingredient ingredient
+    )
     {
         if (ingredient == null)
         {
             return default;
         }
 
-        int triggerCount = GetTriggerCount(ingredient);
-        float total = amount * triggerCount;
+        float triggerCount =
+            GetTriggerCount(ingredient);
 
-        return reward == ScoringReward.Points
-            ? new ScoreValue(Mathf.RoundToInt(total), 0f)
-            : new ScoreValue(0, total);
+        return CreateReward(
+            triggerCount
+        );
     }
 
-    private int GetTriggerCount(Ingredient ingredient)
+    protected virtual float GetTriggerCount(
+        Ingredient ingredient
+    )
     {
         switch (target)
         {
             case ScoringTarget.Self:
-                return 1;
+                return 1f;
 
             case ScoringTarget.TouchingAny:
                 return ingredient.TouchingCount;
 
             case ScoringTarget.TouchingTag:
-                return ingredient.CountTouchingWithTag(requiredTag);
+                return ingredient
+                    .CountTouchingWithTag(
+                        requiredTag
+                    );
 
             case ScoringTarget.TouchingIngredient:
-                return ingredient.CountTouchingIngredient(requiredIngredient);
+                return ingredient
+                    .CountTouchingIngredient(
+                        requiredIngredient
+                    );
 
             default:
-                return 0;
+                return 0f;
         }
+    }
+
+    protected ScoreValue CreateReward(
+        float triggerCount
+    )
+    {
+        float total =
+            amount * triggerCount;
+
+        if (
+            reward ==
+            ScoringReward.Points
+        )
+        {
+            return new ScoreValue(
+                Mathf.RoundToInt(total),
+                0f
+            );
+        }
+
+        return new ScoreValue(
+            0,
+            total
+        );
     }
 }

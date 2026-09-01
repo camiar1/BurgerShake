@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56220a5e1287f1340aacabe2dd0d04e0, type: 3}
+  m_Name: Lettuce
+  m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
+  ingredientName: Lettuce
+  description: 
+  sprite: {fileID: 0}
+  prefab: {fileID: 6129104059103207348, guid: 556632da9eaf2344e9d43f9cafa9e620, type: 3}
+  draftWeight: 1
+  scoringRules:
+  - {fileID: 11400000, guid: 9e5aa26a515f27a40a2d0ee61bda1ee6, type: 2}
+  tags: 010000000a000000

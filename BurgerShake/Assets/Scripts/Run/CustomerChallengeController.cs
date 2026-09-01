@@ -3,59 +3,180 @@ using UnityEngine;
 
 public class CustomerChallengeController : MonoBehaviour
 {
+    [Header("Gameplay")]
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private GameplayModifiers gameplayModifiers;
     [SerializeField] private UpgradeManager upgradeManager;
     [SerializeField] private IngredientDropper ingredientDropper;
+
+    [Header("Assembly")]
     [SerializeField] private Transform blenderRoot;
+    [SerializeField] private Transform ingredientContainer;
 
-    public CustomerDefinition CurrentCustomer { get; private set; }
-    public int GoalScore { get; private set; }
-
-    public event Action<CustomerDefinition, int> ChallengeStarted;
-    public event Action<bool, int> ChallengeFinished;
-
-    public void BeginChallenge(CustomerDefinition customer, int goalScore)
+    public CustomerDefinition CurrentCustomer
     {
-        CurrentCustomer = customer;
-        GoalScore = Mathf.Max(1, goalScore);
+        get;
+        private set;
+    }
 
-        gameplayModifiers?.Apply(customer != null ? customer.restrictions : null);
-        upgradeManager?.ApplyOwnedUpgrades();
-        ingredientDropper?.ResetChallenge();
+    public int GoalScore
+    {
+        get;
+        private set;
+    }
+
+    public event Action<
+        CustomerDefinition,
+        int
+    > ChallengeStarted;
+
+    public event Action<
+        bool,
+        int
+    > ChallengeFinished;
+
+    public void BeginChallenge(
+        CustomerDefinition customer,
+        int goalScore
+    )
+    {
+        ClearIngredients();
+
+        CurrentCustomer =
+            customer;
+
+        GoalScore =
+            Mathf.Max(
+                1,
+                goalScore
+            );
+
+        gameplayModifiers?.Apply(
+            customer != null
+                ? customer.restrictions
+                : null
+        );
+
+        upgradeManager
+            ?.ApplyOwnedUpgrades();
+
+        ingredientDropper
+            ?.ResetChallenge();
+
         ApplyBlenderScale();
 
-        ChallengeStarted?.Invoke(CurrentCustomer, GoalScore);
+        scoreManager
+            ?.RecalculateScore();
+
+        ChallengeStarted?.Invoke(
+            CurrentCustomer,
+            GoalScore
+        );
     }
 
     public bool CompleteChallenge()
     {
-        if (CurrentCustomer == null || scoreManager == null)
+        if (
+            CurrentCustomer == null ||
+            scoreManager == null
+        )
         {
             return false;
         }
 
         scoreManager.RecalculateScore();
-        Ingredient[] ingredients = FindObjectsByType<Ingredient>(FindObjectsSortMode.None);
 
-        bool passed = scoreManager.TotalScore >= GoalScore;
-        int earnedCoins = passed ? CurrentCustomer.baseRewardCoins : 0;
+        Ingredient[] ingredients =
+            GetChallengeIngredients();
+
+        bool passed =
+            scoreManager.TotalScore >=
+            GoalScore;
+
+        int earnedCoins =
+            passed
+                ? CurrentCustomer
+                    .baseRewardCoins
+                : 0;
 
         if (passed)
         {
-            earnedCoins += upgradeManager != null ? upgradeManager.BonusCoinsPerWin : 0;
-
-            foreach (CustomerPreference preference in CurrentCustomer.preferences)
+            if (upgradeManager != null)
             {
-                if (preference != null && preference.IsSatisfied(GoalScore, scoreManager.TotalScore, ingredients))
+                earnedCoins +=
+                    upgradeManager
+                        .BonusCoinsPerWin;
+            }
+
+            foreach (
+                CustomerPreference preference
+                in CurrentCustomer.preferences
+            )
+            {
+                if (
+                    preference != null &&
+                    preference.IsSatisfied(
+                        GoalScore,
+                        scoreManager.TotalScore,
+                        ingredients
+                    )
+                )
                 {
-                    earnedCoins += preference.bonusCoins;
+                    earnedCoins +=
+                        preference.bonusCoins;
                 }
             }
         }
 
-        ChallengeFinished?.Invoke(passed, earnedCoins);
+        ChallengeFinished?.Invoke(
+            passed,
+            earnedCoins
+        );
+
         return passed;
+    }
+
+    private Ingredient[]
+        GetChallengeIngredients()
+    {
+        if (ingredientContainer != null)
+        {
+            return ingredientContainer
+                .GetComponentsInChildren<Ingredient>(
+                    false
+                );
+        }
+
+        return FindObjectsByType<Ingredient>(
+            FindObjectsSortMode.None
+        );
+    }
+
+    private void ClearIngredients()
+    {
+        if (ingredientContainer == null)
+        {
+            return;
+        }
+
+        for (
+            int i =
+                ingredientContainer.childCount - 1;
+            i >= 0;
+            i--
+        )
+        {
+            GameObject ingredient =
+                ingredientContainer
+                    .GetChild(i)
+                    .gameObject;
+
+            // Immediately prevents the old
+            // ingredient from contributing score.
+            ingredient.SetActive(false);
+
+            Destroy(ingredient);
+        }
     }
 
     private void ApplyBlenderScale()
@@ -65,8 +186,20 @@ public class CustomerChallengeController : MonoBehaviour
             return;
         }
 
-        float scale = gameplayModifiers != null ? gameplayModifiers.BlenderScale : 1f;
-        Vector3 current = blenderRoot.localScale;
-        blenderRoot.localScale = new Vector3(scale, scale, current.z);
+        float scale =
+            gameplayModifiers != null
+                ? gameplayModifiers
+                    .BlenderScale
+                : 1f;
+
+        Vector3 current =
+            blenderRoot.localScale;
+
+        blenderRoot.localScale =
+            new Vector3(
+                scale,
+                scale,
+                current.z
+            );
     }
 }
