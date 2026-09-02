@@ -3,8 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class IngredientHoverController :
-    MonoBehaviour
+public class IngredientHoverController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Camera gameplayCamera;
@@ -13,8 +12,7 @@ public class IngredientHoverController :
 
     [Header("Detection")]
     [SerializeField]
-    private LayerMask ingredientLayerMask =
-        ~0;
+    private LayerMask ingredientLayerMask = ~0;
 
     [Header("Highlight")]
     [SerializeField]
@@ -36,12 +34,10 @@ public class IngredientHoverController :
         );
 
     [SerializeField]
-    private float hoveredWidth =
-        0.07f;
+    private float hoveredWidth = 0.07f;
 
     [SerializeField]
-    private float touchingWidth =
-        0.05f;
+    private float touchingWidth = 0.05f;
 
     private Ingredient hoveredIngredient;
 
@@ -105,8 +101,7 @@ public class IngredientHoverController :
                 mouse.position.ReadValue()
             );
 
-        mouseWorld.z =
-            0f;
+        mouseWorld.z = 0f;
 
         Ingredient ingredient =
             FindIngredientAtPoint(
@@ -219,7 +214,9 @@ public class IngredientHoverController :
 
     private void RefreshHighlights()
     {
-        ClearHighlights();
+        // Hide the previous outlines,
+        // but DO NOT clear hoveredIngredient.
+        HideHighlightLines();
 
         if (hoveredIngredient == null)
         {
@@ -286,7 +283,7 @@ public class IngredientHoverController :
         );
     }
 
-    private void ClearHighlights()
+    private void HideHighlightLines()
     {
         foreach (
             Ingredient ingredient
@@ -307,6 +304,11 @@ public class IngredientHoverController :
         }
 
         highlightedIngredients.Clear();
+    }
+
+    private void ClearHighlights()
+    {
+        HideHighlightLines();
 
         hoveredIngredient =
             null;

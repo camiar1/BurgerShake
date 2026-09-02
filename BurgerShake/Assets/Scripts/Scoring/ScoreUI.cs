@@ -5,18 +5,32 @@ using UnityEngine;
 public class ScoreUI : MonoBehaviour
 {
     [Header("Managers")]
-    [SerializeField] private ScoreManager scoreManager;
-    [SerializeField] private RunManager runManager;
+    [SerializeField]
+    private RunManager runManager;
 
     [Header("Score Text")]
-    [SerializeField] private TMP_Text pointsText;
-    [SerializeField] private TMP_Text multText;
-    [SerializeField] private TMP_Text totalScoreText;
-    [SerializeField] private TMP_Text goalText;
+    [SerializeField]
+    private TMP_Text pointsText;
 
-    [Header("Animation")]
-    [SerializeField] private float popScale = 1.2f;
-    [SerializeField] private float popDuration = 0.18f;
+    [SerializeField]
+    private TMP_Text multText;
+
+    [SerializeField]
+    private TMP_Text totalScoreText;
+
+    [SerializeField]
+    private TMP_Text goalText;
+
+    [Header("Number Animation")]
+    [SerializeField]
+    private float countDuration = 0.25f;
+
+    [Header("Pop Animation")]
+    [SerializeField]
+    private float popScale = 1.2f;
+
+    [SerializeField]
+    private float popDuration = 0.18f;
 
     [SerializeField]
     private AnimationCurve popCurve =
@@ -29,17 +43,6 @@ public class ScoreUI : MonoBehaviour
 
     private int currentGoalScore;
 
-    private int previousPoints;
-    private float previousMult;
-    private int previousTotalScore;
-
-    private bool hasPreviousScore;
-
-    private Coroutine pointsPopRoutine;
-    private Coroutine multPopRoutine;
-    private Coroutine totalPopRoutine;
-    private Coroutine goalPopRoutine;
-
     private Vector3 pointsBaseScale;
     private Vector3 multBaseScale;
     private Vector3 totalBaseScale;
@@ -47,12 +50,6 @@ public class ScoreUI : MonoBehaviour
 
     private void Awake()
     {
-        if (scoreManager == null)
-        {
-            scoreManager =
-                FindFirstObjectByType<ScoreManager>();
-        }
-
         if (runManager == null)
         {
             runManager =
@@ -86,34 +83,28 @@ public class ScoreUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (scoreManager != null)
-        {
-            scoreManager.ScoreChanged +=
-                HandleScoreChanged;
-        }
-
         if (runManager != null)
         {
             runManager.CustomerIntroStarted +=
                 HandleCustomerIntroStarted;
+
+            runManager.StateChanged +=
+                HandleStateChanged;
         }
     }
 
     private void OnDisable()
     {
-        if (scoreManager != null)
-        {
-            scoreManager.ScoreChanged -=
-                HandleScoreChanged;
-        }
-
         if (runManager != null)
         {
             runManager.CustomerIntroStarted -=
                 HandleCustomerIntroStarted;
+
+            runManager.StateChanged -=
+                HandleStateChanged;
         }
 
-        ResetTextScales();
+        ResetScales();
     }
 
     private void Start()
@@ -124,12 +115,9 @@ public class ScoreUI : MonoBehaviour
                 runManager.CurrentGoalScore;
         }
 
-        RefreshUI(false);
-    }
+        UpdateGoal();
 
-    private void HandleScoreChanged()
-    {
-        RefreshUI(true);
+        PrepareForAssembly();
     }
 
     private void HandleCustomerIntroStarted(
@@ -137,208 +125,210 @@ public class ScoreUI : MonoBehaviour
         int goalScore
     )
     {
-        bool goalChanged =
-            currentGoalScore != goalScore;
-
         currentGoalScore =
             goalScore;
 
-        RefreshUI(false);
+        UpdateGoal();
+    }
 
-        if (goalChanged)
+    private void HandleStateChanged(
+        RunState state
+    )
+    {
+        if (state == RunState.Assembly)
         {
-            StartGoalPop();
+            PrepareForAssembly();
         }
     }
 
-    private void RefreshUI(
-        bool animateChanges
-    )
+    public void PrepareForAssembly()
     {
-        if (scoreManager == null)
-        {
-            return;
-        }
-
-        int newPoints =
-            scoreManager.Points;
-
-        float newMult =
-            scoreManager.Mult;
-
-        int newTotalScore =
-            scoreManager.TotalScore;
-
         if (pointsText != null)
         {
             pointsText.text =
-                $"POINTS\n{newPoints}";
+                "POINTS\n?";
         }
 
         if (multText != null)
         {
             multText.text =
-                $"MULT\n×{newMult:0.##}";
+                "MULT\n?";
         }
 
         if (totalScoreText != null)
         {
             totalScoreText.text =
-                $"SCORE\n{newTotalScore}";
+                "SCORE\n?";
         }
 
-        if (goalText != null)
-        {
-            goalText.text =
-                $"GOAL: {currentGoalScore}";
-        }
+        UpdateGoal();
 
-        if (
-            animateChanges &&
-            hasPreviousScore
-        )
-        {
-            if (
-                newPoints !=
-                previousPoints
-            )
-            {
-                StartPointsPop();
-            }
-
-            if (
-                !Mathf.Approximately(
-                    newMult,
-                    previousMult
-                )
-            )
-            {
-                StartMultPop();
-            }
-
-            if (
-                newTotalScore !=
-                previousTotalScore
-            )
-            {
-                StartTotalPop();
-            }
-        }
-
-        previousPoints =
-            newPoints;
-
-        previousMult =
-            newMult;
-
-        previousTotalScore =
-            newTotalScore;
-
-        hasPreviousScore = true;
+        ResetScales();
     }
 
-    private void StartPointsPop()
+    public void BeginScoreReveal(
+        float startingMult
+    )
+    {
+        if (pointsText != null)
+        {
+            pointsText.text =
+                "POINTS\n0";
+        }
+
+        if (multText != null)
+        {
+            multText.text =
+                $"MULT\n×{startingMult:0.##}";
+        }
+
+        if (totalScoreText != null)
+        {
+            totalScoreText.text =
+                "SCORE\n0";
+        }
+
+        ResetScales();
+    }
+
+    public IEnumerator AnimatePoints(
+        int from,
+        int to
+    )
     {
         if (pointsText == null)
         {
-            return;
+            yield break;
         }
 
-        if (pointsPopRoutine != null)
-        {
-            StopCoroutine(
-                pointsPopRoutine
-            );
-        }
+        yield return AnimateInteger(
+            pointsText,
+            "POINTS",
+            from,
+            to
+        );
 
-        pointsText.rectTransform.localScale =
-            pointsBaseScale;
-
-        pointsPopRoutine =
-            StartCoroutine(
-                PopRoutine(
-                    pointsText.rectTransform,
-                    pointsBaseScale
-                )
-            );
+        yield return PopRoutine(
+            pointsText.rectTransform,
+            pointsBaseScale
+        );
     }
 
-    private void StartMultPop()
+    public IEnumerator AnimateMult(
+        float from,
+        float to
+    )
     {
         if (multText == null)
         {
-            return;
+            yield break;
         }
 
-        if (multPopRoutine != null)
+        float duration =
+            Mathf.Max(
+                0.01f,
+                countDuration
+            );
+
+        float elapsed = 0f;
+
+        while (elapsed < duration)
         {
-            StopCoroutine(
-                multPopRoutine
-            );
+            elapsed +=
+                Time.unscaledDeltaTime;
+
+            float t =
+                Mathf.Clamp01(
+                    elapsed / duration
+                );
+
+            float value =
+                Mathf.Lerp(
+                    from,
+                    to,
+                    t
+                );
+
+            multText.text =
+                $"MULT\n×{value:0.##}";
+
+            yield return null;
         }
 
-        multText.rectTransform.localScale =
-            multBaseScale;
+        multText.text =
+            $"MULT\n×{to:0.##}";
 
-        multPopRoutine =
-            StartCoroutine(
-                PopRoutine(
-                    multText.rectTransform,
-                    multBaseScale
-                )
-            );
+        yield return PopRoutine(
+            multText.rectTransform,
+            multBaseScale
+        );
     }
 
-    private void StartTotalPop()
+    public IEnumerator AnimateTotal(
+        int from,
+        int to
+    )
     {
         if (totalScoreText == null)
         {
-            return;
+            yield break;
         }
 
-        if (totalPopRoutine != null)
-        {
-            StopCoroutine(
-                totalPopRoutine
-            );
-        }
+        yield return AnimateInteger(
+            totalScoreText,
+            "SCORE",
+            from,
+            to
+        );
 
-        totalScoreText.rectTransform.localScale =
-            totalBaseScale;
-
-        totalPopRoutine =
-            StartCoroutine(
-                PopRoutine(
-                    totalScoreText.rectTransform,
-                    totalBaseScale
-                )
-            );
+        yield return PopRoutine(
+            totalScoreText.rectTransform,
+            totalBaseScale
+        );
     }
 
-    private void StartGoalPop()
+    private IEnumerator AnimateInteger(
+        TMP_Text target,
+        string label,
+        int from,
+        int to
+    )
     {
-        if (goalText == null)
+        float duration =
+            Mathf.Max(
+                0.01f,
+                countDuration
+            );
+
+        float elapsed = 0f;
+
+        while (elapsed < duration)
         {
-            return;
+            elapsed +=
+                Time.unscaledDeltaTime;
+
+            float t =
+                Mathf.Clamp01(
+                    elapsed / duration
+                );
+
+            int value =
+                Mathf.RoundToInt(
+                    Mathf.Lerp(
+                        from,
+                        to,
+                        t
+                    )
+                );
+
+            target.text =
+                $"{label}\n{value}";
+
+            yield return null;
         }
 
-        if (goalPopRoutine != null)
-        {
-            StopCoroutine(
-                goalPopRoutine
-            );
-        }
-
-        goalText.rectTransform.localScale =
-            goalBaseScale;
-
-        goalPopRoutine =
-            StartCoroutine(
-                PopRoutine(
-                    goalText.rectTransform,
-                    goalBaseScale
-                )
-            );
+        target.text =
+            $"{label}\n{to}";
     }
 
     private IEnumerator PopRoutine(
@@ -351,38 +341,36 @@ public class ScoreUI : MonoBehaviour
             yield break;
         }
 
-        float halfDuration =
+        float half =
             Mathf.Max(
                 0.01f,
                 popDuration * 0.5f
             );
 
-        Vector3 enlargedScale =
+        Vector3 large =
             baseScale * popScale;
 
         float elapsed = 0f;
 
-        while (elapsed < halfDuration)
+        while (elapsed < half)
         {
             elapsed +=
                 Time.unscaledDeltaTime;
 
-            float normalized =
+            float t =
                 Mathf.Clamp01(
-                    elapsed / halfDuration
+                    elapsed / half
                 );
 
             float curved =
                 popCurve != null
-                    ? popCurve.Evaluate(
-                        normalized
-                    )
-                    : normalized;
+                    ? popCurve.Evaluate(t)
+                    : t;
 
             target.localScale =
                 Vector3.LerpUnclamped(
                     baseScale,
-                    enlargedScale,
+                    large,
                     curved
                 );
 
@@ -391,26 +379,24 @@ public class ScoreUI : MonoBehaviour
 
         elapsed = 0f;
 
-        while (elapsed < halfDuration)
+        while (elapsed < half)
         {
             elapsed +=
                 Time.unscaledDeltaTime;
 
-            float normalized =
+            float t =
                 Mathf.Clamp01(
-                    elapsed / halfDuration
+                    elapsed / half
                 );
 
             float curved =
                 popCurve != null
-                    ? popCurve.Evaluate(
-                        normalized
-                    )
-                    : normalized;
+                    ? popCurve.Evaluate(t)
+                    : t;
 
             target.localScale =
                 Vector3.LerpUnclamped(
-                    enlargedScale,
+                    large,
                     baseScale,
                     curved
                 );
@@ -422,7 +408,16 @@ public class ScoreUI : MonoBehaviour
             baseScale;
     }
 
-    private void ResetTextScales()
+    private void UpdateGoal()
+    {
+        if (goalText != null)
+        {
+            goalText.text =
+                $"GOAL: {currentGoalScore}";
+        }
+    }
+
+    private void ResetScales()
     {
         if (pointsText != null)
         {

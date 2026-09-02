@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
@@ -12,6 +13,10 @@ public class ScoreManager : MonoBehaviour
     private float startingMult = 1f;
 
     private float startingMultBonus;
+
+    private readonly List<IngredientScoreStep>
+        lastBreakdown =
+            new List<IngredientScoreStep>();
 
     public int Points
     {
@@ -31,6 +36,17 @@ public class ScoreManager : MonoBehaviour
         private set;
     }
 
+    public float StartingMultValue =>
+        Mathf.Max(
+            0f,
+            startingMult +
+            startingMultBonus
+        );
+
+    public IReadOnlyList<IngredientScoreStep>
+        LastBreakdown =>
+            lastBreakdown;
+
     public event Action ScoreChanged;
 
     public void SetStartingMultBonus(
@@ -39,92 +55,193 @@ public class ScoreManager : MonoBehaviour
     {
         startingMultBonus =
             bonus;
-
-        RecalculateScore();
     }
 
-    public void RecalculateScore()
+    public void ResetScore()
     {
+        lastBreakdown.Clear();
+
+        Points =
+            0;
+
+        Mult =
+            StartingMultValue;
+
+        TotalScore =
+            0;
+
+        ScoreChanged?.Invoke();
+    }
+
+    public void CalculateFinalScore()
+    {
+        lastBreakdown.Clear();
+
         Ingredient[] ingredients =
-            GetScorableIngredients();
+            GetScorableIngredientsInOrder();
 
-        int points = 0;
+        int runningPoints =
+            0;
 
-        float mult =
+        float rawRunningMult =
             startingMult +
             startingMultBonus;
+
+        int runningTotal =
+            0;
 
         foreach (
             Ingredient ingredient
             in ingredients
         )
         {
-            ScoreValue contribution =
-                ingredient.EvaluateScore();
+            if (
+                ingredient == null ||
+                ingredient.Definition == null ||
+                ingredient.Definition.scoringRules ==
+                    null
+            )
+            {
+                continue;
+            }
 
-            points +=
-                contribution.points;
+            foreach (
+                IngredientScoringRule rule
+                in ingredient.Definition.scoringRules
+            )
+            {
+                if (rule == null)
+                {
+                    continue;
+                }
 
-            mult +=
-                contribution.mult;
+                int pointsBefore =
+                    runningPoints;
+
+                float multBefore =
+                    Mathf.Max(
+                        0f,
+                        rawRunningMult
+                    );
+
+                int totalBefore =
+                    runningTotal;
+
+                ScoreValue contribution =
+                    rule.Evaluate(
+                        ingredient
+                    );
+
+                runningPoints +=
+                    contribution.points;
+
+                rawRunningMult +=
+                    contribution.mult;
+
+                float multAfter =
+                    Mathf.Max(
+                        0f,
+                        rawRunningMult
+                    );
+
+                runningTotal =
+                    Mathf.RoundToInt(
+                        runningPoints *
+                        multAfter
+                    );
+
+                IngredientScoreStep step =
+                    new IngredientScoreStep(
+                        ingredient,
+                        rule,
+                        contribution,
+                        pointsBefore,
+                        runningPoints,
+                        multBefore,
+                        multAfter,
+                        totalBefore,
+                        runningTotal
+                    );
+
+                lastBreakdown.Add(
+                    step
+                );
+            }
         }
 
-        int previousPoints =
-            Points;
-
-        float previousMult =
-            Mult;
-
-        int previousTotal =
-            TotalScore;
-
         Points =
-            points;
+            runningPoints;
 
         Mult =
             Mathf.Max(
                 0f,
-                mult
+                rawRunningMult
             );
 
         TotalScore =
             Mathf.RoundToInt(
-                Points * Mult
+                Points *
+                Mult
             );
 
-        if (
-            previousPoints != Points ||
-            !Mathf.Approximately(
-                previousMult,
-                Mult
-            ) ||
-            previousTotal != TotalScore
-        )
-        {
-            ScoreChanged?.Invoke();
-        }
+        ScoreChanged?.Invoke();
+    }
+
+    public void RecalculateScore()
+    {
+        CalculateFinalScore();
     }
 
     private Ingredient[]
-        GetScorableIngredients()
+        GetScorableIngredientsInOrder()
     {
         if (ingredientContainer != null)
         {
-            return ingredientContainer
-                .GetComponentsInChildren<Ingredient>(
-                    false
-                );
+            List<Ingredient> ingredients =
+                new List<Ingredient>();
+
+            for (
+                int i = 0;
+                i <
+                ingredientContainer.childCount;
+                i++
+            )
+            {
+                Transform child =
+                    ingredientContainer
+                        .GetChild(i);
+
+                Ingredient ingredient =
+                    child.GetComponent<
+                        Ingredient
+                    >();
+
+                if (ingredient == null)
+                {
+                    ingredient =
+                        child
+                            .GetComponentInChildren<
+                                Ingredient
+                            >(
+                                false
+                            );
+                }
+
+                if (ingredient != null)
+                {
+                    ingredients.Add(
+                        ingredient
+                    );
+                }
+            }
+
+            return ingredients.ToArray();
         }
 
-        // Fallback for debugging if the
-        // Inspector reference was forgotten.
-        return FindObjectsByType<Ingredient>(
+        return FindObjectsByType<
+            Ingredient
+        >(
             FindObjectsSortMode.None
         );
-    }
-
-    private void LateUpdate()
-    {
-        RecalculateScore();
     }
 }

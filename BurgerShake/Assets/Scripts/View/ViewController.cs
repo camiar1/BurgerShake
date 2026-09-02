@@ -3,7 +3,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ViewController : MonoBehaviour
+public class ViewController :
+    MonoBehaviour
 {
     public enum FoodTruckView
     {
@@ -11,26 +12,53 @@ public class ViewController : MonoBehaviour
         CustomerWindow
     }
 
-    [Header("Station Layout")]
-    [SerializeField] private RectTransform viewport;
-    [SerializeField] private RectTransform stationStrip;
-
-    [SerializeField] private RectTransform assemblyView;
-    [SerializeField] private RectTransform customerWindowView;
-
-    [Header("View Interaction")]
-    [SerializeField] private CanvasGroup assemblyCanvasGroup;
-    [SerializeField] private CanvasGroup customerWindowCanvasGroup;
-
-    [Header("Assembly Physics")]
-    [SerializeField] private Transform assemblyPhysicsRoot;
-
-    [Header("Sliding")]
-    [SerializeField] private float slideDuration = 0.45f;
+    [Header("Views")]
+    [SerializeField]
+    private RectTransform assemblyView;
 
     [SerializeField]
-    private AnimationCurve slideCurve =
-        AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+    private RectTransform customerWindowView;
+
+    [Header("View Interaction")]
+    [SerializeField]
+    private CanvasGroup assemblyCanvasGroup;
+
+    [SerializeField]
+    private CanvasGroup customerWindowCanvasGroup;
+
+    [Header("Assembly Physics")]
+    [SerializeField]
+    private Transform assemblyPhysicsRoot;
+
+    [Header("Iris Transition")]
+    [SerializeField]
+    private IrisTransitionController
+        irisTransition;
+
+    [Tooltip(
+        "Normalized screen position where " +
+        "the Assembly iris opens/closes. " +
+        "(0,0) is bottom-left and " +
+        "(1,1) is top-right."
+    )]
+    [SerializeField]
+    private Vector2 assemblyIrisCenter =
+        new Vector2(
+            0.5f,
+            0.5f
+        );
+
+    [Tooltip(
+        "Normalized screen position where " +
+        "the Customer Window iris " +
+        "opens/closes."
+    )]
+    [SerializeField]
+    private Vector2 customerWindowIrisCenter =
+        new Vector2(
+            0.5f,
+            0.5f
+        );
 
     [Header("Starting View")]
     [SerializeField]
@@ -39,65 +67,74 @@ public class ViewController : MonoBehaviour
 
     private FoodTruckView currentView;
 
-    private bool isSliding;
+    private bool isTransitioning;
 
-    private float viewWidth;
-    private float viewHeight;
+    public FoodTruckView CurrentView =>
+        currentView;
 
-    public FoodTruckView CurrentView => currentView;
+    // Kept for compatibility with scripts
+    // that used the old sliding system.
+    public bool IsSliding =>
+        isTransitioning;
 
-    public bool IsSliding => isSliding;
+    public bool IsTransitioning =>
+        isTransitioning;
 
-    public bool IsReady { get; private set; }
-
-    public event Action<FoodTruckView> ViewChanged;
-
-    private IEnumerator Start()
+    public bool IsReady
     {
-        IsReady = false;
+        get;
+        private set;
+    }
 
-        currentView = startingView;
+    public event Action<FoodTruckView>
+        ViewChanged;
 
-        yield return null;
+    private void Awake()
+    {
+        IsReady =
+            false;
 
-        Canvas.ForceUpdateCanvases();
+        currentView =
+            startingView;
 
-        RefreshLayout();
+        ConfigureViews();
 
-        SnapToView(currentView);
+        ApplyViewVisibility(
+            currentView
+        );
 
         UpdateViewInteraction();
 
         SetAssemblyPhysicsSimulation(
-            currentView == FoodTruckView.Assembly
+            currentView ==
+            FoodTruckView.Assembly
+        );
+    }
+
+    private IEnumerator Start()
+    {
+        yield return null;
+
+        Canvas.ForceUpdateCanvases();
+
+        ConfigureViews();
+
+        ApplyViewVisibility(
+            currentView
         );
 
-        IsReady = true;
+        UpdateViewInteraction();
+
+        SetAssemblyPhysicsSimulation(
+            currentView ==
+            FoodTruckView.Assembly
+        );
+
+        IsReady =
+            true;
     }
 
-    private void OnRectTransformDimensionsChange()
-    {
-        if (
-            !isActiveAndEnabled ||
-            viewport == null ||
-            !IsReady
-        )
-        {
-            return;
-        }
-
-        RefreshLayout();
-
-        if (!isSliding)
-        {
-            SnapToView(currentView);
-        }
-    }
-
-    // Legacy methods.
-    // Nothing in the current game should call these.
-    // They remain here so the old ViewKeyboardInput
-    // script does not cause compile errors.
+    // Legacy Input System callbacks.
     public void TurnLeft(
         InputAction.CallbackContext context
     )
@@ -121,28 +158,31 @@ public class ViewController : MonoBehaviour
     public void TurnLeft()
     {
         if (
-            isSliding ||
-            currentView == FoodTruckView.Assembly
+            isTransitioning ||
+            currentView ==
+                FoodTruckView.Assembly
         )
         {
             return;
         }
 
-        BeginSlide(FoodTruckView.Assembly);
+        BeginTransition(
+            FoodTruckView.Assembly
+        );
     }
 
     public void TurnRight()
     {
         if (
-            isSliding ||
+            isTransitioning ||
             currentView ==
-            FoodTruckView.CustomerWindow
+                FoodTruckView.CustomerWindow
         )
         {
             return;
         }
 
-        BeginSlide(
+        BeginTransition(
             FoodTruckView.CustomerWindow
         );
     }
@@ -150,14 +190,15 @@ public class ViewController : MonoBehaviour
     public void GoToAssembly()
     {
         if (
-            isSliding ||
-            currentView == FoodTruckView.Assembly
+            isTransitioning ||
+            currentView ==
+                FoodTruckView.Assembly
         )
         {
             return;
         }
 
-        BeginSlide(
+        BeginTransition(
             FoodTruckView.Assembly
         );
     }
@@ -165,74 +206,98 @@ public class ViewController : MonoBehaviour
     public void GoToCustomerWindow()
     {
         if (
-            isSliding ||
+            isTransitioning ||
             currentView ==
-            FoodTruckView.CustomerWindow
+                FoodTruckView.CustomerWindow
         )
         {
             return;
         }
 
-        BeginSlide(
+        BeginTransition(
             FoodTruckView.CustomerWindow
         );
     }
 
-    private void BeginSlide(
+    private void BeginTransition(
         FoodTruckView targetView
     )
     {
         StartCoroutine(
-            SlideToView(targetView)
+            TransitionToView(
+                targetView
+            )
         );
     }
 
-    private IEnumerator SlideToView(
+    private IEnumerator TransitionToView(
         FoodTruckView targetView
     )
     {
-        isSliding = true;
+        isTransitioning =
+            true;
 
+        IsReady =
+            false;
+
+        // Disable clicking, but KEEP the
+        // current view visible.
         DisableAllInteraction();
 
-        SetAssemblyPhysicsSimulation(false);
+        // Freeze assembly ingredients while
+        // the transition is happening.
+        SetAssemblyPhysicsSimulation(
+            false
+        );
 
-        Vector2 start =
-            stationStrip.anchoredPosition;
+        FoodTruckView oldView =
+            currentView;
 
-        Vector2 target =
-            GetStripPosition(targetView);
+        Vector2 closeCenter =
+            GetIrisCenter(
+                oldView
+            );
 
-        float elapsed = 0f;
+        Vector2 openCenter =
+            GetIrisCenter(
+                targetView
+            );
 
-        while (elapsed < slideDuration)
+        if (irisTransition != null)
         {
-            elapsed += Time.unscaledDeltaTime;
+            yield return
+                irisTransition
+                    .PlayTransition(
+                        () =>
+                        {
+                            // This callback only happens
+                            // once the iris is completely
+                            // closed and the screen is black.
+                            SwitchVisibleView(
+                                targetView
+                            );
+                        },
+                        closeCenter,
+                        openCenter
+                    );
+        }
+        else
+        {
+            Debug.LogWarning(
+                "ViewController has no " +
+                "IrisTransitionController. " +
+                "Switching views instantly."
+            );
 
-            float normalized =
-                Mathf.Clamp01(
-                    elapsed / slideDuration
-                );
-
-            float curved =
-                slideCurve.Evaluate(normalized);
-
-            stationStrip.anchoredPosition =
-                Vector2.LerpUnclamped(
-                    start,
-                    target,
-                    curved
-                );
+            SwitchVisibleView(
+                targetView
+            );
 
             yield return null;
         }
 
-        stationStrip.anchoredPosition =
-            target;
-
-        currentView = targetView;
-
-        isSliding = false;
+        isTransitioning =
+            false;
 
         SetAssemblyPhysicsSimulation(
             currentView ==
@@ -241,113 +306,132 @@ public class ViewController : MonoBehaviour
 
         UpdateViewInteraction();
 
-        ViewChanged?.Invoke(currentView);
+        IsReady =
+            true;
+
+        ViewChanged?.Invoke(
+            currentView
+        );
     }
 
-    private void RefreshLayout()
+    private void SwitchVisibleView(
+        FoodTruckView targetView
+    )
     {
-        if (
-            viewport == null ||
-            stationStrip == null ||
-            assemblyView == null ||
-            customerWindowView == null
-        )
-        {
-            return;
-        }
+        currentView =
+            targetView;
 
-        viewWidth = viewport.rect.width;
-        viewHeight = viewport.rect.height;
+        ApplyViewVisibility(
+            currentView
+        );
+    }
 
-        stationStrip.anchorMin =
-            new Vector2(0.5f, 0.5f);
-
-        stationStrip.anchorMax =
-            new Vector2(0.5f, 0.5f);
-
-        stationStrip.pivot =
-            new Vector2(0.5f, 0.5f);
-
-        stationStrip.sizeDelta =
-            new Vector2(
-                viewWidth * 2f,
-                viewHeight
-            );
-
+    private void ConfigureViews()
+    {
         ConfigureView(
-            assemblyView,
-            -viewWidth * 0.5f
+            assemblyView
         );
 
         ConfigureView(
-            customerWindowView,
-            viewWidth * 0.5f
+            customerWindowView
         );
     }
 
     private void ConfigureView(
-        RectTransform view,
-        float xPosition
+        RectTransform view
     )
     {
-        view.anchorMin =
-            new Vector2(0.5f, 0.5f);
-
-        view.anchorMax =
-            new Vector2(0.5f, 0.5f);
-
-        view.pivot =
-            new Vector2(0.5f, 0.5f);
-
-        view.sizeDelta =
-            new Vector2(
-                viewWidth,
-                viewHeight
-            );
-
-        view.anchoredPosition =
-            new Vector2(
-                xPosition,
-                0f
-            );
-    }
-
-    private Vector2 GetStripPosition(
-        FoodTruckView view
-    )
-    {
-        if (
-            view ==
-            FoodTruckView.Assembly
-        )
-        {
-            return new Vector2(
-                viewWidth * 0.5f,
-                0f
-            );
-        }
-
-        return new Vector2(
-            -viewWidth * 0.5f,
-            0f
-        );
-    }
-
-    private void SnapToView(
-        FoodTruckView view
-    )
-    {
-        if (stationStrip == null)
+        if (view == null)
         {
             return;
         }
 
-        stationStrip.anchoredPosition =
-            GetStripPosition(view);
+        view.anchorMin =
+            Vector2.zero;
+
+        view.anchorMax =
+            Vector2.one;
+
+        view.pivot =
+            new Vector2(
+                0.5f,
+                0.5f
+            );
+
+        view.offsetMin =
+            Vector2.zero;
+
+        view.offsetMax =
+            Vector2.zero;
+
+        view.localScale =
+            Vector3.one;
+
+        view.localRotation =
+            Quaternion.identity;
+    }
+
+    private void ApplyViewVisibility(
+        FoodTruckView visibleView
+    )
+    {
+        bool showAssembly =
+            visibleView ==
+            FoodTruckView.Assembly;
+
+        bool showCustomerWindow =
+            visibleView ==
+            FoodTruckView.CustomerWindow;
+
+        SetViewVisibility(
+            assemblyView,
+            assemblyCanvasGroup,
+            showAssembly
+        );
+
+        SetViewVisibility(
+            customerWindowView,
+            customerWindowCanvasGroup,
+            showCustomerWindow
+        );
+    }
+
+    private void SetViewVisibility(
+        RectTransform view,
+        CanvasGroup group,
+        bool visible
+    )
+    {
+        if (view != null)
+        {
+            view.gameObject
+                .SetActive(
+                    visible
+                );
+        }
+
+        if (group != null)
+        {
+            group.alpha =
+                visible
+                    ? 1f
+                    : 0f;
+
+            group.interactable =
+                false;
+
+            group.blocksRaycasts =
+                false;
+        }
     }
 
     private void DisableAllInteraction()
     {
+        // IMPORTANT:
+        // Do not change alpha here.
+        // The current view must remain visible
+        // while the iris closes over it.
+
         SetCanvasInteraction(
             assemblyCanvasGroup,
             false
@@ -364,13 +448,13 @@ public class ViewController : MonoBehaviour
         SetCanvasInteraction(
             assemblyCanvasGroup,
             currentView ==
-            FoodTruckView.Assembly
+                FoodTruckView.Assembly
         );
 
         SetCanvasInteraction(
             customerWindowCanvasGroup,
             currentView ==
-            FoodTruckView.CustomerWindow
+                FoodTruckView.CustomerWindow
         );
     }
 
@@ -384,29 +468,59 @@ public class ViewController : MonoBehaviour
             return;
         }
 
-        group.alpha = 1f;
-        group.interactable = active;
-        group.blocksRaycasts = active;
+        // Only control input here.
+        // Visibility is handled separately
+        // by ApplyViewVisibility().
+        group.interactable =
+            active;
+
+        group.blocksRaycasts =
+            active;
+    }
+
+    private Vector2 GetIrisCenter(
+        FoodTruckView view
+    )
+    {
+        if (
+            view ==
+            FoodTruckView.Assembly
+        )
+        {
+            return
+                assemblyIrisCenter;
+        }
+
+        return
+            customerWindowIrisCenter;
     }
 
     private void SetAssemblyPhysicsSimulation(
         bool simulated
     )
     {
-        if (assemblyPhysicsRoot == null)
+        if (
+            assemblyPhysicsRoot == null
+        )
         {
             return;
         }
 
         Rigidbody2D[] bodies =
             assemblyPhysicsRoot
-                .GetComponentsInChildren<Rigidbody2D>(
+                .GetComponentsInChildren<
+                    Rigidbody2D
+                >(
                     true
                 );
 
-        foreach (Rigidbody2D body in bodies)
+        foreach (
+            Rigidbody2D body
+            in bodies
+        )
         {
-            body.simulated = simulated;
+            body.simulated =
+                simulated;
         }
     }
 }

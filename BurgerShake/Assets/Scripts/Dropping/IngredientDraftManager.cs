@@ -3,21 +3,49 @@ using UnityEngine;
 
 public class IngredientDraftManager : MonoBehaviour
 {
-    [SerializeField] private List<IngredientDefinition> ingredientPool = new List<IngredientDefinition>();
-    [SerializeField] private IngredientChoiceButton[] choiceButtons;
-    [SerializeField] private IngredientDropper dropper;
-    [SerializeField] private GameplayModifiers gameplayModifiers;
+    [Header("Ingredient Pool")]
+    [SerializeField]
+    private List<IngredientDefinition> ingredientPool =
+        new List<IngredientDefinition>();
 
-    private readonly List<IngredientDefinition> currentChoices = new List<IngredientDefinition>();
+    [Header("Draft")]
+    [SerializeField]
+    [Min(1)]
+    private int defaultChoiceCount = 3;
 
-    public IReadOnlyList<IngredientDefinition> CurrentChoices => currentChoices;
-    public IReadOnlyList<IngredientDefinition> IngredientPool => ingredientPool;
+    [Header("Legacy Button UI")]
+    [Tooltip(
+        "Optional. Leave this empty when using the cat toss system."
+    )]
+    [SerializeField]
+    private IngredientChoiceButton[] choiceButtons;
+
+    [Header("Gameplay")]
+    [SerializeField]
+    private IngredientDropper dropper;
+
+    [SerializeField]
+    private GameplayModifiers gameplayModifiers;
+
+    private readonly List<IngredientDefinition>
+        currentChoices =
+            new List<IngredientDefinition>();
+
+    public IReadOnlyList<IngredientDefinition>
+        CurrentChoices =>
+            currentChoices;
+
+    public IReadOnlyList<IngredientDefinition>
+        IngredientPool =>
+            ingredientPool;
 
     private void Awake()
     {
         if (dropper != null)
         {
-            dropper.Initialize(this);
+            dropper.Initialize(
+                this
+            );
         }
     }
 
@@ -26,17 +54,29 @@ public class IngredientDraftManager : MonoBehaviour
         RefreshChoices();
     }
 
-    public void SetIngredientPool(IEnumerable<IngredientDefinition> ingredients)
+    public void SetIngredientPool(
+        IEnumerable<IngredientDefinition> ingredients
+    )
     {
         ingredientPool.Clear();
 
         if (ingredients != null)
         {
-            foreach (IngredientDefinition ingredient in ingredients)
+            foreach (
+                IngredientDefinition ingredient
+                in ingredients
+            )
             {
-                if (ingredient != null && !ingredientPool.Contains(ingredient))
+                if (
+                    ingredient != null &&
+                    !ingredientPool.Contains(
+                        ingredient
+                    )
+                )
                 {
-                    ingredientPool.Add(ingredient);
+                    ingredientPool.Add(
+                        ingredient
+                    );
                 }
             }
         }
@@ -44,24 +84,49 @@ public class IngredientDraftManager : MonoBehaviour
         RefreshChoices();
     }
 
-    public void AddIngredientToPool(IngredientDefinition ingredient)
+    public void AddIngredientToPool(
+        IngredientDefinition ingredient
+    )
     {
-        if (ingredient != null && !ingredientPool.Contains(ingredient))
-        {
-            ingredientPool.Add(ingredient);
-            RefreshChoices();
-        }
-    }
-
-    public void SelectIngredient(IngredientDefinition ingredient)
-    {
-        if (ingredient == null || !currentChoices.Contains(ingredient) || dropper == null)
+        if (
+            ingredient == null ||
+            ingredientPool.Contains(
+                ingredient
+            )
+        )
         {
             return;
         }
 
-        dropper.SetIngredient(ingredient);
-        SetChoiceButtonsInteractable(false);
+        ingredientPool.Add(
+            ingredient
+        );
+
+        RefreshChoices();
+    }
+
+    public void SelectIngredient(
+        IngredientDefinition ingredient
+    )
+    {
+        if (
+            ingredient == null ||
+            !currentChoices.Contains(
+                ingredient
+            ) ||
+            dropper == null
+        )
+        {
+            return;
+        }
+
+        dropper.SetIngredient(
+            ingredient
+        );
+
+        SetChoiceButtonsInteractable(
+            false
+        );
     }
 
     public void IngredientWasDropped()
@@ -73,68 +138,195 @@ public class IngredientDraftManager : MonoBehaviour
     {
         currentChoices.Clear();
 
-        List<IngredientDefinition> available = new List<IngredientDefinition>();
-        foreach (IngredientDefinition ingredient in ingredientPool)
+        List<IngredientDefinition> available =
+            new List<IngredientDefinition>();
+
+        foreach (
+            IngredientDefinition ingredient
+            in ingredientPool
+        )
         {
-            if (ingredient != null && ingredient.draftWeight > 0f)
+            if (
+                ingredient != null &&
+                ingredient.draftWeight > 0f
+            )
             {
-                available.Add(ingredient);
+                available.Add(
+                    ingredient
+                );
             }
         }
 
-        int requestedChoices = gameplayModifiers != null
-            ? gameplayModifiers.DraftChoiceCount
-            : choiceButtons.Length;
+        int requestedChoices =
+            gameplayModifiers != null
+                ? gameplayModifiers
+                    .DraftChoiceCount
+                : defaultChoiceCount;
 
-        int count = Mathf.Min(requestedChoices, choiceButtons.Length, available.Count);
+        requestedChoices =
+            Mathf.Max(
+                1,
+                requestedChoices
+            );
 
-        for (int i = 0; i < count; i++)
+        int count =
+            Mathf.Min(
+                requestedChoices,
+                available.Count
+            );
+
+        for (
+            int i = 0;
+            i < count;
+            i++
+        )
         {
-            IngredientDefinition chosen = RollWeightedChoice(available);
-            currentChoices.Add(chosen);
-            available.Remove(chosen);
-            choiceButtons[i].Setup(chosen, this);
-            choiceButtons[i].gameObject.SetActive(true);
+            IngredientDefinition chosen =
+                RollWeightedChoice(
+                    available
+                );
+
+            currentChoices.Add(
+                chosen
+            );
+
+            available.Remove(
+                chosen
+            );
         }
 
-        for (int i = count; i < choiceButtons.Length; i++)
-        {
-            choiceButtons[i].gameObject.SetActive(false);
-        }
+        UpdateLegacyButtons();
 
-        SetChoiceButtonsInteractable(true);
+        SetChoiceButtonsInteractable(
+            true
+        );
     }
 
-    private IngredientDefinition RollWeightedChoice(List<IngredientDefinition> candidates)
+    private void UpdateLegacyButtons()
     {
-        float totalWeight = 0f;
-
-        foreach (IngredientDefinition ingredient in candidates)
+        if (
+            choiceButtons == null ||
+            choiceButtons.Length == 0
+        )
         {
-            totalWeight += ingredient.draftWeight;
+            return;
         }
 
-        float roll = Random.Range(0f, totalWeight);
+        int visibleCount =
+            Mathf.Min(
+                currentChoices.Count,
+                choiceButtons.Length
+            );
 
-        foreach (IngredientDefinition ingredient in candidates)
+        for (
+            int i = 0;
+            i < visibleCount;
+            i++
+        )
         {
-            roll -= ingredient.draftWeight;
+            if (choiceButtons[i] == null)
+            {
+                continue;
+            }
+
+            choiceButtons[i].Setup(
+                currentChoices[i],
+                this
+            );
+
+            choiceButtons[i]
+                .gameObject
+                .SetActive(
+                    true
+                );
+        }
+
+        for (
+            int i = visibleCount;
+            i < choiceButtons.Length;
+            i++
+        )
+        {
+            if (choiceButtons[i] != null)
+            {
+                choiceButtons[i]
+                    .gameObject
+                    .SetActive(
+                        false
+                    );
+            }
+        }
+    }
+
+    private IngredientDefinition
+        RollWeightedChoice(
+            List<IngredientDefinition> candidates
+        )
+    {
+        if (
+            candidates == null ||
+            candidates.Count == 0
+        )
+        {
+            return null;
+        }
+
+        float totalWeight =
+            0f;
+
+        foreach (
+            IngredientDefinition ingredient
+            in candidates
+        )
+        {
+            totalWeight +=
+                ingredient.draftWeight;
+        }
+
+        float roll =
+            Random.Range(
+                0f,
+                totalWeight
+            );
+
+        foreach (
+            IngredientDefinition ingredient
+            in candidates
+        )
+        {
+            roll -=
+                ingredient.draftWeight;
+
             if (roll <= 0f)
             {
                 return ingredient;
             }
         }
 
-        return candidates[candidates.Count - 1];
+        return candidates[
+            candidates.Count - 1
+        ];
     }
 
-    private void SetChoiceButtonsInteractable(bool interactable)
+    private void SetChoiceButtonsInteractable(
+        bool interactable
+    )
     {
-        foreach (IngredientChoiceButton choiceButton in choiceButtons)
+        if (choiceButtons == null)
+        {
+            return;
+        }
+
+        foreach (
+            IngredientChoiceButton choiceButton
+            in choiceButtons
+        )
         {
             if (choiceButton != null)
             {
-                choiceButton.SetInteractable(interactable);
+                choiceButton.SetInteractable(
+                    interactable
+                );
             }
         }
     }

@@ -7,6 +7,7 @@ public enum RunState
     Setup,
     CustomerIntro,
     Assembly,
+    ScoreReveal,
     CustomerOutro,
     Shop,
     Won,
@@ -16,26 +17,45 @@ public enum RunState
 public class RunManager : MonoBehaviour
 {
     [Header("Run")]
-    [SerializeField] private RunDefinition runDefinition;
-    [SerializeField] private RunProgress progress;
+    [SerializeField]
+    private RunDefinition runDefinition;
+
+    [SerializeField]
+    private RunProgress progress;
 
     [SerializeField]
     private bool autoStartRun = true;
 
     [Header("Gameplay")]
-    [SerializeField] private IngredientDraftManager draftManager;
-    [SerializeField] private CustomerChallengeController challengeController;
+    [SerializeField]
+    private IngredientDraftManager draftManager;
+
+    [SerializeField]
+    private CustomerChallengeController challengeController;
+
+    [SerializeField]
+    private ScoreRevealController scoreRevealController;
 
     [Header("Views")]
-    [SerializeField] private ViewController viewController;
-    [SerializeField] private CustomerSpawner customerSpawner;
+    [SerializeField]
+    private ViewController viewController;
+
+    [SerializeField]
+    private CustomerSpawner customerSpawner;
 
     [Header("Customer Intro")]
-    [SerializeField] private float customerIntroDelay = 0.5f;
+    [SerializeField]
+    private float customerIntroDelay =
+        0.5f;
 
     [Header("Customer Outro")]
-    [SerializeField] private float leaveDelay = 0.5f;
-    [SerializeField] private float postLeaveDelay = 0.3f;
+    [SerializeField]
+    private float leaveDelay =
+        0.5f;
+
+    [SerializeField]
+    private float postLeaveDelay =
+        0.3f;
 
     public RunState State
     {
@@ -64,8 +84,10 @@ public class RunManager : MonoBehaviour
     public event Action<RunState>
         StateChanged;
 
-    public event Action<CustomerDefinition, int>
-        CustomerIntroStarted;
+    public event Action<
+        CustomerDefinition,
+        int
+    > CustomerIntroStarted;
 
     private bool waitingForCustomerWindow;
     private bool waitingForAssembly;
@@ -75,19 +97,32 @@ public class RunManager : MonoBehaviour
 
     private Coroutine introRoutine;
     private Coroutine outroRoutine;
+    private Coroutine scoreRevealRoutine;
 
     private void Awake()
     {
         if (viewController == null)
         {
             viewController =
-                FindFirstObjectByType<ViewController>();
+                FindFirstObjectByType<
+                    ViewController
+                >();
         }
 
         if (customerSpawner == null)
         {
             customerSpawner =
-                FindFirstObjectByType<CustomerSpawner>();
+                FindFirstObjectByType<
+                    CustomerSpawner
+                >();
+        }
+
+        if (scoreRevealController == null)
+        {
+            scoreRevealController =
+                FindFirstObjectByType<
+                    ScoreRevealController
+                >();
         }
     }
 
@@ -95,8 +130,9 @@ public class RunManager : MonoBehaviour
     {
         if (challengeController != null)
         {
-            challengeController.ChallengeFinished +=
-                HandleChallengeFinished;
+            challengeController
+                .ChallengeFinished +=
+                    HandleChallengeFinished;
         }
 
         if (viewController != null)
@@ -116,8 +152,9 @@ public class RunManager : MonoBehaviour
     {
         if (challengeController != null)
         {
-            challengeController.ChallengeFinished -=
-                HandleChallengeFinished;
+            challengeController
+                .ChallengeFinished -=
+                    HandleChallengeFinished;
         }
 
         if (viewController != null)
@@ -138,7 +175,8 @@ public class RunManager : MonoBehaviour
                 introRoutine
             );
 
-            introRoutine = null;
+            introRoutine =
+                null;
         }
 
         if (outroRoutine != null)
@@ -147,7 +185,18 @@ public class RunManager : MonoBehaviour
                 outroRoutine
             );
 
-            outroRoutine = null;
+            outroRoutine =
+                null;
+        }
+
+        if (scoreRevealRoutine != null)
+        {
+            StopCoroutine(
+                scoreRevealRoutine
+            );
+
+            scoreRevealRoutine =
+                null;
         }
     }
 
@@ -158,7 +207,6 @@ public class RunManager : MonoBehaviour
             yield break;
         }
 
-        // Gives ViewController time to initialize.
         yield return null;
 
         StartRun();
@@ -190,8 +238,12 @@ public class RunManager : MonoBehaviour
         }
 
         if (
-            runDefinition.startingIngredients == null ||
-            runDefinition.startingIngredients.Count == 0
+            runDefinition
+                .startingIngredients ==
+                null ||
+            runDefinition
+                .startingIngredients
+                .Count == 0
         )
         {
             Debug.LogError(
@@ -202,8 +254,10 @@ public class RunManager : MonoBehaviour
         }
 
         if (
-            runDefinition.customers == null ||
-            runDefinition.customers.Count == 0
+            runDefinition.customers ==
+                null ||
+            runDefinition.customers.Count ==
+                0
         )
         {
             Debug.LogError(
@@ -213,7 +267,8 @@ public class RunManager : MonoBehaviour
             return;
         }
 
-        RunStarted = true;
+        RunStarted =
+            true;
 
         progress.BeginRun(
             runDefinition
@@ -274,13 +329,19 @@ public class RunManager : MonoBehaviour
 
         CurrentGoalScore =
             Mathf.RoundToInt(
-                CurrentCustomer.baseGoalScore *
+                CurrentCustomer
+                    .baseGoalScore *
                 multiplier
             );
 
-        waitingForCustomerWindow = false;
-        waitingForAssembly = false;
-        waitingForOutroWindow = false;
+        waitingForCustomerWindow =
+            false;
+
+        waitingForAssembly =
+            false;
+
+        waitingForOutroWindow =
+            false;
 
         if (introRoutine != null)
         {
@@ -288,7 +349,8 @@ public class RunManager : MonoBehaviour
                 introRoutine
             );
 
-            introRoutine = null;
+            introRoutine =
+                null;
         }
 
         SetState(
@@ -298,6 +360,7 @@ public class RunManager : MonoBehaviour
         if (viewController == null)
         {
             BeginCustomerIntroDelay();
+
             return;
         }
 
@@ -310,18 +373,22 @@ public class RunManager : MonoBehaviour
         )
         {
             BeginCustomerIntroDelay();
+
             return;
         }
 
-        waitingForCustomerWindow = true;
+        waitingForCustomerWindow =
+            true;
 
-        viewController.GoToCustomerWindow();
+        viewController
+            .GoToCustomerWindow();
     }
 
     public void BeginCurrentCustomer()
     {
         if (
-            State != RunState.CustomerIntro ||
+            State !=
+                RunState.CustomerIntro ||
             CurrentCustomer == null
         )
         {
@@ -331,6 +398,7 @@ public class RunManager : MonoBehaviour
         if (viewController == null)
         {
             StartAssemblyGameplay();
+
             return;
         }
 
@@ -343,10 +411,12 @@ public class RunManager : MonoBehaviour
         )
         {
             StartAssemblyGameplay();
+
             return;
         }
 
-        waitingForAssembly = true;
+        waitingForAssembly =
+            true;
 
         viewController.GoToAssembly();
     }
@@ -354,14 +424,22 @@ public class RunManager : MonoBehaviour
     public void FinishCurrentCustomer()
     {
         if (
-            State != RunState.Assembly
+            State !=
+            RunState.Assembly
         )
         {
             return;
         }
 
-        challengeController
-            ?.CompleteChallenge();
+        if (scoreRevealRoutine != null)
+        {
+            return;
+        }
+
+        scoreRevealRoutine =
+            StartCoroutine(
+                FinishCustomerRoutine()
+            );
     }
 
     public void ContinueAfterShop()
@@ -379,7 +457,9 @@ public class RunManager : MonoBehaviour
         if (
             runDefinition != null &&
             progress.Day >
-                runDefinition.customers.Count
+                runDefinition
+                    .customers
+                    .Count
         )
         {
             SetState(
@@ -396,6 +476,34 @@ public class RunManager : MonoBehaviour
         StartCurrentDay();
     }
 
+    private IEnumerator FinishCustomerRoutine()
+    {
+        SetState(
+            RunState.ScoreReveal
+        );
+
+        if (scoreRevealController != null)
+        {
+            yield return
+                scoreRevealController
+                    .PlayReveal();
+
+            scoreRevealRoutine =
+                null;
+
+            challengeController
+                ?.CompleteChallengeUsingCurrentScore();
+
+            yield break;
+        }
+
+        scoreRevealRoutine =
+            null;
+
+        challengeController
+            ?.CompleteChallenge();
+    }
+
     private void HandleViewChanged(
         ViewController.FoodTruckView view
     )
@@ -408,7 +516,8 @@ public class RunManager : MonoBehaviour
                     .CustomerWindow
         )
         {
-            waitingForCustomerWindow = false;
+            waitingForCustomerWindow =
+                false;
 
             BeginCustomerIntroDelay();
 
@@ -436,7 +545,8 @@ public class RunManager : MonoBehaviour
                     .CustomerWindow
         )
         {
-            waitingForOutroWindow = false;
+            waitingForOutroWindow =
+                false;
 
             StartCustomerLeaveSequence();
         }
@@ -457,7 +567,8 @@ public class RunManager : MonoBehaviour
             );
     }
 
-    private IEnumerator CustomerIntroDelayRoutine()
+    private IEnumerator
+        CustomerIntroDelayRoutine()
     {
         if (customerIntroDelay > 0f)
         {
@@ -467,7 +578,8 @@ public class RunManager : MonoBehaviour
                 );
         }
 
-        introRoutine = null;
+        introRoutine =
+            null;
 
         PresentCustomerIntro();
     }
@@ -475,7 +587,8 @@ public class RunManager : MonoBehaviour
     private void PresentCustomerIntro()
     {
         if (
-            State != RunState.CustomerIntro ||
+            State !=
+                RunState.CustomerIntro ||
             CurrentCustomer == null
         )
         {
@@ -490,16 +603,18 @@ public class RunManager : MonoBehaviour
 
     private void StartAssemblyGameplay()
     {
-        waitingForAssembly = false;
+        waitingForAssembly =
+            false;
 
         SetState(
             RunState.Assembly
         );
 
-        challengeController?.BeginChallenge(
-            CurrentCustomer,
-            CurrentGoalScore
-        );
+        challengeController
+            ?.BeginChallenge(
+                CurrentCustomer,
+                CurrentGoalScore
+            );
     }
 
     private void HandleChallengeFinished(
@@ -524,7 +639,9 @@ public class RunManager : MonoBehaviour
             runDefinition != null &&
             progress != null &&
             progress.Day >=
-                runDefinition.customers.Count
+                runDefinition
+                    .customers
+                    .Count
         )
         {
             stateAfterOutro =
@@ -565,9 +682,11 @@ public class RunManager : MonoBehaviour
             return;
         }
 
-        waitingForOutroWindow = true;
+        waitingForOutroWindow =
+            true;
 
-        viewController.GoToCustomerWindow();
+        viewController
+            .GoToCustomerWindow();
     }
 
     private void StartCustomerLeaveSequence()
@@ -585,7 +704,8 @@ public class RunManager : MonoBehaviour
             );
     }
 
-    private IEnumerator CustomerLeaveSequence()
+    private IEnumerator
+        CustomerLeaveSequence()
     {
         if (leaveDelay > 0f)
         {
@@ -622,7 +742,8 @@ public class RunManager : MonoBehaviour
                 outroRoutine
             );
 
-            outroRoutine = null;
+            outroRoutine =
+                null;
         }
 
         outroRoutine =
@@ -631,7 +752,8 @@ public class RunManager : MonoBehaviour
             );
     }
 
-    private IEnumerator FinishOutroAfterDelay()
+    private IEnumerator
+        FinishOutroAfterDelay()
     {
         if (postLeaveDelay > 0f)
         {
@@ -641,7 +763,8 @@ public class RunManager : MonoBehaviour
                 );
         }
 
-        outroRoutine = null;
+        outroRoutine =
+            null;
 
         SetState(
             stateAfterOutro
@@ -652,7 +775,8 @@ public class RunManager : MonoBehaviour
         RunState state
     )
     {
-        State = state;
+        State =
+            state;
 
         StateChanged?.Invoke(
             State

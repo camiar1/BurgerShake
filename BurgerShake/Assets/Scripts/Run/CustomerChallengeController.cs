@@ -4,14 +4,24 @@ using UnityEngine;
 public class CustomerChallengeController : MonoBehaviour
 {
     [Header("Gameplay")]
-    [SerializeField] private ScoreManager scoreManager;
-    [SerializeField] private GameplayModifiers gameplayModifiers;
-    [SerializeField] private UpgradeManager upgradeManager;
-    [SerializeField] private IngredientDropper ingredientDropper;
+    [SerializeField]
+    private ScoreManager scoreManager;
+
+    [SerializeField]
+    private GameplayModifiers gameplayModifiers;
+
+    [SerializeField]
+    private UpgradeManager upgradeManager;
+
+    [SerializeField]
+    private IngredientDropper ingredientDropper;
 
     [Header("Assembly")]
-    [SerializeField] private Transform blenderRoot;
-    [SerializeField] private Transform ingredientContainer;
+    [SerializeField]
+    private Transform blenderRoot;
+
+    [SerializeField]
+    private Transform ingredientContainer;
 
     public CustomerDefinition CurrentCustomer
     {
@@ -66,7 +76,7 @@ public class CustomerChallengeController : MonoBehaviour
         ApplyBlenderScale();
 
         scoreManager
-            ?.RecalculateScore();
+            ?.ResetScore();
 
         ChallengeStarted?.Invoke(
             CurrentCustomer,
@@ -76,6 +86,20 @@ public class CustomerChallengeController : MonoBehaviour
 
     public bool CompleteChallenge()
     {
+        if (scoreManager == null)
+        {
+            return false;
+        }
+
+        scoreManager
+            .CalculateFinalScore();
+
+        return
+            CompleteChallengeUsingCurrentScore();
+    }
+
+    public bool CompleteChallengeUsingCurrentScore()
+    {
         if (
             CurrentCustomer == null ||
             scoreManager == null
@@ -83,8 +107,6 @@ public class CustomerChallengeController : MonoBehaviour
         {
             return false;
         }
-
-        scoreManager.RecalculateScore();
 
         Ingredient[] ingredients =
             GetChallengeIngredients();
@@ -142,12 +164,16 @@ public class CustomerChallengeController : MonoBehaviour
         if (ingredientContainer != null)
         {
             return ingredientContainer
-                .GetComponentsInChildren<Ingredient>(
+                .GetComponentsInChildren<
+                    Ingredient
+                >(
                     false
                 );
         }
 
-        return FindObjectsByType<Ingredient>(
+        return FindObjectsByType<
+            Ingredient
+        >(
             FindObjectsSortMode.None
         );
     }
@@ -161,7 +187,8 @@ public class CustomerChallengeController : MonoBehaviour
 
         for (
             int i =
-                ingredientContainer.childCount - 1;
+                ingredientContainer.childCount -
+                1;
             i >= 0;
             i--
         )
@@ -171,11 +198,13 @@ public class CustomerChallengeController : MonoBehaviour
                     .GetChild(i)
                     .gameObject;
 
-            // Immediately prevents the old
-            // ingredient from contributing score.
-            ingredient.SetActive(false);
+            ingredient.SetActive(
+                false
+            );
 
-            Destroy(ingredient);
+            Destroy(
+                ingredient
+            );
         }
     }
 

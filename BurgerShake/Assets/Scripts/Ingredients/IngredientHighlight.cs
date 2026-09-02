@@ -1,15 +1,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IngredientHighlight : MonoBehaviour
+public class IngredientHighlight :
+    MonoBehaviour
 {
-    private readonly List<LineRenderer>
-        highlightLines =
-            new List<LineRenderer>();
+    private class HighlightRenderer
+    {
+        public SpriteRenderer source;
+        public SpriteRenderer outline;
+
+        public MaterialPropertyBlock
+            propertyBlock;
+    }
+
+    private readonly List<HighlightRenderer>
+        highlightRenderers =
+            new List<HighlightRenderer>();
 
     private bool built;
 
-    private static Material sharedLineMaterial;
+    private static Material outlineMaterial;
+
+    private static readonly int
+        OutlineColorProperty =
+            Shader.PropertyToID(
+                "_OutlineColor"
+            );
+
+    private static readonly int
+        OutlineWidthProperty =
+            Shader.PropertyToID(
+                "_OutlineWidthPixels"
+            );
 
     public void Show(
         Color color,
@@ -22,25 +44,51 @@ public class IngredientHighlight : MonoBehaviour
         }
 
         foreach (
-            LineRenderer line
-            in highlightLines
+            HighlightRenderer highlight
+            in highlightRenderers
         )
         {
-            if (line == null)
+            if (
+                highlight.source == null ||
+                highlight.outline == null
+            )
             {
                 continue;
             }
 
-            line.startColor =
-                color;
+            UpdateRendererSettings(
+                highlight
+            );
 
-            line.endColor =
-                color;
+            float widthPixels =
+                ConvertWorldWidthToPixels(
+                    highlight.source,
+                    width
+                );
 
-            line.widthMultiplier =
-                width;
+            highlight.outline
+                .GetPropertyBlock(
+                    highlight.propertyBlock
+                );
 
-            line.enabled =
+            highlight.propertyBlock
+                .SetColor(
+                    OutlineColorProperty,
+                    color
+                );
+
+            highlight.propertyBlock
+                .SetFloat(
+                    OutlineWidthProperty,
+                    widthPixels
+                );
+
+            highlight.outline
+                .SetPropertyBlock(
+                    highlight.propertyBlock
+                );
+
+            highlight.outline.enabled =
                 true;
         }
     }
@@ -48,13 +96,15 @@ public class IngredientHighlight : MonoBehaviour
     public void Hide()
     {
         foreach (
-            LineRenderer line
-            in highlightLines
+            HighlightRenderer highlight
+            in highlightRenderers
         )
         {
-            if (line != null)
+            if (
+                highlight.outline != null
+            )
             {
-                line.enabled =
+                highlight.outline.enabled =
                     false;
             }
         }
@@ -64,465 +114,212 @@ public class IngredientHighlight : MonoBehaviour
     {
         built = true;
 
-        Collider2D[] colliders =
-            GetComponentsInChildren<Collider2D>(
+        SpriteRenderer[] sources =
+            GetComponentsInChildren<
+                SpriteRenderer
+            >(
                 true
             );
 
         foreach (
-            Collider2D collider
-            in colliders
+            SpriteRenderer source
+            in sources
         )
         {
             if (
-                collider is PolygonCollider2D polygon
+                source == null ||
+                source.sprite == null
             )
             {
-                BuildPolygon(
-                    polygon
-                );
+                continue;
             }
-            else if (
-                collider is CircleCollider2D circle
+
+            if (
+                source.gameObject.name ==
+                "IngredientHighlightOverlay"
             )
             {
-                BuildCircle(
-                    circle
-                );
+                continue;
             }
-            else if (
-                collider is BoxCollider2D box
-            )
-            {
-                BuildBox(
-                    box
-                );
-            }
-            else if (
-                collider is CapsuleCollider2D capsule
-            )
-            {
-                BuildCapsule(
-                    capsule
-                );
-            }
-        }
-    }
 
-    private void BuildPolygon(
-        PolygonCollider2D collider
-    )
-    {
-        for (
-            int pathIndex = 0;
-            pathIndex < collider.pathCount;
-            pathIndex++
-        )
-        {
-            Vector2[] path =
-                collider.GetPath(
-                    pathIndex
-                );
-
-            LineRenderer line =
-                CreateLine(
-                    collider.transform
-                );
-
-            line.positionCount =
-                path.Length;
-
-            line.loop =
-                true;
-
-            for (
-                int i = 0;
-                i < path.Length;
-                i++
-            )
-            {
-                line.SetPosition(
-                    i,
-                    path[i] +
-                    collider.offset
-                );
-            }
-        }
-    }
-
-    private void BuildCircle(
-        CircleCollider2D collider
-    )
-    {
-        const int segments =
-            48;
-
-        LineRenderer line =
-            CreateLine(
-                collider.transform
-            );
-
-        line.positionCount =
-            segments;
-
-        line.loop =
-            true;
-
-        for (
-            int i = 0;
-            i < segments;
-            i++
-        )
-        {
-            float angle =
-                (float)i /
-                segments *
-                Mathf.PI *
-                2f;
-
-            Vector2 point =
-                collider.offset +
-                new Vector2(
-                    Mathf.Cos(angle),
-                    Mathf.Sin(angle)
-                ) *
-                collider.radius;
-
-            line.SetPosition(
-                i,
-                point
+            CreateHighlightRenderer(
+                source
             );
         }
     }
 
-    private void BuildBox(
-        BoxCollider2D collider
+    private void CreateHighlightRenderer(
+        SpriteRenderer source
     )
     {
-        Vector2 halfSize =
-            collider.size *
-            0.5f;
-
-        Vector2 center =
-            collider.offset;
-
-        Vector3[] points =
-        {
-            center +
-            new Vector2(
-                -halfSize.x,
-                -halfSize.y
-            ),
-
-            center +
-            new Vector2(
-                -halfSize.x,
-                halfSize.y
-            ),
-
-            center +
-            new Vector2(
-                halfSize.x,
-                halfSize.y
-            ),
-
-            center +
-            new Vector2(
-                halfSize.x,
-                -halfSize.y
-            )
-        };
-
-        LineRenderer line =
-            CreateLine(
-                collider.transform
-            );
-
-        line.positionCount =
-            points.Length;
-
-        line.loop =
-            true;
-
-        line.SetPositions(
-            points
-        );
-    }
-
-    private void BuildCapsule(
-        CapsuleCollider2D collider
-    )
-    {
-        const int segments =
-            40;
-
-        LineRenderer line =
-            CreateLine(
-                collider.transform
-            );
-
-        List<Vector3> points =
-            new List<Vector3>();
-
-        Vector2 size =
-            collider.size;
-
-        Vector2 center =
-            collider.offset;
-
-        if (
-            collider.direction ==
-            CapsuleDirection2D.Vertical
-        )
-        {
-            float radius =
-                size.x * 0.5f;
-
-            float straight =
-                Mathf.Max(
-                    0f,
-                    size.y -
-                    radius * 2f
-                );
-
-            Vector2 topCenter =
-                center +
-                Vector2.up *
-                straight *
-                0.5f;
-
-            Vector2 bottomCenter =
-                center +
-                Vector2.down *
-                straight *
-                0.5f;
-
-            for (
-                int i = 0;
-                i <= segments / 2;
-                i++
-            )
-            {
-                float angle =
-                    Mathf.Lerp(
-                        0f,
-                        Mathf.PI,
-                        (float)i /
-                        (segments / 2)
-                    );
-
-                points.Add(
-                    topCenter +
-                    new Vector2(
-                        Mathf.Cos(angle),
-                        Mathf.Sin(angle)
-                    ) *
-                    radius
-                );
-            }
-
-            for (
-                int i = 0;
-                i <= segments / 2;
-                i++
-            )
-            {
-                float angle =
-                    Mathf.Lerp(
-                        Mathf.PI,
-                        Mathf.PI * 2f,
-                        (float)i /
-                        (segments / 2)
-                    );
-
-                points.Add(
-                    bottomCenter +
-                    new Vector2(
-                        Mathf.Cos(angle),
-                        Mathf.Sin(angle)
-                    ) *
-                    radius
-                );
-            }
-        }
-        else
-        {
-            float radius =
-                size.y * 0.5f;
-
-            float straight =
-                Mathf.Max(
-                    0f,
-                    size.x -
-                    radius * 2f
-                );
-
-            Vector2 rightCenter =
-                center +
-                Vector2.right *
-                straight *
-                0.5f;
-
-            Vector2 leftCenter =
-                center +
-                Vector2.left *
-                straight *
-                0.5f;
-
-            for (
-                int i = 0;
-                i <= segments / 2;
-                i++
-            )
-            {
-                float angle =
-                    Mathf.Lerp(
-                        -Mathf.PI * 0.5f,
-                        Mathf.PI * 0.5f,
-                        (float)i /
-                        (segments / 2)
-                    );
-
-                points.Add(
-                    rightCenter +
-                    new Vector2(
-                        Mathf.Cos(angle),
-                        Mathf.Sin(angle)
-                    ) *
-                    radius
-                );
-            }
-
-            for (
-                int i = 0;
-                i <= segments / 2;
-                i++
-            )
-            {
-                float angle =
-                    Mathf.Lerp(
-                        Mathf.PI * 0.5f,
-                        Mathf.PI * 1.5f,
-                        (float)i /
-                        (segments / 2)
-                    );
-
-                points.Add(
-                    leftCenter +
-                    new Vector2(
-                        Mathf.Cos(angle),
-                        Mathf.Sin(angle)
-                    ) *
-                    radius
-                );
-            }
-        }
-
-        line.positionCount =
-            points.Count;
-
-        line.loop =
-            true;
-
-        line.SetPositions(
-            points.ToArray()
-        );
-    }
-
-    private LineRenderer CreateLine(
-        Transform parent
-    )
-    {
-        GameObject lineObject =
+        GameObject outlineObject =
             new GameObject(
-                "IngredientHighlightLine"
+                "IngredientHighlightOverlay"
             );
 
-        lineObject.transform.SetParent(
-            parent,
+        outlineObject.transform.SetParent(
+            source.transform,
             false
         );
 
-        LineRenderer line =
-            lineObject.AddComponent<LineRenderer>();
+        outlineObject.transform.localPosition =
+            Vector3.zero;
 
-        line.useWorldSpace =
+        outlineObject.transform.localRotation =
+            Quaternion.identity;
+
+        outlineObject.transform.localScale =
+            Vector3.one;
+
+        SpriteRenderer outline =
+            outlineObject.AddComponent<
+                SpriteRenderer
+            >();
+
+        outline.material =
+            GetOutlineMaterial();
+
+        outline.enabled =
             false;
 
-        line.enabled =
-            false;
+        HighlightRenderer highlight =
+            new HighlightRenderer
+            {
+                source =
+                    source,
 
-        line.alignment =
-            LineAlignment.TransformZ;
+                outline =
+                    outline,
 
-        line.numCornerVertices =
-            4;
+                propertyBlock =
+                    new MaterialPropertyBlock()
+            };
 
-        line.numCapVertices =
-            4;
-
-        line.textureMode =
-            LineTextureMode.Stretch;
-
-        line.material =
-            GetSharedMaterial();
-
-        SpriteRenderer spriteRenderer =
-            GetComponentInChildren<SpriteRenderer>();
-
-        if (spriteRenderer != null)
-        {
-            line.sortingLayerID =
-                spriteRenderer.sortingLayerID;
-
-            line.sortingOrder =
-                spriteRenderer.sortingOrder +
-                20;
-        }
-
-        highlightLines.Add(
-            line
+        UpdateRendererSettings(
+            highlight
         );
 
-        return line;
+        highlightRenderers.Add(
+            highlight
+        );
     }
 
-    private static Material GetSharedMaterial()
+    private void UpdateRendererSettings(
+        HighlightRenderer highlight
+    )
     {
-        if (sharedLineMaterial != null)
+        SpriteRenderer source =
+            highlight.source;
+
+        SpriteRenderer outline =
+            highlight.outline;
+
+        outline.sprite =
+            source.sprite;
+
+        outline.flipX =
+            source.flipX;
+
+        outline.flipY =
+            source.flipY;
+
+        outline.drawMode =
+            source.drawMode;
+
+        outline.size =
+            source.size;
+
+        outline.spriteSortPoint =
+            source.spriteSortPoint;
+
+        outline.sortingLayerID =
+            source.sortingLayerID;
+
+        // Draw highlight on top of the
+        // ingredient artwork.
+        outline.sortingOrder =
+            source.sortingOrder +
+            20;
+
+        outline.maskInteraction =
+            source.maskInteraction;
+
+        outline.color =
+            Color.white;
+    }
+
+    private float ConvertWorldWidthToPixels(
+        SpriteRenderer source,
+        float worldWidth
+    )
+    {
+        if (
+            source == null ||
+            source.sprite == null
+        )
         {
-            return sharedLineMaterial;
+            return 1f;
+        }
+
+        Vector3 scale =
+            source.transform.lossyScale;
+
+        float averageScale =
+            (
+                Mathf.Abs(scale.x) +
+                Mathf.Abs(scale.y)
+            ) *
+            0.5f;
+
+        if (averageScale <= 0.0001f)
+        {
+            averageScale =
+                1f;
+        }
+
+        float pixels =
+            worldWidth *
+            source.sprite.pixelsPerUnit /
+            averageScale;
+
+        return Mathf.Clamp(
+            pixels,
+            1f,
+            12f
+        );
+    }
+
+    private static Material
+        GetOutlineMaterial()
+    {
+        if (outlineMaterial != null)
+        {
+            return outlineMaterial;
         }
 
         Shader shader =
             Shader.Find(
-                "Sprites/Default"
+                "BurgerShake/IngredientOutline"
             );
 
         if (shader == null)
         {
-            shader =
-                Shader.Find(
-                    "Universal Render Pipeline/Unlit"
-                );
+            Debug.LogError(
+                "Could not find shader: " +
+                "BurgerShake/IngredientOutline"
+            );
+
+            return null;
         }
 
-        if (shader == null)
-        {
-            shader =
-                Shader.Find(
-                    "Unlit/Color"
-                );
-        }
+        outlineMaterial =
+            new Material(
+                shader
+            );
 
-        if (shader != null)
-        {
-            sharedLineMaterial =
-                new Material(
-                    shader
-                );
-        }
+        outlineMaterial.name =
+            "Runtime Ingredient Outline";
 
-        return sharedLineMaterial;
+        return outlineMaterial;
     }
 }
