@@ -14,12 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RunDefinition
   startingIngredientCount: 10
   startingIngredients:
-  - {fileID: 11400000, guid: ba0795d112fd3134083e2499da1aeee7, type: 2}
-  - {fileID: 11400000, guid: d95271a6072e1a1479cfad4048212100, type: 2}
-  - {fileID: 11400000, guid: ea5e17f00abd1304bbbb08d171edf410, type: 2}
-  - {fileID: 11400000, guid: e789465cc0f07de4788c7413a145aaaf, type: 2}
-  - {fileID: 11400000, guid: d58da19064cd980499f5e2dd3746a11d, type: 2}
-  - {fileID: 11400000, guid: 0d33af6ba5dcdb64e9b742f52f2e3889, type: 2}
+  - {fileID: 11400000, guid: d6a224a0fa58db34c8f40676519d608b, type: 2}
+  - {fileID: 11400000, guid: d780b1a3b60acff4aacbdcc7b1df3fe9, type: 2}
+  - {fileID: 11400000, guid: 3830bae78c103b7429436d7446075da0, type: 2}
+  - {fileID: 11400000, guid: fa283ccee0c73304a93a70d4de002711, type: 2}
   - {fileID: 11400000, guid: e872694ae712a6248be21368becb1303, type: 2}
   customers:
   - {fileID: 11400000, guid: 36b240fd6087f3a4c89533d80df971e7, type: 2}

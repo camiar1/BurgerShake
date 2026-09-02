@@ -103,7 +103,7 @@ RectTransform:
   m_GameObject: {fileID: 2648662939058304047}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1953230773542993916}
@@ -112,7 +112,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 998.37604, y: 119.670006}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &5182615515697324804
@@ -146,7 +146,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -167,7 +167,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 760672939514343792}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -183,10 +183,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 407e35724f52391419776130fbcb8bcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DraftChoiceVisual
-  iconImage: {fileID: 0}
-  nameText: {fileID: 0}
-  button: {fileID: 0}
-  canvasGroup: {fileID: 0}
+  iconImage: {fileID: 760672939514343792}
+  nameText: {fileID: 4493558753155342368}
+  button: {fileID: 1294579112136143321}
+  canvasGroup: {fileID: 5182615515697324804}
 --- !u!1 &3222142529218126000
 GameObject:
   m_ObjectHideFlags: 0
