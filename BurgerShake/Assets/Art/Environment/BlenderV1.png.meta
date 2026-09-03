@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 748cb364065cbfc4d951d986907288b6
+guid: 8db4122996c8e1e4680e23f56e4210f3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1047172125055194385
-    second: CatJump_0
+      213: -1974517664817365727
+    second: BlenderV1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CatJump_0
+      name: BlenderV1_0
       rect:
         serializedVersion: 2
-        x: 4
-        y: 0
-        width: 493
-        height: 886
+        x: 103
+        y: 40
+        width: 826
+        height: 762
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1151b94ef7d488e00800000000000000
-      internalID: 1047172125055194385
+      spriteID: 12db3d135aa1994e0800000000000000
+      internalID: -1974517664817365727
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CatJump_0: 1047172125055194385
+      BlenderV1_0: -1974517664817365727
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -4,25 +4,73 @@ using UnityEngine.UI;
 
 public class CatMascotView : MonoBehaviour
 {
+    [Header("Images")]
     [SerializeField]
-    private Image targetImage;
+    private Image idleImage;
 
     [SerializeField]
-    private Sprite idleSprite;
+    private Image jumpImage;
+
+    [Header("Jump Transform")]
+    [SerializeField]
+    private RectTransform jumpRect;
+
+    [Header("Jump Motion")]
+    [SerializeField]
+    private float jumpHeight = 110f;
 
     [SerializeField]
-    private Sprite throwSprite;
+    private float jumpUpDuration = 0.18f;
 
     [SerializeField]
-    private float throwPoseDuration = 0.18f;
+    private float hangDuration = 0.08f;
 
-    private Coroutine throwRoutine;
+    [SerializeField]
+    private float jumpDownDuration = 0.25f;
+
+    [SerializeField]
+    private AnimationCurve jumpCurve =
+        AnimationCurve.EaseInOut(
+            0f,
+            0f,
+            1f,
+            1f
+        );
+
+    private Coroutine jumpRoutine;
+
+    private Vector2 jumpRestPosition;
 
     private void Awake()
     {
-        if (targetImage == null)
+        if (
+            jumpRect == null &&
+            jumpImage != null
+        )
         {
-            targetImage = GetComponent<Image>();
+            jumpRect =
+                jumpImage.rectTransform;
+        }
+
+        if (jumpRect != null)
+        {
+            jumpRestPosition =
+                jumpRect.anchoredPosition;
+        }
+
+        SetIdle();
+    }
+
+    private void OnDisable()
+    {
+        if (jumpRoutine != null)
+        {
+            StopCoroutine(
+                jumpRoutine
+            );
+
+            jumpRoutine =
+                null;
         }
 
         SetIdle();
@@ -30,33 +78,142 @@ public class CatMascotView : MonoBehaviour
 
     public void SetIdle()
     {
-        if (targetImage != null && idleSprite != null)
+        if (jumpRect != null)
         {
-            targetImage.sprite = idleSprite;
+            jumpRect.anchoredPosition =
+                jumpRestPosition;
+        }
+
+        if (jumpImage != null)
+        {
+            jumpImage.gameObject
+                .SetActive(false);
+        }
+
+        if (idleImage != null)
+        {
+            idleImage.gameObject
+                .SetActive(true);
         }
     }
 
     public void PlayThrowPose()
     {
-        if (throwRoutine != null)
+        if (jumpRoutine != null)
         {
-            StopCoroutine(throwRoutine);
+            StopCoroutine(
+                jumpRoutine
+            );
         }
 
-        throwRoutine = StartCoroutine(ThrowPoseRoutine());
+        jumpRoutine =
+            StartCoroutine(
+                JumpRoutine()
+            );
     }
 
-    private IEnumerator ThrowPoseRoutine()
+    private IEnumerator JumpRoutine()
     {
-        if (targetImage != null && throwSprite != null)
+        if (
+            jumpImage == null ||
+            jumpRect == null
+        )
         {
-            targetImage.sprite = throwSprite;
+            yield break;
         }
 
-        yield return new WaitForSecondsRealtime(throwPoseDuration);
+        if (idleImage != null)
+        {
+            idleImage.gameObject
+                .SetActive(false);
+        }
+
+        jumpImage.gameObject
+            .SetActive(true);
+
+        jumpRect.anchoredPosition =
+            jumpRestPosition;
+
+        Vector2 peakPosition =
+            jumpRestPosition +
+            Vector2.up *
+            jumpHeight;
+
+        // Jump upward.
+        yield return MoveJumpImage(
+            jumpRestPosition,
+            peakPosition,
+            jumpUpDuration
+        );
+
+        // Tiny pause at the top.
+        if (hangDuration > 0f)
+        {
+            yield return
+                new WaitForSecondsRealtime(
+                    hangDuration
+                );
+        }
+
+        // Fall back down behind the ledge.
+        yield return MoveJumpImage(
+            peakPosition,
+            jumpRestPosition,
+            jumpDownDuration
+        );
 
         SetIdle();
 
-        throwRoutine = null;
+        jumpRoutine =
+            null;
+    }
+
+    private IEnumerator MoveJumpImage(
+        Vector2 start,
+        Vector2 end,
+        float duration
+    )
+    {
+        if (duration <= 0f)
+        {
+            jumpRect.anchoredPosition =
+                end;
+
+            yield break;
+        }
+
+        float elapsed =
+            0f;
+
+        while (elapsed < duration)
+        {
+            elapsed +=
+                Time.unscaledDeltaTime;
+
+            float normalized =
+                Mathf.Clamp01(
+                    elapsed /
+                    duration
+                );
+
+            float curved =
+                jumpCurve != null
+                    ? jumpCurve.Evaluate(
+                        normalized
+                    )
+                    : normalized;
+
+            jumpRect.anchoredPosition =
+                Vector2.LerpUnclamped(
+                    start,
+                    end,
+                    curved
+                );
+
+            yield return null;
+        }
+
+        jumpRect.anchoredPosition =
+            end;
     }
 }
