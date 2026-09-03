@@ -106,6 +106,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8645948670094774862}
   - {fileID: 1953230773542993916}
   - {fileID: 9002390409295683133}
   m_Father: {fileID: 0}
@@ -187,6 +188,18 @@ MonoBehaviour:
   nameText: {fileID: 4493558753155342368}
   button: {fileID: 1294579112136143321}
   canvasGroup: {fileID: 5182615515697324804}
+  hoverParticleRoot: {fileID: 8645948670094774862}
+  hoverScale: 1.25
+  scaleSpeed: 10
+  swayAngle: 6
+  swaySpeed: 4
+  particleSprite: {fileID: 3625043607559282579, guid: 408f878386f5a1b4b9a7bdb1f59160e9, type: 3}
+  particleSpawnInterval: 0.06
+  particleLifetime: 0.45
+  particleSpeed: 80
+  particleSpawnRadius: 85
+  particleSizeMin: 15
+  particleSizeMax: 25
 --- !u!1 &3222142529218126000
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,3 +337,38 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &7950958561619744105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8645948670094774862}
+  m_Layer: 0
+  m_Name: HoverParticles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &8645948670094774862
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7950958561619744105}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8653585936124322434}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}

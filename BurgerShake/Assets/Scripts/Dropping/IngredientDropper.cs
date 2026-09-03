@@ -5,35 +5,52 @@ using UnityEngine.InputSystem;
 public class IngredientDropper : MonoBehaviour
 {
     [Header("Managers")]
-    [SerializeField] private Camera gameplayCamera;
-    [SerializeField] private ViewController viewController;
-    [SerializeField] private RunManager runManager;
-    [SerializeField] private GameplayModifiers gameplayModifiers;
+    [SerializeField]
+    private Camera gameplayCamera;
+
+    [SerializeField]
+    private ViewController viewController;
+
+    [SerializeField]
+    private RunManager runManager;
+
+    [SerializeField]
+    private GameplayModifiers gameplayModifiers;
 
     [Header("Drop Area")]
-    [SerializeField] private Collider2D dropRegion;
+    [SerializeField]
+    private Collider2D dropRegion;
 
     [Tooltip(
         "When enabled, the preview only follows the mouse horizontally."
     )]
-    [SerializeField] private bool lockPreviewToDropY = true;
+    [SerializeField]
+    private bool lockPreviewToDropY = true;
 
-    [SerializeField] private float dropY = 4f;
+    [SerializeField]
+    private float dropY = 4f;
 
     [Header("Ingredients")]
-    [SerializeField] private Transform ingredientContainer;
+    [SerializeField]
+    private Transform ingredientContainer;
+
+    [SerializeField]
+    private int droppedIngredientSortingOrder = 12;
 
     [Header("Preview")]
     [Range(0.1f, 1f)]
-    [SerializeField] private float previewAlpha = 0.65f;
+    [SerializeField]
+    private float previewAlpha = 0.65f;
 
-    [SerializeField] private int previewSortingOrderOffset = 1;
+    [SerializeField]
+    private int previewSortingOrderOffset = 1;
 
     [Header("Rotation")]
     [Tooltip(
         "Degrees per second while holding the right mouse button."
     )]
-    [SerializeField] private float rotationSpeed = 140f;
+    [SerializeField]
+    private float rotationSpeed = 140f;
 
     private IngredientDefinition selectedIngredient;
     private IngredientDraftManager draftManager;
@@ -66,19 +83,24 @@ public class IngredientDropper : MonoBehaviour
     {
         if (gameplayCamera == null)
         {
-            gameplayCamera = Camera.main;
+            gameplayCamera =
+                Camera.main;
         }
 
         if (viewController == null)
         {
             viewController =
-                FindFirstObjectByType<ViewController>();
+                FindFirstObjectByType<
+                    ViewController
+                >();
         }
 
         if (runManager == null)
         {
             runManager =
-                FindFirstObjectByType<RunManager>();
+                FindFirstObjectByType<
+                    RunManager
+                >();
         }
     }
 
@@ -89,15 +111,19 @@ public class IngredientDropper : MonoBehaviour
 
     public void ResetChallenge()
     {
-        selectedIngredient = null;
+        selectedIngredient =
+            null;
 
-        dropsThisChallenge = 0;
+        dropsThisChallenge =
+            0;
 
-        previewRotation = 0f;
+        previewRotation =
+            0f;
 
         DestroyPreview();
 
-        draftManager?.RefreshChoices();
+        draftManager
+            ?.RefreshChoices();
     }
 
     public void SetIngredient(
@@ -115,7 +141,8 @@ public class IngredientDropper : MonoBehaviour
         selectedIngredient =
             ingredient;
 
-        previewRotation = 0f;
+        previewRotation =
+            0f;
 
         CreatePreview();
     }
@@ -131,7 +158,9 @@ public class IngredientDropper : MonoBehaviour
             return;
         }
 
-        if (!CanAcceptGameplayInput())
+        if (
+            !CanAcceptGameplayInput()
+        )
         {
             HidePreview();
             return;
@@ -172,11 +201,14 @@ public class IngredientDropper : MonoBehaviour
         }
 
         Vector3 mouseWorld =
-            gameplayCamera.ScreenToWorldPoint(
-                mouse.position.ReadValue()
-            );
+            gameplayCamera
+                .ScreenToWorldPoint(
+                    mouse.position
+                        .ReadValue()
+                );
 
-        mouseWorld.z = 0f;
+        mouseWorld.z =
+            0f;
 
         bool insideDropRegion =
             IsInsideDropRegion(
@@ -217,9 +249,11 @@ public class IngredientDropper : MonoBehaviour
             return true;
         }
 
-        return dropRegion.OverlapPoint(
-            worldPosition
-        );
+        return
+            dropRegion
+                .OverlapPoint(
+                    worldPosition
+                );
     }
 
     private void UpdatePreviewPosition(
@@ -243,8 +277,10 @@ public class IngredientDropper : MonoBehaviour
         position.z =
             transform.position.z;
 
-        previewObject.transform.position =
-            position;
+        previewObject
+            .transform
+            .position =
+                position;
     }
 
     private void UpdatePreviewRotation(
@@ -259,19 +295,24 @@ public class IngredientDropper : MonoBehaviour
             return;
         }
 
-        if (mouse.rightButton.isPressed)
+        if (
+            mouse.rightButton
+                .isPressed
+        )
         {
             previewRotation -=
                 rotationSpeed *
                 Time.unscaledDeltaTime;
         }
 
-        previewObject.transform.rotation =
-            Quaternion.Euler(
-                0f,
-                0f,
-                previewRotation
-            );
+        previewObject
+            .transform
+            .rotation =
+                Quaternion.Euler(
+                    0f,
+                    0f,
+                    previewRotation
+                );
     }
 
     private void CreatePreview()
@@ -287,8 +328,11 @@ public class IngredientDropper : MonoBehaviour
         }
 
         SpriteRenderer prefabRenderer =
-            selectedIngredient.prefab
-                .GetComponentInChildren<SpriteRenderer>();
+            selectedIngredient
+                .prefab
+                .GetComponentInChildren<
+                    SpriteRenderer
+                >();
 
         Sprite sprite =
             selectedIngredient.sprite;
@@ -314,14 +358,19 @@ public class IngredientDropper : MonoBehaviour
 
         if (transform.parent != null)
         {
-            previewObject.transform.SetParent(
-                transform.parent,
-                true
-            );
+            previewObject
+                .transform
+                .SetParent(
+                    transform.parent,
+                    true
+                );
         }
 
         previewRenderer =
-            previewObject.AddComponent<SpriteRenderer>();
+            previewObject
+                .AddComponent<
+                    SpriteRenderer
+                >();
 
         previewRenderer.sprite =
             sprite;
@@ -337,12 +386,10 @@ public class IngredientDropper : MonoBehaviour
 
         if (prefabRenderer != null)
         {
-            previewRenderer.sortingLayerID =
-                prefabRenderer.sortingLayerID;
-
-            previewRenderer.sortingOrder =
-                prefabRenderer.sortingOrder +
-                previewSortingOrderOffset;
+            previewRenderer
+                .sortingLayerID =
+                    prefabRenderer
+                        .sortingLayerID;
 
             previewRenderer.flipX =
                 prefabRenderer.flipX;
@@ -351,29 +398,39 @@ public class IngredientDropper : MonoBehaviour
                 prefabRenderer.flipY;
         }
 
+        previewRenderer.sortingOrder =
+            droppedIngredientSortingOrder +
+            previewSortingOrderOffset;
+
         float scaleMultiplier =
             gameplayModifiers != null
                 ? gameplayModifiers
                     .IngredientScale
                 : 1f;
 
-        previewObject.transform.localScale =
-            selectedIngredient
-                .prefab
-                .transform
-                .localScale *
-            scaleMultiplier;
+        previewObject
+            .transform
+            .localScale =
+                selectedIngredient
+                    .prefab
+                    .transform
+                    .localScale *
+                scaleMultiplier;
 
-        previewObject.SetActive(false);
+        previewObject
+            .SetActive(
+                false
+            );
     }
 
     private void ShowPreview()
     {
         if (previewObject != null)
         {
-            previewObject.SetActive(
-                true
-            );
+            previewObject
+                .SetActive(
+                    true
+                );
         }
     }
 
@@ -381,9 +438,10 @@ public class IngredientDropper : MonoBehaviour
     {
         if (previewObject != null)
         {
-            previewObject.SetActive(
-                false
-            );
+            previewObject
+                .SetActive(
+                    false
+                );
         }
     }
 
@@ -395,8 +453,11 @@ public class IngredientDropper : MonoBehaviour
                 previewObject
             );
 
-            previewObject = null;
-            previewRenderer = null;
+            previewObject =
+                null;
+
+            previewRenderer =
+                null;
         }
     }
 
@@ -438,7 +499,9 @@ public class IngredientDropper : MonoBehaviour
         GameObject spawned =
             Instantiate(
                 selectedIngredient.prefab,
-                previewObject.transform.position,
+                previewObject
+                    .transform
+                    .position,
                 rotation,
                 ingredientContainer
             );
@@ -449,11 +512,33 @@ public class IngredientDropper : MonoBehaviour
                     .IngredientScale
                 : 1f;
 
-        spawned.transform.localScale *=
-            scaleMultiplier;
+        spawned
+            .transform
+            .localScale *=
+                scaleMultiplier;
+
+        SpriteRenderer[] renderers =
+            spawned
+                .GetComponentsInChildren<
+                    SpriteRenderer
+                >(
+                    true
+                );
+
+        foreach (
+            SpriteRenderer renderer
+            in renderers
+        )
+        {
+            renderer.sortingOrder =
+                droppedIngredientSortingOrder;
+        }
 
         Ingredient ingredient =
-            spawned.GetComponent<Ingredient>();
+            spawned
+                .GetComponent<
+                    Ingredient
+                >();
 
         if (ingredient != null)
         {
@@ -464,13 +549,16 @@ public class IngredientDropper : MonoBehaviour
 
         dropsThisChallenge++;
 
-        selectedIngredient = null;
+        selectedIngredient =
+            null;
 
-        previewRotation = 0f;
+        previewRotation =
+            0f;
 
         DestroyPreview();
 
-        draftManager?.IngredientWasDropped();
+        draftManager
+            ?.IngredientWasDropped();
     }
 
     private bool CanAcceptGameplayInput()
@@ -485,8 +573,10 @@ public class IngredientDropper : MonoBehaviour
     {
         return
             gameplayModifiers != null &&
-            gameplayModifiers.DropLimit > 0 &&
+            gameplayModifiers.DropLimit >
+                0 &&
             dropsThisChallenge >=
-                gameplayModifiers.DropLimit;
+                gameplayModifiers
+                    .DropLimit;
     }
 }

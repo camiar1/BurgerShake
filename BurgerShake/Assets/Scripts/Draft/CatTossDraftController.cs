@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +34,11 @@ public class CatTossDraftController : MonoBehaviour
 
     [SerializeField]
     private DraftChoiceVisual choicePrefab;
+
+    [Header("Dispenses")]
+    [SerializeField]
+    [Min(1)]
+    private int dispensesPerRound = 5;
 
     [Header("Toss")]
     [SerializeField]
@@ -84,8 +90,24 @@ public class CatTossDraftController : MonoBehaviour
 
     private int knownPlacedCount;
 
+    private int dispensesRemaining;
+
     private Coroutine
         delayedNextTossRoutine;
+
+    public int DispensesRemaining =>
+        dispensesRemaining;
+
+    public int DispensesPerRound =>
+        dispensesPerRound;
+
+    public bool HasDispensesRemaining =>
+        dispensesRemaining > 0;
+
+    public event Action<
+        int,
+        int
+    > DispensesChanged;
 
     private void Awake()
     {
@@ -118,36 +140,73 @@ public class CatTossDraftController : MonoBehaviour
                 .childCount;
 
         if (
-            currentCount >
+            currentCount <=
             knownPlacedCount
         )
         {
-            knownPlacedCount =
-                currentCount;
-
-            waitingForPlacedIngredient =
-                false;
-
-            if (
-                delayedNextTossRoutine !=
-                null
-            )
-            {
-                StopCoroutine(
-                    delayedNextTossRoutine
-                );
-            }
-
-            delayedNextTossRoutine =
-                StartCoroutine(
-                    DelayedNextTossRoutine()
-                );
+            return;
         }
+
+        knownPlacedCount =
+            currentCount;
+
+        waitingForPlacedIngredient =
+            false;
+
+        if (
+            dispensesRemaining <=
+            0
+        )
+        {
+            catMascotView
+                ?.SetSleeping();
+
+            return;
+        }
+
+        if (
+            delayedNextTossRoutine !=
+            null
+        )
+        {
+            StopCoroutine(
+                delayedNextTossRoutine
+            );
+        }
+
+        delayedNextTossRoutine =
+            StartCoroutine(
+                DelayedNextTossRoutine()
+            );
     }
 
     public void BeginRound()
     {
         ClearChoicesImmediate();
+
+        if (
+            delayedNextTossRoutine !=
+            null
+        )
+        {
+            StopCoroutine(
+                delayedNextTossRoutine
+            );
+
+            delayedNextTossRoutine =
+                null;
+        }
+
+        dispensesRemaining =
+            Mathf.Max(
+                1,
+                dispensesPerRound
+            );
+
+        NotifyDispensesChanged();
+
+        catMascotView
+            ?.SetIdle();
 
         if (ingredientContainer != null)
         {
@@ -159,6 +218,9 @@ public class CatTossDraftController : MonoBehaviour
         waitingForPlacedIngredient =
             false;
 
+        tossInProgress =
+            false;
+
         if (
             draftManager != null &&
             draftManager
@@ -166,7 +228,8 @@ public class CatTossDraftController : MonoBehaviour
                 .Count == 0
         )
         {
-            draftManager.RefreshChoices();
+            draftManager
+                .RefreshChoices();
         }
 
         ShowNextToss();
@@ -184,6 +247,17 @@ public class CatTossDraftController : MonoBehaviour
     {
         if (tossInProgress)
         {
+            return;
+        }
+
+        if (
+            dispensesRemaining <=
+            0
+        )
+        {
+            catMascotView
+                ?.SetSleeping();
+
             return;
         }
 
@@ -206,6 +280,20 @@ public class CatTossDraftController : MonoBehaviour
                 new WaitForSecondsRealtime(
                     tossStartDelay
                 );
+        }
+
+        if (
+            dispensesRemaining <=
+            0
+        )
+        {
+            tossInProgress =
+                false;
+
+            catMascotView
+                ?.SetSleeping();
+
+            yield break;
         }
 
         List<IngredientDefinition> offers =
@@ -236,6 +324,10 @@ public class CatTossDraftController : MonoBehaviour
 
             yield break;
         }
+
+        dispensesRemaining--;
+
+        NotifyDispensesChanged();
 
         if (catMascotView != null)
         {
@@ -334,11 +426,10 @@ public class CatTossDraftController : MonoBehaviour
             return;
         }
 
-        // This is the real method in
-        // your IngredientDraftManager.
-        draftManager.SelectIngredient(
-            chosen.Definition
-        );
+        draftManager
+            .SelectIngredient(
+                chosen.Definition
+            );
 
         waitingForPlacedIngredient =
             true;
@@ -382,13 +473,18 @@ public class CatTossDraftController : MonoBehaviour
                 );
         }
 
-        // IngredientDropper already calls
-        // IngredientWasDropped(), which
-        // refreshes CurrentChoices.
-        ShowNextToss();
-
         delayedNextTossRoutine =
             null;
+
+        ShowNextToss();
+    }
+
+    private void NotifyDispensesChanged()
+    {
+        DispensesChanged?.Invoke(
+            dispensesRemaining,
+            dispensesPerRound
+        );
     }
 
     private List<IngredientDefinition>
@@ -426,7 +522,10 @@ public class CatTossDraftController : MonoBehaviour
             i++
         )
         {
-            if (activeChoices[i] != null)
+            if (
+                activeChoices[i] !=
+                null
+            )
             {
                 Destroy(
                     activeChoices[i]
@@ -449,7 +548,8 @@ public class CatTossDraftController : MonoBehaviour
         }
 
         return
-            definition.ingredientName;
+            definition
+                .ingredientName;
     }
 
     private Sprite GetIngredientSprite(
@@ -478,7 +578,10 @@ public class CatTossDraftController : MonoBehaviour
                     SpriteRenderer
                 >();
 
-        if (spriteRenderer != null)
+        if (
+            spriteRenderer !=
+            null
+        )
         {
             return
                 spriteRenderer.sprite;
