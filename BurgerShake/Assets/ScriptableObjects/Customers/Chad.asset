@@ -17,7 +17,7 @@ MonoBehaviour:
   portrait: {fileID: 2458917243557503670, guid: 69b377a561816b54a842b769420e71e8, type: 3}
   visualOffset: {x: 0, y: 0}
   visualScale: 1
-  baseGoalScore: 50
+  baseGoalScore: 12
   baseRewardCoins: 5
   restrictions: []
   preferences: []

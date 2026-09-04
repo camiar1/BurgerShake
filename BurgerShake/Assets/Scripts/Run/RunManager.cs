@@ -23,18 +23,31 @@ public class RunManager : MonoBehaviour
     [SerializeField]
     private RunProgress progress;
 
+    [Header("Starting Pantry")]
+    [Tooltip(
+        "Used when Auto Start Run is enabled. " +
+        "Later the pantry selection screen will pass " +
+        "a pantry directly instead."
+    )]
+    [SerializeField]
+    private StartingPantryDefinition
+        defaultStartingPantry;
+
     [SerializeField]
     private bool autoStartRun = true;
 
     [Header("Gameplay")]
     [SerializeField]
-    private IngredientDraftManager draftManager;
+    private IngredientDraftManager
+        draftManager;
 
     [SerializeField]
-    private CustomerChallengeController challengeController;
+    private CustomerChallengeController
+        challengeController;
 
     [SerializeField]
-    private ScoreRevealController scoreRevealController;
+    private ScoreRevealController
+        scoreRevealController;
 
     [Header("Views")]
     [SerializeField]
@@ -81,6 +94,13 @@ public class RunManager : MonoBehaviour
         private set;
     }
 
+    public StartingPantryDefinition
+        SelectedStartingPantry
+    {
+        get;
+        private set;
+    }
+
     public event Action<RunState>
         StateChanged;
 
@@ -101,6 +121,14 @@ public class RunManager : MonoBehaviour
 
     private void Awake()
     {
+        if (progress == null)
+        {
+            progress =
+                FindFirstObjectByType<
+                    RunProgress
+                >();
+        }
+
         if (viewController == null)
         {
             viewController =
@@ -214,6 +242,16 @@ public class RunManager : MonoBehaviour
 
     public void StartRun()
     {
+        StartRun(
+            defaultStartingPantry
+        );
+    }
+
+    public void StartRun(
+        StartingPantryDefinition
+            startingPantry
+    )
+    {
         if (RunStarted)
         {
             return;
@@ -237,17 +275,24 @@ public class RunManager : MonoBehaviour
             return;
         }
 
+        if (startingPantry == null)
+        {
+            Debug.LogError(
+                "RunManager has no Starting Pantry."
+            );
+
+            return;
+        }
+
         if (
-            runDefinition
-                .startingIngredients ==
+            startingPantry.ingredients ==
                 null ||
-            runDefinition
-                .startingIngredients
-                .Count == 0
+            startingPantry.ingredients.Count ==
+                0
         )
         {
             Debug.LogError(
-                "The RunDefinition has no starting ingredients."
+                "The selected Starting Pantry has no ingredients."
             );
 
             return;
@@ -267,15 +312,15 @@ public class RunManager : MonoBehaviour
             return;
         }
 
+        SelectedStartingPantry =
+            startingPantry;
+
         RunStarted =
             true;
 
         progress.BeginRun(
-            runDefinition
-        );
-
-        draftManager?.SetIngredientPool(
-            progress.Ingredients
+            runDefinition,
+            startingPantry
         );
 
         StartCurrentDay();
@@ -469,14 +514,11 @@ public class RunManager : MonoBehaviour
             return;
         }
 
-        draftManager?.SetIngredientPool(
-            progress.Ingredients
-        );
-
         StartCurrentDay();
     }
 
-    private IEnumerator FinishCustomerRoutine()
+    private IEnumerator
+        FinishCustomerRoutine()
     {
         SetState(
             RunState.ScoreReveal
@@ -609,6 +651,9 @@ public class RunManager : MonoBehaviour
         SetState(
             RunState.Assembly
         );
+
+        draftManager
+            ?.BeginRoundDraftCycle();
 
         challengeController
             ?.BeginChallenge(

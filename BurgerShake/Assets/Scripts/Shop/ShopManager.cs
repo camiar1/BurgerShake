@@ -4,49 +4,78 @@ using UnityEngine;
 public class ShopManager : MonoBehaviour
 {
     [Header("Run")]
-    [SerializeField] private RunProgress progress;
-    [SerializeField] private IngredientDraftManager draftManager;
+    [SerializeField]
+    private RunProgress progress;
 
     [Header("Ingredient Crates")]
     [SerializeField]
-    private List<IngredientDefinition> allIngredients =
-        new List<IngredientDefinition>();
+    private List<IngredientDefinition>
+        allIngredients =
+            new List<
+                IngredientDefinition
+            >();
 
     [SerializeField]
-    private int ingredientCrateCost = 5;
+    private int ingredientCrateCost =
+        5;
 
     [SerializeField]
-    private int ingredientChoicesPerCrate = 3;
+    private int ingredientChoicesPerCrate =
+        3;
 
-    [Header("Upgrades")]
+    [Header("Helpers")]
     [SerializeField]
-    private List<RunUpgradeDefinition> availableUpgrades =
-        new List<RunUpgradeDefinition>();
+    private List<RunUpgradeDefinition>
+        availableUpgrades =
+            new List<
+                RunUpgradeDefinition
+            >();
 
     [SerializeField]
-    private int upgradeChoicesPerShop = 3;
+    private int upgradeChoicesPerShop =
+        3;
 
-    private readonly List<IngredientDefinition>
-        currentIngredientChoices =
-            new List<IngredientDefinition>();
+    private readonly List<
+        IngredientDefinition
+    > currentIngredientChoices =
+        new List<
+            IngredientDefinition
+        >();
 
-    private readonly List<RunUpgradeDefinition>
-        currentUpgradeChoices =
-            new List<RunUpgradeDefinition>();
+    private readonly List<
+        RunUpgradeDefinition
+    > currentUpgradeChoices =
+        new List<
+            RunUpgradeDefinition
+        >();
 
-    public IReadOnlyList<IngredientDefinition>
-        CurrentIngredientChoices =>
-            currentIngredientChoices;
+    public IReadOnlyList<
+        IngredientDefinition
+    > CurrentIngredientChoices =>
+        currentIngredientChoices;
 
-    public IReadOnlyList<RunUpgradeDefinition>
-        CurrentUpgradeChoices =>
-            currentUpgradeChoices;
+    public IReadOnlyList<
+        RunUpgradeDefinition
+    > CurrentUpgradeChoices =>
+        currentUpgradeChoices;
 
     public int IngredientCrateCost =>
         ingredientCrateCost;
 
     public bool HasOpenIngredientCrate =>
-        currentIngredientChoices.Count > 0;
+        currentIngredientChoices.Count >
+        0;
+
+    private void Awake()
+    {
+        if (progress == null)
+        {
+            progress =
+                FindFirstObjectByType<
+                    RunProgress
+                >();
+        }
+    }
 
     public void BeginShop()
     {
@@ -67,12 +96,17 @@ public class ShopManager : MonoBehaviour
             return false;
         }
 
-        if (progress.Coins < ingredientCrateCost)
+        if (
+            progress.Coins <
+            ingredientCrateCost
+        )
         {
             return false;
         }
 
-        return GetIngredientCandidates().Count > 0;
+        return
+            GetIngredientCandidates()
+                .Count > 0;
     }
 
     public bool OpenIngredientCrate()
@@ -87,8 +121,9 @@ public class ShopManager : MonoBehaviour
             return false;
         }
 
-        List<IngredientDefinition> candidates =
-            GetIngredientCandidates();
+        List<IngredientDefinition>
+            candidates =
+                GetIngredientCandidates();
 
         if (candidates.Count == 0)
         {
@@ -112,7 +147,11 @@ public class ShopManager : MonoBehaviour
                 candidates.Count
             );
 
-        for (int i = 0; i < count; i++)
+        for (
+            int i = 0;
+            i < count;
+            i++
+        )
         {
             int index =
                 Random.Range(
@@ -127,11 +166,14 @@ public class ShopManager : MonoBehaviour
                 chosen
             );
 
-            candidates.RemoveAt(index);
+            candidates.RemoveAt(
+                index
+            );
         }
 
         return
-            currentIngredientChoices.Count > 0;
+            currentIngredientChoices
+                .Count > 0;
     }
 
     public bool ChooseIngredient(
@@ -141,20 +183,18 @@ public class ShopManager : MonoBehaviour
         if (
             progress == null ||
             ingredient == null ||
-            !currentIngredientChoices.Contains(
-                ingredient
-            )
+            !currentIngredientChoices
+                .Contains(
+                    ingredient
+                )
         )
         {
             return false;
         }
 
-        progress.AddIngredient(
-            ingredient
-        );
-
-        draftManager?.AddIngredientToPool(
-            ingredient
+        progress.AddIngredientCopies(
+            ingredient,
+            1
         );
 
         currentIngredientChoices.Clear();
@@ -169,17 +209,17 @@ public class ShopManager : MonoBehaviour
         if (
             progress == null ||
             upgrade == null ||
-            !currentUpgradeChoices.Contains(
-                upgrade
-            )
+            !currentUpgradeChoices
+                .Contains(
+                    upgrade
+                )
         )
         {
             return false;
         }
 
         if (
-            ContainsUpgrade(
-                progress.Upgrades,
+            progress.HasUpgrade(
                 upgrade
             )
         )
@@ -211,8 +251,11 @@ public class ShopManager : MonoBehaviour
     {
         currentUpgradeChoices.Clear();
 
-        List<RunUpgradeDefinition> candidates =
-            new List<RunUpgradeDefinition>();
+        List<RunUpgradeDefinition>
+            candidates =
+                new List<
+                    RunUpgradeDefinition
+                >();
 
         foreach (
             RunUpgradeDefinition upgrade
@@ -220,20 +263,19 @@ public class ShopManager : MonoBehaviour
         )
         {
             if (
-                upgrade != null &&
-                (
-                    progress == null ||
-                    !ContainsUpgrade(
-                        progress.Upgrades,
-                        upgrade
-                    )
+                upgrade == null ||
+                progress == null ||
+                progress.HasUpgrade(
+                    upgrade
                 )
             )
             {
-                candidates.Add(
-                    upgrade
-                );
+                continue;
             }
+
+            candidates.Add(
+                upgrade
+            );
         }
 
         int count =
@@ -242,7 +284,11 @@ public class ShopManager : MonoBehaviour
                 candidates.Count
             );
 
-        for (int i = 0; i < count; i++)
+        for (
+            int i = 0;
+            i < count;
+            i++
+        )
         {
             int index =
                 Random.Range(
@@ -257,30 +303,29 @@ public class ShopManager : MonoBehaviour
                 chosen
             );
 
-            candidates.RemoveAt(index);
+            candidates.RemoveAt(
+                index
+            );
         }
     }
 
     private List<IngredientDefinition>
         GetIngredientCandidates()
     {
-        List<IngredientDefinition> candidates =
-            new List<IngredientDefinition>();
+        List<IngredientDefinition>
+            candidates =
+                new List<
+                    IngredientDefinition
+                >();
 
         foreach (
             IngredientDefinition ingredient
             in allIngredients
         )
         {
-            if (ingredient == null)
-            {
-                continue;
-            }
-
             if (
-                progress != null &&
-                ContainsIngredient(
-                    progress.Ingredients,
+                ingredient == null ||
+                candidates.Contains(
                     ingredient
                 )
             )
@@ -294,37 +339,5 @@ public class ShopManager : MonoBehaviour
         }
 
         return candidates;
-    }
-
-    private bool ContainsIngredient(
-        IReadOnlyList<IngredientDefinition> list,
-        IngredientDefinition value
-    )
-    {
-        for (int i = 0; i < list.Count; i++)
-        {
-            if (list[i] == value)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private bool ContainsUpgrade(
-        IReadOnlyList<RunUpgradeDefinition> list,
-        RunUpgradeDefinition value
-    )
-    {
-        for (int i = 0; i < list.Count; i++)
-        {
-            if (list[i] == value)
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

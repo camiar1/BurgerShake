@@ -15,7 +15,9 @@ MonoBehaviour:
   customerName: Gregg
   description: 
   portrait: {fileID: 4884028340168989115, guid: 7416abd1a40b13e42878e67f1601ec32, type: 3}
-  baseGoalScore: 50
+  visualOffset: {x: 0, y: 0}
+  visualScale: 1
+  baseGoalScore: 12
   baseRewardCoins: 5
   restrictions: []
   preferences: []

@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56220a5e1287f1340aacabe2dd0d04e0, type: 3}
   m_Name: Egg
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
-  ingredientName: Burger Patty
+  ingredientName: Egg
   description: 
   sprite: {fileID: 0}
   prefab: {fileID: 9051470400439627296, guid: 1ea5843d4e4e39b4e89ffb4d911a3246, type: 3}
   draftWeight: 1
+  copiesPerCycle: 3
   scoringRules:
   - {fileID: 11400000, guid: 4ae4fb14b51f05647927efefd6b32bae, type: 2}
   tags: 000000000a000000

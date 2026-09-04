@@ -14,6 +14,10 @@ public class CatMascotView : MonoBehaviour
     [SerializeField]
     private Image sleepImage;
 
+    [Header("Idle Squish")]
+    [SerializeField]
+    private RectTransform idleSquishRoot;
+
     [Header("Jump Transform")]
     [SerializeField]
     private RectTransform jumpRect;
@@ -44,15 +48,15 @@ public class CatMascotView : MonoBehaviour
     [SerializeField]
     private Vector2 squishScale =
         new Vector2(
-            1.18f,
+            1.12f,
             0.82f
         );
 
     [SerializeField]
     private Vector2 reboundScale =
         new Vector2(
-            0.94f,
-            1.08f
+            0.97f,
+            1.06f
         );
 
     [SerializeField]
@@ -74,10 +78,8 @@ public class CatMascotView : MonoBehaviour
     private Coroutine jumpRoutine;
     private Coroutine sleepRoutine;
 
-    private RectTransform idleRect;
-
     private Vector2 jumpRestPosition;
-    private Vector3 idleRestScale;
+    private Vector3 squishRootRestScale;
 
     public bool IsSleeping
     {
@@ -102,13 +104,20 @@ public class CatMascotView : MonoBehaviour
                 jumpRect.anchoredPosition;
         }
 
-        if (idleImage != null)
+        if (
+            idleSquishRoot == null &&
+            idleImage != null
+        )
         {
-            idleRect =
-                idleImage.rectTransform;
+            idleSquishRoot =
+                idleImage.rectTransform.parent
+                    as RectTransform;
+        }
 
-            idleRestScale =
-                idleRect.localScale;
+        if (idleSquishRoot != null)
+        {
+            squishRootRestScale =
+                idleSquishRoot.localScale;
         }
 
         SetIdle();
@@ -160,7 +169,7 @@ public class CatMascotView : MonoBehaviour
             false;
 
         ResetJumpPosition();
-        ResetIdleScale();
+        ResetSquishScale();
 
         if (jumpImage != null)
         {
@@ -229,7 +238,7 @@ public class CatMascotView : MonoBehaviour
             );
         }
 
-        ResetIdleScale();
+        ResetSquishScale();
 
         if (sleepImage != null)
         {
@@ -246,7 +255,7 @@ public class CatMascotView : MonoBehaviour
     private IEnumerator SleepRoutine()
     {
         ResetJumpPosition();
-        ResetIdleScale();
+        ResetSquishScale();
 
         if (jumpImage != null)
         {
@@ -266,45 +275,45 @@ public class CatMascotView : MonoBehaviour
                 .SetActive(true);
         }
 
-        if (idleRect != null)
+        if (idleSquishRoot != null)
         {
             Vector3 squished =
                 new Vector3(
-                    idleRestScale.x *
+                    squishRootRestScale.x *
                     squishScale.x,
 
-                    idleRestScale.y *
+                    squishRootRestScale.y *
                     squishScale.y,
 
-                    idleRestScale.z
+                    squishRootRestScale.z
                 );
 
             Vector3 rebound =
                 new Vector3(
-                    idleRestScale.x *
+                    squishRootRestScale.x *
                     reboundScale.x,
 
-                    idleRestScale.y *
+                    squishRootRestScale.y *
                     reboundScale.y,
 
-                    idleRestScale.z
+                    squishRootRestScale.z
                 );
 
-            yield return ScaleIdle(
-                idleRestScale,
+            yield return ScaleSquishRoot(
+                squishRootRestScale,
                 squished,
                 squishInDuration
             );
 
-            yield return ScaleIdle(
+            yield return ScaleSquishRoot(
                 squished,
                 rebound,
                 reboundDuration
             );
 
-            yield return ScaleIdle(
+            yield return ScaleSquishRoot(
                 rebound,
-                idleRestScale,
+                squishRootRestScale,
                 settleDuration
             );
         }
@@ -339,20 +348,20 @@ public class CatMascotView : MonoBehaviour
             null;
     }
 
-    private IEnumerator ScaleIdle(
+    private IEnumerator ScaleSquishRoot(
         Vector3 start,
         Vector3 end,
         float duration
     )
     {
-        if (idleRect == null)
+        if (idleSquishRoot == null)
         {
             yield break;
         }
 
         if (duration <= 0f)
         {
-            idleRect.localScale =
+            idleSquishRoot.localScale =
                 end;
 
             yield break;
@@ -381,7 +390,7 @@ public class CatMascotView : MonoBehaviour
                     t
                 );
 
-            idleRect.localScale =
+            idleSquishRoot.localScale =
                 Vector3.LerpUnclamped(
                     start,
                     end,
@@ -391,7 +400,7 @@ public class CatMascotView : MonoBehaviour
             yield return null;
         }
 
-        idleRect.localScale =
+        idleSquishRoot.localScale =
             end;
     }
 
@@ -402,6 +411,9 @@ public class CatMascotView : MonoBehaviour
             jumpRect == null
         )
         {
+            jumpRoutine =
+                null;
+
             yield break;
         }
 
@@ -512,12 +524,12 @@ public class CatMascotView : MonoBehaviour
         }
     }
 
-    private void ResetIdleScale()
+    private void ResetSquishScale()
     {
-        if (idleRect != null)
+        if (idleSquishRoot != null)
         {
-            idleRect.localScale =
-                idleRestScale;
+            idleSquishRoot.localScale =
+                squishRootRestScale;
         }
     }
 }

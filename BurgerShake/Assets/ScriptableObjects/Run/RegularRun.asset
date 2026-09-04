@@ -16,9 +16,6 @@ MonoBehaviour:
   startingIngredients:
   - {fileID: 11400000, guid: d6a224a0fa58db34c8f40676519d608b, type: 2}
   - {fileID: 11400000, guid: d780b1a3b60acff4aacbdcc7b1df3fe9, type: 2}
-  - {fileID: 11400000, guid: 3830bae78c103b7429436d7446075da0, type: 2}
-  - {fileID: 11400000, guid: fa283ccee0c73304a93a70d4de002711, type: 2}
-  - {fileID: 11400000, guid: e872694ae712a6248be21368becb1303, type: 2}
   customers:
   - {fileID: 11400000, guid: 36b240fd6087f3a4c89533d80df971e7, type: 2}
   - {fileID: 11400000, guid: a7b2ae837dd6e944f83d225bbc321076, type: 2}
@@ -27,24 +24,24 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0.11111111
-      tangentMode: 0
+      time: 0
+      value: 0
+      inSlope: 0.64596844
+      outSlope: 0.64596844
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
     - serializedVersion: 3
-      time: 10
-      value: 2
-      inSlope: 0.11111111
-      outSlope: 0
-      tangentMode: 0
+      time: 3.4012575
+      value: 2.197105
+      inSlope: 0.64596844
+      outSlope: 0.64596844
+      tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
-    m_PostInfinity: 2
+    m_PostInfinity: 0
     m_RotationOrder: 4
   startingCoins: 0

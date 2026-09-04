@@ -76,7 +76,8 @@ public class IngredientDropper : MonoBehaviour
         IngredientDraftManager manager
     )
     {
-        draftManager = manager;
+        draftManager =
+            manager;
     }
 
     private void Awake()
@@ -122,8 +123,11 @@ public class IngredientDropper : MonoBehaviour
 
         DestroyPreview();
 
+        // IMPORTANT:
+        // Resetting a challenge must not draw
+        // any pantry copies.
         draftManager
-            ?.RefreshChoices();
+            ?.ClearCurrentChoices();
     }
 
     public void SetIngredient(
@@ -158,9 +162,7 @@ public class IngredientDropper : MonoBehaviour
             return;
         }
 
-        if (
-            !CanAcceptGameplayInput()
-        )
+        if (!CanAcceptGameplayInput())
         {
             HidePreview();
             return;
@@ -557,6 +559,8 @@ public class IngredientDropper : MonoBehaviour
 
         DestroyPreview();
 
+        // This only clears the already-shown hand.
+        // It does NOT generate the next hand.
         draftManager
             ?.IngredientWasDropped();
     }

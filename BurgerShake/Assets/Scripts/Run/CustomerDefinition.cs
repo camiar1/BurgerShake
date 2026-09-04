@@ -14,7 +14,7 @@ public class CustomerDefinition : ScriptableObject
     [Min(0.01f)] public float visualScale = 1f;
 
     [Header("Challenge")]
-    [Min(1)] public int baseGoalScore = 100;
+    [Min(1)] public int baseGoalScore = 12;
     [Min(0)] public int baseRewardCoins = 5;
 
     [Header("Restrictions")]

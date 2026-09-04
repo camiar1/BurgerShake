@@ -92,8 +92,7 @@ public class CatTossDraftController : MonoBehaviour
 
     private int dispensesRemaining;
 
-    private Coroutine
-        delayedNextTossRoutine;
+    private Coroutine delayedNextTossRoutine;
 
     public int DispensesRemaining =>
         dispensesRemaining;
@@ -221,17 +220,9 @@ public class CatTossDraftController : MonoBehaviour
         tossInProgress =
             false;
 
-        if (
-            draftManager != null &&
-            draftManager
-                .CurrentChoices
-                .Count == 0
-        )
-        {
-            draftManager
-                .RefreshChoices();
-        }
-
+        // DO NOT draw here.
+        // The actual visible toss below
+        // will perform the draw.
         ShowNextToss();
     }
 
@@ -296,23 +287,42 @@ public class CatTossDraftController : MonoBehaviour
             yield break;
         }
 
-        List<IngredientDefinition> offers =
-            GetCurrentOffers();
+        if (draftManager == null)
+        {
+            Debug.LogError(
+                "CatTossDraftController has no IngredientDraftManager."
+            );
+
+            tossInProgress =
+                false;
+
+            yield break;
+        }
 
         if (
-            offers == null ||
-            offers.Count == 0
+            choicePrefab == null ||
+            throwOrigin == null ||
+            choiceSlots == null ||
+            choiceSlots.Length == 0
         )
         {
-            if (draftManager != null)
-            {
-                draftManager
-                    .RefreshChoices();
+            Debug.LogError(
+                "CatTossDraftController is missing its toss UI references."
+            );
 
-                offers =
-                    GetCurrentOffers();
-            }
+            tossInProgress =
+                false;
+
+            yield break;
         }
+
+        // THIS is the only point where a new
+        // visible hand is drawn from the pantry.
+        draftManager
+            .RefreshChoices();
+
+        List<IngredientDefinition> offers =
+            GetCurrentOffers();
 
         if (
             offers == null ||
@@ -322,6 +332,10 @@ public class CatTossDraftController : MonoBehaviour
             tossInProgress =
                 false;
 
+            Debug.LogWarning(
+                "The cat could not draw any ingredients from the pantry."
+            );
+
             yield break;
         }
 
@@ -329,11 +343,8 @@ public class CatTossDraftController : MonoBehaviour
 
         NotifyDispensesChanged();
 
-        if (catMascotView != null)
-        {
-            catMascotView
-                .PlayThrowPose();
-        }
+        catMascotView
+            ?.PlayThrowPose();
 
         int choiceCount =
             Mathf.Min(
@@ -350,11 +361,7 @@ public class CatTossDraftController : MonoBehaviour
             RectTransform slot =
                 choiceSlots[i];
 
-            if (
-                slot == null ||
-                choicePrefab == null ||
-                throwOrigin == null
-            )
+            if (slot == null)
             {
                 continue;
             }
@@ -578,10 +585,7 @@ public class CatTossDraftController : MonoBehaviour
                     SpriteRenderer
                 >();
 
-        if (
-            spriteRenderer !=
-            null
-        )
+        if (spriteRenderer != null)
         {
             return
                 spriteRenderer.sprite;
