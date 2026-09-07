@@ -8,10 +8,20 @@ public class ShopIngredientOfferButton :
     MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField] private Image icon;
-    [SerializeField] private TMP_Text nameText;
-    [SerializeField] private TMP_Text descriptionText;
-    [SerializeField] private Button chooseButton;
+    [SerializeField]
+    private Image icon;
+
+    [SerializeField]
+    private TMP_Text nameText;
+
+    [SerializeField]
+    private TMP_Text copiesText;
+
+    [SerializeField]
+    private TMP_Text descriptionText;
+
+    [SerializeField]
+    private Button chooseButton;
 
     private IngredientDefinition ingredient;
 
@@ -40,6 +50,8 @@ public class ShopIngredientOfferButton :
 
     public void Setup(
         IngredientDefinition newIngredient,
+        int ownedCopies,
+        int copiesGranted,
         Action<IngredientDefinition> onChoose
     )
     {
@@ -60,17 +72,35 @@ public class ShopIngredientOfferButton :
                 ingredient.sprite;
 
             icon.enabled =
-                ingredient.sprite != null;
+                ingredient.sprite !=
+                null;
 
-            icon.preserveAspect = true;
+            icon.preserveAspect =
+                true;
 
-            icon.raycastTarget = false;
+            icon.raycastTarget =
+                false;
         }
 
         if (nameText != null)
         {
             nameText.text =
-                ingredient.ingredientName;
+                ingredient
+                    .ingredientName;
+        }
+
+        if (copiesText != null)
+        {
+            if (ownedCopies > 0)
+            {
+                copiesText.text =
+                    $"Owned ×{ownedCopies} → ×{ownedCopies + copiesGranted}";
+            }
+            else
+            {
+                copiesText.text =
+                    $"NEW → ×{copiesGranted}";
+            }
         }
 
         if (descriptionText != null)

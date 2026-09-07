@@ -12,10 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bf4549267c8e2643a5cb1b90da856fa, type: 3}
   m_Name: RegularRun
   m_EditorClassIdentifier: Assembly-CSharp::RunDefinition
-  startingIngredientCount: 10
-  startingIngredients:
-  - {fileID: 11400000, guid: d6a224a0fa58db34c8f40676519d608b, type: 2}
-  - {fileID: 11400000, guid: d780b1a3b60acff4aacbdcc7b1df3fe9, type: 2}
   customers:
   - {fileID: 11400000, guid: 36b240fd6087f3a4c89533d80df971e7, type: 2}
   - {fileID: 11400000, guid: a7b2ae837dd6e944f83d225bbc321076, type: 2}

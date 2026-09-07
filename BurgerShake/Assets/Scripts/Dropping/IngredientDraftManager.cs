@@ -14,6 +14,15 @@ public class IngredientDraftManager :
     private int defaultChoiceCount =
         3;
 
+    [Tooltip(
+        "Maximum copies of the same ingredient allowed " +
+        "in one hand when another ingredient is available."
+    )]
+    [SerializeField]
+    [Min(1)]
+    private int maxSameIngredientPerHand =
+        2;
+
     [Header("Legacy Button UI")]
     [Tooltip(
         "Optional. Leave this empty when using the cat toss system."
@@ -132,7 +141,7 @@ public class IngredientDraftManager :
             }
 
             int index =
-                RollWeightedBagIndex();
+                RollWeightedBagIndexForHand();
 
             if (
                 index < 0 ||
@@ -289,15 +298,15 @@ public class IngredientDraftManager :
             drawBag.Count > 0;
     }
 
-    private int RollWeightedBagIndex()
+    private int RollWeightedBagIndexForHand()
     {
         if (drawBag.Count == 0)
         {
             return -1;
         }
 
-        float totalWeight =
-            0f;
+        List<int> eligibleIndices =
+            new List<int>();
 
         for (
             int i = 0;
@@ -307,6 +316,77 @@ public class IngredientDraftManager :
         {
             IngredientDefinition ingredient =
                 drawBag[i];
+
+            if (ingredient == null)
+            {
+                continue;
+            }
+
+            int alreadyInHand =
+                CountIngredientInCurrentChoices(
+                    ingredient
+                );
+
+            if (
+                alreadyInHand <
+                maxSameIngredientPerHand
+            )
+            {
+                eligibleIndices.Add(
+                    i
+                );
+            }
+        }
+
+        // If every remaining ingredient would
+        // exceed the limit, allow it rather than
+        // creating a dead end.
+        if (eligibleIndices.Count == 0)
+        {
+            for (
+                int i = 0;
+                i < drawBag.Count;
+                i++
+            )
+            {
+                if (drawBag[i] != null)
+                {
+                    eligibleIndices.Add(
+                        i
+                    );
+                }
+            }
+        }
+
+        return
+            RollWeightedIndexFromCandidates(
+                eligibleIndices
+            );
+    }
+
+    private int
+        RollWeightedIndexFromCandidates(
+            List<int> candidateIndices
+        )
+    {
+        if (
+            candidateIndices == null ||
+            candidateIndices.Count == 0
+        )
+        {
+            return -1;
+        }
+
+        float totalWeight =
+            0f;
+
+        foreach (
+            int index
+            in candidateIndices
+        )
+        {
+            IngredientDefinition ingredient =
+                drawBag[index];
 
             if (ingredient == null)
             {
@@ -323,11 +403,16 @@ public class IngredientDraftManager :
 
         if (totalWeight <= 0f)
         {
-            return
+            int randomCandidate =
                 Random.Range(
                     0,
-                    drawBag.Count
+                    candidateIndices.Count
                 );
+
+            return
+                candidateIndices[
+                    randomCandidate
+                ];
         }
 
         float roll =
@@ -336,14 +421,13 @@ public class IngredientDraftManager :
                 totalWeight
             );
 
-        for (
-            int i = 0;
-            i < drawBag.Count;
-            i++
+        foreach (
+            int index
+            in candidateIndices
         )
         {
             IngredientDefinition ingredient =
-                drawBag[i];
+                drawBag[index];
 
             if (ingredient == null)
             {
@@ -359,12 +443,40 @@ public class IngredientDraftManager :
 
             if (roll <= 0f)
             {
-                return i;
+                return index;
             }
         }
 
         return
-            drawBag.Count - 1;
+            candidateIndices[
+                candidateIndices.Count - 1
+            ];
+    }
+
+    private int CountIngredientInCurrentChoices(
+        IngredientDefinition ingredient
+    )
+    {
+        if (ingredient == null)
+        {
+            return 0;
+        }
+
+        int count =
+            0;
+
+        foreach (
+            IngredientDefinition choice
+            in currentChoices
+        )
+        {
+            if (choice == ingredient)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private void UpdateLegacyButtons()
