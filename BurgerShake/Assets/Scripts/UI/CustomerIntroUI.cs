@@ -5,18 +5,26 @@ using UnityEngine.UI;
 public class CustomerIntroUI : MonoBehaviour
 {
     [Header("Run")]
-    [SerializeField] private RunManager runManager;
+    [SerializeField]
+    private RunManager runManager;
 
     [Header("Content")]
-    [SerializeField] private GameObject introContent;
+    [SerializeField]
+    private GameObject introContent;
 
     [Header("Text")]
-    [SerializeField] private TMP_Text customerNameText;
-    [SerializeField] private TMP_Text dialogueText;
-    [SerializeField] private TMP_Text goalText;
+    [SerializeField]
+    private TMP_Text customerNameText;
+
+    [SerializeField]
+    private TMP_Text dialogueText;
+
+    [SerializeField]
+    private TMP_Text goalText;
 
     [Header("Controls")]
-    [SerializeField] private Button readyButton;
+    [SerializeField]
+    private Button readyButton;
 
     [Header("Fallback Dialogue")]
     [TextArea]
@@ -29,7 +37,9 @@ public class CustomerIntroUI : MonoBehaviour
         if (runManager == null)
         {
             runManager =
-                FindFirstObjectByType<RunManager>();
+                FindFirstObjectByType<
+                    RunManager
+                >();
         }
     }
 
@@ -73,7 +83,13 @@ public class CustomerIntroUI : MonoBehaviour
 
     private void Start()
     {
-        SetContentVisible(false);
+        // Keep the intro panel visible while
+        // waiting for the customer to arrive.
+        SetContentVisible(
+            true
+        );
+
+        PrepareForCustomer();
 
         if (
             runManager != null &&
@@ -82,10 +98,12 @@ public class CustomerIntroUI : MonoBehaviour
                 RunState.CustomerIntro
         )
         {
-            ShowCustomer(
-                runManager.CurrentCustomer,
-                runManager.CurrentGoalScore
-            );
+            // Only populate immediately if the
+            // actual customer intro has already
+            // started before this UI initialized.
+            //
+            // Otherwise CustomerIntroStarted will
+            // populate it normally.
         }
     }
 
@@ -99,7 +117,9 @@ public class CustomerIntroUI : MonoBehaviour
             return;
         }
 
-        SetContentVisible(true);
+        SetContentVisible(
+            true
+        );
 
         if (customerNameText != null)
         {
@@ -159,10 +179,51 @@ public class CustomerIntroUI : MonoBehaviour
     )
     {
         if (
-            state != RunState.CustomerIntro
+            state ==
+            RunState.CustomerIntro
         )
         {
-            SetContentVisible(false);
+            // Show the panel immediately, even
+            // before the customer finishes
+            // arriving.
+            SetContentVisible(
+                true
+            );
+
+            PrepareForCustomer();
+
+            return;
+        }
+
+        SetContentVisible(
+            false
+        );
+    }
+
+    private void PrepareForCustomer()
+    {
+        if (customerNameText != null)
+        {
+            customerNameText.text =
+                "";
+        }
+
+        if (dialogueText != null)
+        {
+            dialogueText.text =
+                "";
+        }
+
+        if (goalText != null)
+        {
+            goalText.text =
+                "";
+        }
+
+        if (readyButton != null)
+        {
+            readyButton.interactable =
+                false;
         }
     }
 

@@ -9,12 +9,37 @@ public class PolygonColliderScaler : MonoBehaviour
     [Header("Collider Size")]
 
     [Tooltip(
-        "1 = original collider size. " +
-        "Values below 1 shrink the collider toward its center."
+        "Overall collider scale. " +
+        "1 = original size."
     )]
-    [Range(0.5f, 1f)]
     [SerializeField]
-    private float colliderScale = 0.97f;
+    [Range(0.5f, 1.1f)]
+    private float overallScale = 0.97f;
+
+    [Tooltip(
+        "Additional horizontal scaling. " +
+        "1 = no additional horizontal change."
+    )]
+    [SerializeField]
+    [Range(0.5f, 1.1f)]
+    private float horizontalScale = 1f;
+
+    [Tooltip(
+        "Additional vertical scaling. " +
+        "1 = no additional vertical change."
+    )]
+    [SerializeField]
+    [Range(0.5f, 1.1f)]
+    private float verticalScale = 1f;
+
+    [Header("Collider Position")]
+
+    [Tooltip(
+        "Fine local-position adjustment for the collider shape."
+    )]
+    [SerializeField]
+    private Vector2 colliderOffset =
+        Vector2.zero;
 
     [Serializable]
     private class ColliderPath
@@ -50,11 +75,25 @@ public class PolygonColliderScaler : MonoBehaviour
 
     private void OnValidate()
     {
-        colliderScale =
+        overallScale =
             Mathf.Clamp(
-                colliderScale,
+                overallScale,
                 0.5f,
-                1f
+                1.1f
+            );
+
+        horizontalScale =
+            Mathf.Clamp(
+                horizontalScale,
+                0.5f,
+                1.1f
+            );
+
+        verticalScale =
+            Mathf.Clamp(
+                verticalScale,
+                0.5f,
+                1.1f
             );
 
         GetCollider();
@@ -77,11 +116,15 @@ public class PolygonColliderScaler : MonoBehaviour
         if (polygonCollider == null)
         {
             polygonCollider =
-                GetComponent<PolygonCollider2D>();
+                GetComponent<
+                    PolygonCollider2D
+                >();
         }
     }
 
-    [ContextMenu("Capture Current Shape As Original")]
+    [ContextMenu(
+        "Capture Current Shape As Original"
+    )]
     public void CaptureCurrentShapeAsOriginal()
     {
         GetCollider();
@@ -95,7 +138,8 @@ public class PolygonColliderScaler : MonoBehaviour
 
         for (
             int pathIndex = 0;
-            pathIndex < polygonCollider.pathCount;
+            pathIndex <
+                polygonCollider.pathCount;
             pathIndex++
         )
         {
@@ -129,7 +173,9 @@ public class PolygonColliderScaler : MonoBehaviour
         ApplyColliderScale();
     }
 
-    [ContextMenu("Apply Collider Scale")]
+    [ContextMenu(
+        "Apply Collider Scale"
+    )]
     public void ApplyColliderScale()
     {
         GetCollider();
@@ -148,12 +194,15 @@ public class PolygonColliderScaler : MonoBehaviour
 
         for (
             int pathIndex = 0;
-            pathIndex < originalPaths.Count;
+            pathIndex <
+                originalPaths.Count;
             pathIndex++
         )
         {
             Vector2[] originalPoints =
-                originalPaths[pathIndex].points;
+                originalPaths[
+                    pathIndex
+                ].points;
 
             if (
                 originalPoints == null ||
@@ -164,7 +213,7 @@ public class PolygonColliderScaler : MonoBehaviour
             }
 
             Vector2 center =
-                CalculateCenter(
+                CalculateBoundsCenter(
                     originalPoints
                 );
 
@@ -175,17 +224,31 @@ public class PolygonColliderScaler : MonoBehaviour
 
             for (
                 int pointIndex = 0;
-                pointIndex < originalPoints.Length;
+                pointIndex <
+                    originalPoints.Length;
                 pointIndex++
             )
             {
                 Vector2 direction =
-                    originalPoints[pointIndex] -
+                    originalPoints[
+                        pointIndex
+                    ] -
                     center;
 
-                scaledPoints[pointIndex] =
+                direction.x *=
+                    overallScale *
+                    horizontalScale;
+
+                direction.y *=
+                    overallScale *
+                    verticalScale;
+
+                scaledPoints[
+                    pointIndex
+                ] =
                     center +
-                    direction * colliderScale;
+                    direction +
+                    colliderOffset;
             }
 
             polygonCollider.SetPath(
@@ -195,7 +258,9 @@ public class PolygonColliderScaler : MonoBehaviour
         }
     }
 
-    [ContextMenu("Restore Original Collider")]
+    [ContextMenu(
+        "Restore Original Collider"
+    )]
     public void RestoreOriginalCollider()
     {
         GetCollider();
@@ -213,7 +278,8 @@ public class PolygonColliderScaler : MonoBehaviour
 
         for (
             int pathIndex = 0;
-            pathIndex < originalPaths.Count;
+            pathIndex <
+                originalPaths.Count;
             pathIndex++
         )
         {
@@ -225,16 +291,34 @@ public class PolygonColliderScaler : MonoBehaviour
             );
         }
 
-        colliderScale =
+        overallScale =
             1f;
+
+        horizontalScale =
+            1f;
+
+        verticalScale =
+            1f;
+
+        colliderOffset =
+            Vector2.zero;
     }
 
-    private Vector2 CalculateCenter(
+    private Vector2 CalculateBoundsCenter(
         Vector2[] points
     )
     {
-        Vector2 center =
-            Vector2.zero;
+        float minX =
+            float.PositiveInfinity;
+
+        float maxX =
+            float.NegativeInfinity;
+
+        float minY =
+            float.PositiveInfinity;
+
+        float maxY =
+            float.NegativeInfinity;
 
         for (
             int i = 0;
@@ -242,13 +326,46 @@ public class PolygonColliderScaler : MonoBehaviour
             i++
         )
         {
-            center +=
+            Vector2 point =
                 points[i];
+
+            minX =
+                Mathf.Min(
+                    minX,
+                    point.x
+                );
+
+            maxX =
+                Mathf.Max(
+                    maxX,
+                    point.x
+                );
+
+            minY =
+                Mathf.Min(
+                    minY,
+                    point.y
+                );
+
+            maxY =
+                Mathf.Max(
+                    maxY,
+                    point.y
+                );
         }
 
-        center /=
-            points.Length;
+        return new Vector2(
+            (
+                minX +
+                maxX
+            ) *
+            0.5f,
 
-        return center;
+            (
+                minY +
+                maxY
+            ) *
+            0.5f
+        );
     }
 }

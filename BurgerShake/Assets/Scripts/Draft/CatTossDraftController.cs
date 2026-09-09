@@ -67,14 +67,43 @@ public class CatTossDraftController : MonoBehaviour
     private float feralHoverSpeed =
         1.8f;
 
+    [Header("Choice Dismissal")]
+    [Tooltip(
+        "How quickly the ingredient that was chosen disappears."
+    )]
+    [SerializeField]
+    [Min(0.01f)]
+    private float chosenFadeDuration =
+        0.08f;
+
+    [Tooltip(
+        "Total time for rejected choices to pop and shrink away."
+    )]
+    [SerializeField]
+    [Min(0.01f)]
+    private float unchosenDismissDuration =
+        0.18f;
+
+    [Tooltip(
+        "How large rejected ingredients briefly become."
+    )]
+    [SerializeField]
+    [Min(1f)]
+    private float unchosenPopScale =
+        1.14f;
+
+    [Tooltip(
+        "How small rejected ingredients become before disappearing."
+    )]
+    [SerializeField]
+    [Range(0f, 0.5f)]
+    private float unchosenEndScale =
+        0.04f;
+
     [Header("Timing")]
     [SerializeField]
     private float tossStartDelay =
         0.1f;
-
-    [SerializeField]
-    private float clearFadeDuration =
-        0.15f;
 
     [SerializeField]
     private float nextTossDelayAfterDrop =
@@ -87,6 +116,8 @@ public class CatTossDraftController : MonoBehaviour
     private bool waitingForPlacedIngredient;
 
     private bool tossInProgress;
+
+    private bool selectionLocked;
 
     private int knownPlacedCount;
 
@@ -220,9 +251,9 @@ public class CatTossDraftController : MonoBehaviour
         tossInProgress =
             false;
 
-        // DO NOT draw here.
-        // The actual visible toss below
-        // will perform the draw.
+        selectionLocked =
+            false;
+
         ShowNextToss();
     }
 
@@ -262,6 +293,9 @@ public class CatTossDraftController : MonoBehaviour
     {
         tossInProgress =
             true;
+
+        selectionLocked =
+            false;
 
         ClearChoicesImmediate();
 
@@ -316,8 +350,6 @@ public class CatTossDraftController : MonoBehaviour
             yield break;
         }
 
-        // THIS is the only point where a new
-        // visible hand is drawn from the pantry.
         draftManager
             .RefreshChoices();
 
@@ -421,6 +453,7 @@ public class CatTossDraftController : MonoBehaviour
     )
     {
         if (
+            selectionLocked ||
             chosen == null ||
             chosen.Definition == null
         )
@@ -432,6 +465,9 @@ public class CatTossDraftController : MonoBehaviour
         {
             return;
         }
+
+        selectionLocked =
+            true;
 
         draftManager
             .SelectIngredient(
@@ -455,12 +491,26 @@ public class CatTossDraftController : MonoBehaviour
                 continue;
             }
 
-            StartCoroutine(
-                choice
-                    .FadeOutAndDestroy(
-                        clearFadeDuration
-                    )
-            );
+            if (choice == chosen)
+            {
+                StartCoroutine(
+                    choice
+                        .FadeOutAndDestroy(
+                            chosenFadeDuration
+                        )
+                );
+            }
+            else
+            {
+                StartCoroutine(
+                    choice
+                        .PopAndShrinkAway(
+                            unchosenDismissDuration,
+                            unchosenPopScale,
+                            unchosenEndScale
+                        )
+                );
+            }
         }
 
         activeChoices.Clear();

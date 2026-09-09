@@ -120,6 +120,17 @@ public class DraftChoiceVisual :
         ResetHoverVisuals();
     }
 
+    private void OnDestroy()
+    {
+        if (button != null)
+        {
+            button.onClick
+                .RemoveListener(
+                    HandleClicked
+                );
+        }
+    }
+
     private void Update()
     {
         UpdateFeralHover();
@@ -445,6 +456,10 @@ public class DraftChoiceVisual :
         isHovered =
             false;
 
+        SetInteractable(
+            false
+        );
+
         ResetHoverVisuals();
     }
 
@@ -467,6 +482,10 @@ public class DraftChoiceVisual :
 
         isHovered =
             false;
+
+        SetInteractable(
+            false
+        );
 
         ResetHoverVisuals();
 
@@ -541,6 +560,10 @@ public class DraftChoiceVisual :
         hoverEnabled =
             true;
 
+        SetInteractable(
+            true
+        );
+
         if (freezeAtEnd)
         {
             feralHover =
@@ -565,21 +588,11 @@ public class DraftChoiceVisual :
             true;
     }
 
-    public IEnumerator
-        FadeOutAndDestroy(
-            float duration
-        )
+    public IEnumerator FadeOutAndDestroy(
+        float duration
+    )
     {
-        feralHover =
-            false;
-
-        hoverEnabled =
-            false;
-
-        isHovered =
-            false;
-
-        ResetHoverVisuals();
+        BeginDismissal();
 
         if (canvasGroup == null)
         {
@@ -590,6 +603,12 @@ public class DraftChoiceVisual :
             yield break;
         }
 
+        float safeDuration =
+            Mathf.Max(
+                0.01f,
+                duration
+            );
+
         float elapsed =
             0f;
 
@@ -598,7 +617,7 @@ public class DraftChoiceVisual :
 
         while (
             elapsed <
-            duration
+            safeDuration
         )
         {
             elapsed +=
@@ -607,7 +626,7 @@ public class DraftChoiceVisual :
             float t =
                 Mathf.Clamp01(
                     elapsed /
-                    duration
+                    safeDuration
                 );
 
             canvasGroup.alpha =
@@ -622,6 +641,140 @@ public class DraftChoiceVisual :
 
         canvasGroup.alpha =
             0f;
+
+        Destroy(
+            gameObject
+        );
+    }
+
+    public IEnumerator PopAndShrinkAway(
+        float duration,
+        float popScale,
+        float endScale
+    )
+    {
+        BeginDismissal();
+
+        if (rectTransform == null)
+        {
+            Destroy(
+                gameObject
+            );
+
+            yield break;
+        }
+
+        float safeDuration =
+            Mathf.Max(
+                0.01f,
+                duration
+            );
+
+        float safePopScale =
+            Mathf.Max(
+                1f,
+                popScale
+            );
+
+        float safeEndScale =
+            Mathf.Clamp(
+                endScale,
+                0f,
+                1f
+            );
+
+        Vector3 originalScale =
+            rectTransform.localScale;
+
+        float popDuration =
+            safeDuration *
+            0.32f;
+
+        float shrinkDuration =
+            safeDuration -
+            popDuration;
+
+        float elapsed =
+            0f;
+
+        Vector3 poppedScale =
+            originalScale *
+            safePopScale;
+
+        while (
+            elapsed <
+            popDuration
+        )
+        {
+            elapsed +=
+                Time.unscaledDeltaTime;
+
+            float t =
+                Mathf.Clamp01(
+                    elapsed /
+                    popDuration
+                );
+
+            float eased =
+                1f -
+                Mathf.Pow(
+                    1f - t,
+                    3f
+                );
+
+            rectTransform.localScale =
+                Vector3.Lerp(
+                    originalScale,
+                    poppedScale,
+                    eased
+                );
+
+            yield return null;
+        }
+
+        rectTransform.localScale =
+            poppedScale;
+
+        elapsed =
+            0f;
+
+        Vector3 tinyScale =
+            originalScale *
+            safeEndScale;
+
+        while (
+            elapsed <
+            shrinkDuration
+        )
+        {
+            elapsed +=
+                Time.unscaledDeltaTime;
+
+            float t =
+                Mathf.Clamp01(
+                    elapsed /
+                    shrinkDuration
+                );
+
+            float eased =
+                Mathf.SmoothStep(
+                    0f,
+                    1f,
+                    t
+                );
+
+            rectTransform.localScale =
+                Vector3.Lerp(
+                    poppedScale,
+                    tinyScale,
+                    eased
+                );
+
+            yield return null;
+        }
+
+        rectTransform.localScale =
+            tinyScale;
 
         Destroy(
             gameObject
@@ -651,10 +804,50 @@ public class DraftChoiceVisual :
 
     private void HandleClicked()
     {
+        if (
+            button != null &&
+            !button.interactable
+        )
+        {
+            return;
+        }
+
         clickCallback
             ?.Invoke(
                 this
             );
+    }
+
+    private void BeginDismissal()
+    {
+        feralHover =
+            false;
+
+        hoverEnabled =
+            false;
+
+        isHovered =
+            false;
+
+        particleTimer =
+            0f;
+
+        SetInteractable(
+            false
+        );
+
+        ResetHoverVisuals();
+    }
+
+    private void SetInteractable(
+        bool interactable
+    )
+    {
+        if (button != null)
+        {
+            button.interactable =
+                interactable;
+        }
     }
 
     private void ResetHoverVisuals()
