@@ -1,20 +1,23 @@
 using System;
 using UnityEngine;
 
-public class CustomerChallengeController : MonoBehaviour
+public class CustomerChallengeController :
+    MonoBehaviour
 {
     [Header("Gameplay")]
     [SerializeField]
     private ScoreManager scoreManager;
 
     [SerializeField]
-    private GameplayModifiers gameplayModifiers;
+    private GameplayModifiers
+        gameplayModifiers;
 
     [SerializeField]
     private UpgradeManager upgradeManager;
 
     [SerializeField]
-    private IngredientDropper ingredientDropper;
+    private IngredientDropper
+        ingredientDropper;
 
     [Header("Assembly")]
     [SerializeField]
@@ -50,6 +53,8 @@ public class CustomerChallengeController : MonoBehaviour
         int goalScore
     )
     {
+        // Safety cleanup in case anything
+        // somehow survived the previous round.
         ClearIngredients();
 
         CurrentCustomer =
@@ -98,7 +103,8 @@ public class CustomerChallengeController : MonoBehaviour
             CompleteChallengeUsingCurrentScore();
     }
 
-    public bool CompleteChallengeUsingCurrentScore()
+    public bool
+        CompleteChallengeUsingCurrentScore()
     {
         if (
             CurrentCustomer == null ||
@@ -108,6 +114,9 @@ public class CustomerChallengeController : MonoBehaviour
             return false;
         }
 
+        // We need these ingredients to remain
+        // alive until AFTER customer preferences
+        // have been evaluated.
         Ingredient[] ingredients =
             GetChallengeIngredients();
 
@@ -150,10 +159,24 @@ public class CustomerChallengeController : MonoBehaviour
             }
         }
 
+        // Let RunManager and any other listeners
+        // receive the finished result while all
+        // challenge data is still intact.
         ChallengeFinished?.Invoke(
             passed,
             earnedCoins
         );
+
+        // At this point:
+        //
+        // - final score is complete
+        // - customer preferences are complete
+        // - earned coins are complete
+        // - ChallengeFinished has fired
+        //
+        // Nothing should need the physical
+        // ingredient objects anymore.
+        ClearIngredients();
 
         return passed;
     }
@@ -198,6 +221,12 @@ public class CustomerChallengeController : MonoBehaviour
                     .GetChild(i)
                     .gameObject;
 
+            // Hide immediately.
+            //
+            // Destroy() itself finishes at the
+            // end of the frame, so disabling
+            // first prevents even a single-frame
+            // flash.
             ingredient.SetActive(
                 false
             );

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Gregg
   m_EditorClassIdentifier: Assembly-CSharp::CustomerDefinition
   customerName: Gregg
-  description: 
+  description: egg...
   portrait: {fileID: 4884028340168989115, guid: 7416abd1a40b13e42878e67f1601ec32, type: 3}
   visualOffset: {x: 0, y: 0}
   visualScale: 1
