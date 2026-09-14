@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum RunState
 {
     Setup,
+    StartingDraft,
     CustomerIntro,
     Assembly,
     ScoreReveal,
@@ -23,18 +25,13 @@ public class RunManager : MonoBehaviour
     [SerializeField]
     private RunProgress progress;
 
-    [Header("Starting Pantry")]
-    [Tooltip(
-        "Used when Auto Start Run is enabled. " +
-        "Later the pantry selection screen will pass " +
-        "a pantry directly instead."
-    )]
-    [SerializeField]
-    private StartingPantryDefinition
-        defaultStartingPantry;
-
     [SerializeField]
     private bool autoStartRun = true;
+
+    [Header("Starting Draft")]
+    [SerializeField]
+    private StartingIngredientDraftController
+        startingDraftController;
 
     [Header("Gameplay")]
     [SerializeField]
@@ -70,6 +67,9 @@ public class RunManager : MonoBehaviour
     private float postLeaveDelay =
         0.3f;
 
+    public RunDefinition Definition =>
+        runDefinition;
+
     public RunState State
     {
         get;
@@ -89,13 +89,6 @@ public class RunManager : MonoBehaviour
     }
 
     public bool RunStarted
-    {
-        get;
-        private set;
-    }
-
-    public StartingPantryDefinition
-        SelectedStartingPantry
     {
         get;
         private set;
@@ -126,6 +119,14 @@ public class RunManager : MonoBehaviour
             progress =
                 FindFirstObjectByType<
                     RunProgress
+                >();
+        }
+
+        if (startingDraftController == null)
+        {
+            startingDraftController =
+                FindFirstObjectByType<
+                    StartingIngredientDraftController
                 >();
         }
 
@@ -237,19 +238,72 @@ public class RunManager : MonoBehaviour
 
         yield return null;
 
-        StartRun();
+        BeginStartingDraft();
     }
 
     public void StartRun()
     {
-        StartRun(
-            defaultStartingPantry
+        BeginStartingDraft();
+    }
+
+    public void BeginStartingDraft()
+    {
+        if (RunStarted)
+        {
+            return;
+        }
+
+        if (runDefinition == null)
+        {
+            Debug.LogError(
+                "RunManager has no RunDefinition."
+            );
+
+            return;
+        }
+
+        if (progress == null)
+        {
+            Debug.LogError(
+                "RunManager has no RunProgress."
+            );
+
+            return;
+        }
+
+        if (startingDraftController == null)
+        {
+            Debug.LogError(
+                "RunManager has no StartingIngredientDraftController."
+            );
+
+            return;
+        }
+
+        if (
+            runDefinition.customers == null ||
+            runDefinition.customers.Count == 0
+        )
+        {
+            Debug.LogError(
+                "The RunDefinition has no customers."
+            );
+
+            return;
+        }
+
+        SetState(
+            RunState.StartingDraft
         );
+
+        startingDraftController
+            .BeginDraft();
     }
 
     public void StartRun(
-        StartingPantryDefinition
-            startingPantry
+        IReadOnlyList<IngredientDefinition>
+            startingIngredients,
+        int copiesPerIngredient = 3
     )
     {
         if (RunStarted)
@@ -275,34 +329,25 @@ public class RunManager : MonoBehaviour
             return;
         }
 
-        if (startingPantry == null)
-        {
-            Debug.LogError(
-                "RunManager has no Starting Pantry."
-            );
-
-            return;
-        }
-
         if (
-            startingPantry.ingredients ==
-                null ||
-            startingPantry.ingredients.Count ==
-                0
+            startingIngredients == null ||
+            startingIngredients.Count != 2 ||
+            startingIngredients[0] == null ||
+            startingIngredients[1] == null ||
+            startingIngredients[0] ==
+                startingIngredients[1]
         )
         {
             Debug.LogError(
-                "The selected Starting Pantry has no ingredients."
+                "A run must start with exactly two different drafted ingredients."
             );
 
             return;
         }
 
         if (
-            runDefinition.customers ==
-                null ||
-            runDefinition.customers.Count ==
-                0
+            runDefinition.customers == null ||
+            runDefinition.customers.Count == 0
         )
         {
             Debug.LogError(
@@ -312,15 +357,15 @@ public class RunManager : MonoBehaviour
             return;
         }
 
-        SelectedStartingPantry =
-            startingPantry;
-
-        RunStarted =
-            true;
+        RunStarted = true;
 
         progress.BeginRun(
             runDefinition,
-            startingPantry
+            startingIngredients,
+            Mathf.Max(
+                1,
+                copiesPerIngredient
+            )
         );
 
         StartCurrentDay();
