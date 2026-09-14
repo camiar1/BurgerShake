@@ -92,6 +92,15 @@ public class StartingIngredientDraftController :
                     RunManager
                 >();
         }
+
+        if (
+            runDefinition == null &&
+            runManager != null
+        )
+        {
+            runDefinition =
+                runManager.Definition;
+        }
     }
 
     public void BeginDraft()
@@ -99,6 +108,15 @@ public class StartingIngredientDraftController :
         if (DraftActive)
         {
             return;
+        }
+
+        if (
+            runDefinition == null &&
+            runManager != null
+        )
+        {
+            runDefinition =
+                runManager.Definition;
         }
 
         if (runDefinition == null)
@@ -113,16 +131,10 @@ public class StartingIngredientDraftController :
         List<IngredientDefinition> eligible =
             GetValidStartingPool();
 
-        if (
-            eligible.Count <
-            Mathf.Min(
-                choicesPerRound,
-                1
-            )
-        )
+        if (eligible.Count < choicesPerRound)
         {
             Debug.LogError(
-                "Starting ingredient draft does not have enough valid ingredients."
+                $"Starting ingredient draft needs at least {choicesPerRound} valid ingredients."
             );
 
             return;
@@ -142,17 +154,6 @@ public class StartingIngredientDraftController :
         DraftActive = true;
 
         FillRoundOneChoices();
-
-        if (currentChoices.Count == 0)
-        {
-            DraftActive = false;
-
-            Debug.LogError(
-                "Starting ingredient draft could not create its first offer."
-            );
-
-            return;
-        }
 
         DraftStarted?.Invoke();
         ChoicesChanged?.Invoke();
@@ -198,7 +199,6 @@ public class StartingIngredientDraftController :
         )
         {
             CompleteDraft();
-
             return;
         }
 
@@ -222,6 +222,9 @@ public class StartingIngredientDraftController :
             return false;
         }
 
+        IngredientDefinition oldChoice =
+            currentChoices[slotIndex];
+
         IngredientDefinition replacement =
             FindFreshReplacement(
                 slotIndex
@@ -231,7 +234,8 @@ public class StartingIngredientDraftController :
         {
             replacement =
                 FindFallbackReplacement(
-                    slotIndex
+                    slotIndex,
+                    oldChoice
                 );
         }
 
@@ -263,15 +267,9 @@ public class StartingIngredientDraftController :
 
         Shuffle(candidates);
 
-        int targetCount =
-            Mathf.Min(
-                choicesPerRound,
-                candidates.Count
-            );
-
         for (
             int i = 0;
-            i < targetCount;
+            i < choicesPerRound;
             i++
         )
         {
@@ -320,17 +318,9 @@ public class StartingIngredientDraftController :
                 break;
             }
 
-            if (
-                candidate != null &&
-                !currentChoices.Contains(
-                    candidate
-                )
-            )
-            {
-                AddShownChoice(
-                    candidate
-                );
-            }
+            AddShownChoice(
+                candidate
+            );
         }
 
         if (
@@ -340,7 +330,8 @@ public class StartingIngredientDraftController :
         {
             List<IngredientDefinition> fallback =
                 GetFallbackCandidates(
-                    -1
+                    -1,
+                    null
                 );
 
             Shuffle(fallback);
@@ -358,17 +349,9 @@ public class StartingIngredientDraftController :
                     break;
                 }
 
-                if (
-                    candidate != null &&
-                    !currentChoices.Contains(
-                        candidate
-                    )
-                )
-                {
-                    AddShownChoice(
-                        candidate
-                    );
-                }
+                AddShownChoice(
+                    candidate
+                );
             }
         }
 
@@ -438,7 +421,7 @@ public class StartingIngredientDraftController :
         List<IngredientDefinition> candidates =
             GetFreshCandidates();
 
-        RemoveCurrentSlotConflicts(
+        RemoveOtherDisplayedChoices(
             candidates,
             replacedSlot
         );
@@ -458,12 +441,14 @@ public class StartingIngredientDraftController :
 
     private IngredientDefinition
         FindFallbackReplacement(
-            int replacedSlot
+            int replacedSlot,
+            IngredientDefinition oldChoice
         )
     {
         List<IngredientDefinition> candidates =
             GetFallbackCandidates(
-                replacedSlot
+                replacedSlot,
+                oldChoice
             );
 
         if (candidates.Count == 0)
@@ -507,7 +492,8 @@ public class StartingIngredientDraftController :
 
     private List<IngredientDefinition>
         GetFallbackCandidates(
-            int replacedSlot
+            int replacedSlot,
+            IngredientDefinition excludedChoice
         )
     {
         List<IngredientDefinition> candidates =
@@ -516,12 +502,13 @@ public class StartingIngredientDraftController :
         candidates.RemoveAll(
             ingredient =>
                 ingredient == null ||
+                ingredient == excludedChoice ||
                 selectedIngredients.Contains(
                     ingredient
                 )
         );
 
-        RemoveCurrentSlotConflicts(
+        RemoveOtherDisplayedChoices(
             candidates,
             replacedSlot
         );
@@ -529,7 +516,7 @@ public class StartingIngredientDraftController :
         return candidates;
     }
 
-    private void RemoveCurrentSlotConflicts(
+    private void RemoveOtherDisplayedChoices(
         List<IngredientDefinition> candidates,
         int replacedSlot
     )
