@@ -33,8 +33,9 @@ public class RunProgress : MonoBehaviour
 
     public void BeginRun(
         RunDefinition definition,
-        StartingPantryDefinition
-            startingPantry
+        IReadOnlyList<IngredientDefinition>
+            startingIngredients,
+        int copiesPerIngredient = 3
     )
     {
         Day =
@@ -48,34 +49,30 @@ public class RunProgress : MonoBehaviour
         pantry.Clear();
         upgrades.Clear();
 
-        if (
-            startingPantry == null ||
-            startingPantry.ingredients ==
-                null
-        )
+        if (startingIngredients == null)
         {
             return;
         }
 
+        int copies =
+            Mathf.Max(
+                1,
+                copiesPerIngredient
+            );
+
         foreach (
-            StartingPantryIngredient entry
-            in startingPantry.ingredients
+            IngredientDefinition ingredient
+            in startingIngredients
         )
         {
-            if (
-                entry == null ||
-                entry.ingredient == null
-            )
+            if (ingredient == null)
             {
                 continue;
             }
 
             AddIngredientCopies(
-                entry.ingredient,
-                Mathf.Max(
-                    1,
-                    entry.copies
-                )
+                ingredient,
+                copies
             );
         }
     }
