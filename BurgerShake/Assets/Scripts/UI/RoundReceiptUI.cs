@@ -143,6 +143,10 @@ public class RoundReceiptUI : MonoBehaviour
 
         if (descriptionText != null)
         {
+            descriptionText.gameObject.SetActive(
+                true
+            );
+
             descriptionText.text =
                 BuildReceiptDetails(
                     customer
