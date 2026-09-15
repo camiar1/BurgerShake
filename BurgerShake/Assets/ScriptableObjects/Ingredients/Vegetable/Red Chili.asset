@@ -19,5 +19,6 @@ MonoBehaviour:
   draftWeight: 1
   copiesPerCycle: 3
   scoringRules:
-  - {fileID: 11400000, guid: d3cb2423572d4b94fbcb7ce45fcb78d9, type: 2}
+  - {fileID: 11400000, guid: 86bc29e6a80f8854eabb9da5f566d039, type: 2}
+  - {fileID: 11400000, guid: 327f6cecda8ed3048a14101322a1cff5, type: 2}
   tags: 01000000050000000b000000

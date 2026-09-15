@@ -17,5 +17,8 @@ MonoBehaviour:
   sprite: {fileID: 0}
   prefab: {fileID: 2805112740976925974, guid: 039df6504139e3d4a9925381f548fbf0, type: 3}
   draftWeight: 1
-  scoringRules: []
+  copiesPerCycle: 3
+  scoringRules:
+  - {fileID: 11400000, guid: 0c069d66a72fe094ab5760df1dedf486, type: 2}
+  - {fileID: 11400000, guid: 327f6cecda8ed3048a14101322a1cff5, type: 2}
   tags: 0e0000000a000000
