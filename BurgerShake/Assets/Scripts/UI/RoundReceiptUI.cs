@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -143,9 +144,9 @@ public class RoundReceiptUI : MonoBehaviour
         if (descriptionText != null)
         {
             descriptionText.text =
-                customer != null
-                    ? customer.description
-                    : "";
+                BuildReceiptDetails(
+                    customer
+                );
         }
 
         if (goalText != null)
@@ -153,5 +154,217 @@ public class RoundReceiptUI : MonoBehaviour
             goalText.text =
                 $"GOAL: {goalScore}";
         }
+    }
+
+    private string BuildReceiptDetails(
+        CustomerDefinition customer
+    )
+    {
+        if (customer == null)
+        {
+            return string.Empty;
+        }
+
+        StringBuilder builder =
+            new StringBuilder();
+
+        if (
+            !string.IsNullOrWhiteSpace(
+                customer.description
+            )
+        )
+        {
+            builder.AppendLine(
+                customer.description.Trim()
+            );
+
+            builder.AppendLine();
+        }
+
+        builder.Append(
+            "REWARD: $"
+        );
+
+        builder.AppendLine(
+            Mathf.Max(
+                0,
+                customer.baseRewardCoins
+            ).ToString()
+        );
+
+        AppendPreferences(
+            builder,
+            customer
+        );
+
+        AppendRestrictions(
+            builder,
+            customer
+        );
+
+        return builder
+            .ToString()
+            .TrimEnd();
+    }
+
+    private void AppendPreferences(
+        StringBuilder builder,
+        CustomerDefinition customer
+    )
+    {
+        if (
+            customer.preferences == null ||
+            customer.preferences.Count == 0
+        )
+        {
+            return;
+        }
+
+        builder.AppendLine();
+        builder.AppendLine(
+            "SPECIAL REQUEST"
+        );
+
+        foreach (
+            CustomerPreference preference
+            in customer.preferences
+        )
+        {
+            if (preference == null)
+            {
+                continue;
+            }
+
+            string label =
+                GetPreferenceLabel(
+                    preference
+                );
+
+            if (
+                string.IsNullOrWhiteSpace(
+                    label
+                )
+            )
+            {
+                continue;
+            }
+
+            builder.Append("• ");
+            builder.Append(label);
+
+            if (preference.bonusCoins > 0)
+            {
+                builder.Append(
+                    $" (+${preference.bonusCoins})"
+                );
+            }
+
+            builder.AppendLine();
+        }
+    }
+
+    private void AppendRestrictions(
+        StringBuilder builder,
+        CustomerDefinition customer
+    )
+    {
+        if (
+            customer.restrictions == null ||
+            customer.restrictions.Count == 0
+        )
+        {
+            return;
+        }
+
+        builder.AppendLine();
+        builder.AppendLine(
+            "RESTRICTIONS"
+        );
+
+        foreach (
+            CustomerRestriction restriction
+            in customer.restrictions
+        )
+        {
+            if (restriction == null)
+            {
+                continue;
+            }
+
+            string label =
+                GetRestrictionLabel(
+                    restriction
+                );
+
+            if (
+                string.IsNullOrWhiteSpace(
+                    label
+                )
+            )
+            {
+                continue;
+            }
+
+            builder.Append("• ");
+            builder.AppendLine(label);
+        }
+    }
+
+    private string GetPreferenceLabel(
+        CustomerPreference preference
+    )
+    {
+        if (
+            !string.IsNullOrWhiteSpace(
+                preference.description
+            )
+        )
+        {
+            return preference
+                .description
+                .Trim();
+        }
+
+        if (
+            !string.IsNullOrWhiteSpace(
+                preference.preferenceName
+            )
+        )
+        {
+            return preference
+                .preferenceName
+                .Trim();
+        }
+
+        return "Special request";
+    }
+
+    private string GetRestrictionLabel(
+        CustomerRestriction restriction
+    )
+    {
+        if (
+            !string.IsNullOrWhiteSpace(
+                restriction.description
+            )
+        )
+        {
+            return restriction
+                .description
+                .Trim();
+        }
+
+        if (
+            !string.IsNullOrWhiteSpace(
+                restriction.restrictionName
+            )
+        )
+        {
+            return restriction
+                .restrictionName
+                .Trim();
+        }
+
+        return "Special restriction";
     }
 }
