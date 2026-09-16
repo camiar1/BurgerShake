@@ -1,115 +1,102 @@
 # Burger Shake — Development Status
 
-This file tracks what is currently known, what changed recently, what still needs Unity validation, and what should be worked on next. Update it whenever a milestone materially changes.
+This file tracks what is currently known, what changed recently, what still needs Unity validation, and what should be worked on next.
 
 ## Current branch
 
 - Repository: camiar1/BurgerShake
 - Working branch: agent/burger-shake-foundation
-- User's latest baseline update: `Agent Update` (`e71a99e49e783e8216305cda5b8a9756e10bf173`)
-- Development resumed after that update with explicit permission to modify gameplay systems and placeholder UI.
+- User baseline: `Agent Update`, followed by local Unity fixes in `updated from agent errors`.
+- Development has explicit permission to modify gameplay systems, create/move placeholder UI, and use legal/free resources.
 
-## Confirmed current foundation
+## Run / vertical slice
 
-### Run flow
-- `RunManager` includes `StartingDraft`, customer intro, assembly, score reveal, customer outro, shop, won, and lost states.
-- Auto-start enters the Starting Ingredient Draft rather than a fixed Starting Pantry.
-- `RegularRun` currently contains Chad, Glorb, and Gregg, making it the active 3-customer vertical-slice run.
-- Passing the final customer skips the shop and transitions through CustomerOutro into `RunState.Won`.
+- `RunManager` supports StartingDraft, CustomerIntro, Assembly, ScoreReveal, CustomerOutro, Shop, Won, and Lost.
+- Active slice remains Chad → Glorb → Gregg.
+- Passing the final customer goes to `RunState.Won`.
+- Runtime placeholder Win screen shows customers served, final score, coins, pantry, Helpers, Play Again, and Main Menu.
 
-### Starting Ingredient Draft
-- `StartingIngredientDraftController` exists and is scene-wired.
-- `StartingIngredientDraftUI` exists and is scene-wired.
-- Scene configuration currently uses 2 rounds, 3 choices per round, 3 copies per selected ingredient, and 1 shared opening-draft reroll.
-- Reroll behavior is per individual choice slot.
+## Starting Ingredient Draft
+
+- 2 rounds, 3 choices each, 3 copies per selected ingredient, 1 shared per-slot reroll.
 - Round 2 supports curated synergy partners.
-- `RegularRun.asset` currently includes the 14 implemented ingredients and curated synergy lists.
+- `RegularRun` starter eligibility has expanded from 14 to **18 ingredients** with the first placeholder content batch.
 
-### Ingredients / scoring
-- Current fully playable ingredient data still contains 14 implemented ingredients:
-  - Fruit: Apple, Blueberry, Orange, Pineapple
-  - Protein: Bacon, Burger Patty, Egg, Sausage
-  - Vegetable: Lettuce, Mushroom, Onion, Pickle, Red Chili, Tomato
-- The final first-pass roster is now formally designed at **30 ingredients**, split into 10 Protein / 10 Vegetable / 10 Fruit entries.
-- The 16 planned additions are:
-  - Protein: Cheese, Chicken Nugget, Ham, Meatball, Shrimp, Tofu
-  - Vegetable: Avocado, Carrot, Cucumber, Corn
-  - Fruit: Banana, Strawberry, Grape, Watermelon, Cherry, Lemon
-- Full target base values, abilities, build families, and physical-shape intentions live in `Docs/BURGER_SHAKE_INGREDIENT_ROSTER.md`.
-- These 16 planned ingredients are not yet active ScriptableObject/prefab content; they will be added in small batches after their required generic rules compile-test.
+## Playable ingredient content
 
-### Scoring-rule expansion in this phase
-- `ContactCountScoringRule` now has an optional tag filter. Existing assets preserve their old behavior unless the filter is enabled.
-- `UniqueNeighborScoringRule` now supports ignoring an initial number of unique neighbors when calculating per-neighbor reward, allowing “starting with the Nth unique neighbor” designs without ingredient-specific code.
-- New `OrientationScoringRule` supports Horizontal / Vertical / Diagonal placement, angle tolerance, optional min/max contact count, and optional per-contact reward.
-- Bacon now uses the new tag-filtered Contact Count behavior: **+0.5 Mult when touching at least 2 Proteins**, instead of counting arbitrary contacts.
-- Apple now uses thresholded diversity scaling: starting with its 3rd unique neighboring ingredient type, **+0.1 Mult per scoring unique type**.
-- These changes intentionally keep the scoring framework generic and reusable for the 30-ingredient roster.
+Existing final-art ingredients:
+- Fruit: Apple, Blueberry, Orange, Pineapple
+- Protein: Bacon, Burger Patty, Egg, Sausage
+- Vegetable: Lettuce, Mushroom, Onion, Pickle, Red Chili, Tomato
 
-### Customers
-- There are 10 `CustomerDefinition` assets matching the 10 existing portraits: Chad, Chloe, Cole, Eve, Glorb, Gregg, Ms. Pam, Old Man Joe, Ronda, and Tommy.
-- The active vertical slice remains Chad → Glorb → Gregg.
-- The remaining 7 customer definitions are content-ready but are not yet in `RegularRun`.
+New temporary-playable ingredients:
+- **Cheese** — +1 base; +0.15 Mult per touching Protein.
+- **Tofu** — +1 base; +2 Points per touching Vegetable.
+- **Avocado** — +2 base; +0.3 Mult when touching both a Protein and a Vegetable.
+- **Strawberry** — +2 base; +2 Points per touching Fruit.
 
-### Customer restrictions
-- Six reusable restriction assets exist: Compact Blender, Tight Blender, Chunky Ingredients, Big Ingredients, Two Choice Toss, and Four Drop Order.
-- Blender-width restrictions squeeze only the X axis of both physics BlenderRoot and the visible BlenderFront artwork.
-- The user confirmed the visible blender now correctly narrows with the restriction.
+The final first-pass roster remains 30 ingredients. The remaining planned additions are Chicken Nugget, Ham, Meatball, Shrimp, Carrot, Cucumber, Corn, Banana, Grape, Watermelon, Cherry, and Lemon.
 
-### Receipt
-- `RoundReceiptUI` displays customer description, base reward, optional special requests/preferences and bonus coin value, restrictions, and score goal.
-- Visual spacing/layout still needs further Unity inspection for long receipts.
+## Temporary ingredient art / physics framework
 
-### Win screen
-- A runtime-generated placeholder `WinScreenController` exists for the vertical slice.
-- It shows customers served, final shake score, coins remaining, final pantry, Helpers, Play Again, and Main Menu.
-- Final end-to-end Win-screen behavior still needs explicit local validation.
+- `IngredientDefinition` now contains data-driven placeholder visual fields: shape, color, and temporary collider size.
+- `IngredientPlaceholderSpriteFactory` procedurally creates a rough colored ingredient sprite with a dark hand-drawn-style outline when final art is missing.
+- Existing ingredients with real sprites are unaffected because their placeholder shape defaults to `None`.
+- A shared `PlaceholderIngredient.prefab` supplies temporary Rigidbody2D / SpriteRenderer / Ingredient / BoxCollider2D components.
+- `Ingredient.Initialize` assigns the generated sprite and sizes the placeholder collider from the ingredient definition.
+- This lets future ingredients become playable before final PNG art/prefabs exist, without hardcoding ingredient names in gameplay managers.
 
-### Shop / Helpers
-- Existing shop architecture and UI are present.
-- Current helper assets: HeadStart and TipJar.
-- Final target remains 20+ Helpers with cross-system interactions.
+## Scoring framework
 
-## Product targets locked so far
+- Contact Count supports optional tag filtering.
+- Unique Neighbor supports thresholded reward counts.
+- Orientation scoring supports horizontal, vertical, and diagonal conditions.
+- Bacon uses 2+ touching Proteins for its Mult condition.
+- Apple begins special Mult scaling at its 3rd unique neighbor.
+
+## Customers / restrictions
+
+- 10 current CustomerDefinition assets match existing portraits.
+- Reusable restrictions include Compact Blender, Tight Blender, Chunky Ingredients, Big Ingredients, Two Choice Toss, and Four Drop Order.
+- Blender-width restrictions squeeze both BlenderRoot physics and BlenderFront art on X only; user confirmed this works.
+- Receipt displays description, reward, preferences/bonuses, restrictions, and score goal.
+
+## Shop / Helpers
+
+- Existing shop architecture remains present.
+- Current Helper assets: HeadStart and TipJar.
+- Final target: 20+ Helpers with cross-system interactions.
+
+## Locked product targets
 
 - 30+ ingredients.
 - 20+ Helpers.
 - 20+ customers.
 - No active-run save/resume.
-- Restrictions should alter the puzzle without routinely invalidating a build.
-- Receipt is the central readable summary of customer conditions.
-- Website-style shop remains the intended final shop presentation.
-- Temporary UI creation/movement is authorized during implementation.
-- Use only legal/free external resources unless explicit approval is given for something paid.
+- Restrictions should change the puzzle without routinely invalidating a build.
+- Website-style shop remains the final presentation direction.
 
 ## Needs Unity validation
 
-Because repository editing cannot run the Unity Editor, these should be checked locally after pulling the latest branch:
+After pulling this batch, check:
 
-1. Project compiles after the Contact Count / Unique Neighbor / Orientation scoring-rule additions.
-2. Existing scoring assets deserialize without missing-field or script-reference errors.
-3. Bacon only receives its +0.5 Mult bonus when at least 2 touching ingredients have the Protein tag.
-4. Apple gives no special Mult at 0–2 unique neighboring ingredient types, +0.1 at 3, +0.2 at 4, etc.
-5. Starting Draft still appears and individual reroll still works.
-6. Chad plays with normal blender/ingredient settings.
-7. Glorb still narrows the visible and physical blender together.
-8. Gregg still enlarges dropped ingredients and restrictions reset between customers.
-9. Receipt details remain readable with restriction text.
-10. Three-customer flow reaches the final Won state without stale ingredients or blocked UI.
-11. Win screen appears after Gregg leaves and both Play Again / Main Menu work.
+1. Project imports/compiles without errors.
+2. Cheese, Tofu, Avocado, and Strawberry can appear in the opening draft.
+3. Each new ingredient displays a colored temporary sprite rather than an empty card.
+4. Selecting a new ingredient produces a visible drop preview.
+5. Dropping it creates a physical ingredient in the blender with collision.
+6. Cheese and Tofu receive +1 base; Avocado and Strawberry receive +2 base.
+7. Cheese gains Mult from Protein neighbors; Tofu gains Points from Vegetable neighbors; Avocado requires both Protein and Vegetable neighbors; Strawberry gains Points from Fruit neighbors.
+8. Existing 14 ingredients still render and score normally.
+9. Chad → Glorb → Gregg restrictions and the Win screen still work.
 
 ## Immediate next work
 
-Priority order:
-
-1. Local compile/play validation of the new reusable ingredient-rule layer.
-2. Add the first planned ingredient batch only after that validation, so new content does not hide a framework compile problem.
-3. Build the formal 20-Helper interaction matrix and extend Helper architecture around the now-stable ingredient vocabulary.
-4. Expand the customer/restriction library toward 20 while keeping restrictions moderate.
-5. Return to shop presentation and receipt polish after the new content systems are stable.
+1. Fix any Unity import/serialization issues from the new placeholder-content framework.
+2. Add the next placeholder ingredient batch using the same generic system.
+3. Begin the formal 20-Helper interaction matrix once the first ingredient batch is locally confirmed.
+4. Expand customers/restrictions toward 20 after Helper vocabulary stabilizes.
 
 ## Current milestone
 
-`M4 — Ingredient interaction framework` is now in progress.
-
-The 30-ingredient design matrix is complete, and the generic scoring library has been expanded to express its new threshold/tag/orientation patterns. The next safe content step is a small playable batch of new ingredients after Unity compile validation.
+`M4 — Ingredient content expansion` is active. The project now has 18 starter-eligible ingredients, including the first four temporary-playable additions.
