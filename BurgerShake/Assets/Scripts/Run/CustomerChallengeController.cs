@@ -24,6 +24,9 @@ public class CustomerChallengeController :
     private Transform blenderRoot;
 
     [SerializeField]
+    private RectTransform blenderVisual;
+
+    [SerializeField]
     private Transform ingredientContainer;
 
     public CustomerDefinition CurrentCustomer
@@ -47,6 +50,21 @@ public class CustomerChallengeController :
         bool,
         int
     > ChallengeFinished;
+
+    private Vector3 blenderRootBaseScale =
+        Vector3.one;
+
+    private Vector3 blenderVisualBaseScale =
+        Vector3.one;
+
+    private bool blenderRootScaleCaptured;
+    private bool blenderVisualScaleCaptured;
+
+    private void Awake()
+    {
+        ResolveBlenderVisual();
+        CaptureBlenderBaseScales();
+    }
 
     public void BeginChallenge(
         CustomerDefinition customer,
@@ -239,25 +257,100 @@ public class CustomerChallengeController :
 
     private void ApplyBlenderScale()
     {
-        if (blenderRoot == null)
-        {
-            return;
-        }
+        ResolveBlenderVisual();
+        CaptureBlenderBaseScales();
 
-        float scale =
+        float widthScale =
             gameplayModifiers != null
                 ? gameplayModifiers
                     .BlenderScale
                 : 1f;
 
-        Vector3 current =
-            blenderRoot.localScale;
-
-        blenderRoot.localScale =
-            new Vector3(
-                scale,
-                scale,
-                current.z
+        widthScale =
+            Mathf.Max(
+                0.1f,
+                widthScale
             );
+
+        // Blender restrictions change the usable
+        // width, not the height. Keeping Y at its
+        // original value makes the blender look
+        // squeezed/widened rather than uniformly
+        // shrinking the whole object.
+        if (blenderRoot != null)
+        {
+            blenderRoot.localScale =
+                new Vector3(
+                    blenderRootBaseScale.x *
+                        widthScale,
+                    blenderRootBaseScale.y,
+                    blenderRootBaseScale.z
+                );
+        }
+
+        // BlenderFront is a visual sibling of the
+        // physics BlenderRoot in the current scene,
+        // so it must be resized separately to stay
+        // aligned with the collider width.
+        if (blenderVisual != null)
+        {
+            blenderVisual.localScale =
+                new Vector3(
+                    blenderVisualBaseScale.x *
+                        widthScale,
+                    blenderVisualBaseScale.y,
+                    blenderVisualBaseScale.z
+                );
+        }
+    }
+
+    private void ResolveBlenderVisual()
+    {
+        if (
+            blenderVisual != null ||
+            blenderRoot == null ||
+            blenderRoot.parent == null
+        )
+        {
+            return;
+        }
+
+        Transform visual =
+            blenderRoot.parent.Find(
+                "BlenderFront"
+            );
+
+        if (visual != null)
+        {
+            blenderVisual =
+                visual as RectTransform;
+        }
+    }
+
+    private void CaptureBlenderBaseScales()
+    {
+        if (
+            blenderRoot != null &&
+            !blenderRootScaleCaptured
+        )
+        {
+            blenderRootBaseScale =
+                blenderRoot.localScale;
+
+            blenderRootScaleCaptured =
+                true;
+        }
+
+        if (
+            blenderVisual != null &&
+            !blenderVisualScaleCaptured
+        )
+        {
+            blenderVisualBaseScale =
+                blenderVisual.localScale;
+
+            blenderVisualScaleCaptured =
+                true;
+        }
     }
 }
