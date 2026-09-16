@@ -28,18 +28,64 @@ public class Ingredient : MonoBehaviour
         definition =
             newDefinition;
 
+        if (definition == null)
+        {
+            return;
+        }
+
         SpriteRenderer spriteRenderer =
             GetComponent<SpriteRenderer>();
 
+        if (spriteRenderer != null)
+        {
+            Sprite displaySprite =
+                definition.GetDisplaySprite();
+
+            if (displaySprite != null)
+            {
+                spriteRenderer.sprite =
+                    displaySprite;
+            }
+        }
+
+        ConfigurePlaceholderCollider();
+    }
+
+    private void ConfigurePlaceholderCollider()
+    {
         if (
-            spriteRenderer != null &&
-            definition != null &&
-            definition.sprite != null
+            definition == null ||
+            !definition.UsesPlaceholderVisual
         )
         {
-            spriteRenderer.sprite =
-                definition.sprite;
+            return;
         }
+
+        BoxCollider2D boxCollider =
+            GetComponent<BoxCollider2D>();
+
+        if (boxCollider == null)
+        {
+            return;
+        }
+
+        Vector2 size =
+            definition.placeholderColliderSize;
+
+        size.x =
+            Mathf.Max(
+                0.25f,
+                size.x
+            );
+
+        size.y =
+            Mathf.Max(
+                0.25f,
+                size.y
+            );
+
+        boxCollider.size =
+            size;
     }
 
     public ScoreValue EvaluateScore()
