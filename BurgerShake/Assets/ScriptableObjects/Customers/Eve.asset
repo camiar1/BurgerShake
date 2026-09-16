@@ -9,14 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf0cdf8461272524ea4bc6cbc0c38823, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b9a3070f1416314c8555650ffa19ff6, type: 3}
   m_Name: Eve
   m_EditorClassIdentifier: Assembly-CSharp::CustomerDefinition
   customerName: Eve
   description: I want something balanced. Nothing too ordinary.
-  sprite: {fileID: 21300000, guid: d69cfd6c0a2052544b77166015a66966, type: 3}
-  baseGoalScore: 8
-  baseRewardCoins: 3
+  portrait: {fileID: -504671282291087767, guid: e028efb4d8e993641a25ed9bb9b8ec70, type: 3}
+  visualOffset: {x: 0, y: 0}
+  visualScale: 1
+  baseGoalScore: 12
+  baseRewardCoins: 5
   restrictions:
   - {fileID: 11400000, guid: 1a6c3d4f0e2b4a6fb8d91c2e3f405162, type: 2}
   preferences: []
