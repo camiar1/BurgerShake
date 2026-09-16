@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Tofu
   description: +2 Points per touching Vegetable.
-  sprite: {fileID: 0}
-  prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
-  placeholderShape: 3
+  sprite: {fileID: 6358309481160918528, guid: db62a9afc5e3479980c822178926938d, type: 3}
+  prefab: {fileID: 710001001, guid: 2a431d6a78bc499b8895f7e4f5b73571, type: 3}
+  placeholderShape: 0
   placeholderColor: {r: 0.93, g: 0.88, b: 0.73, a: 1}
   placeholderColliderSize: {x: 1.35, y: 1.35}
   draftWeight: 1

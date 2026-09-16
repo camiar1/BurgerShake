@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Avocado
   description: +0.3 Mult if touching both a Protein and a Vegetable.
-  sprite: {fileID: 0}
-  prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
-  placeholderShape: 2
+  sprite: {fileID: 3810102869644336656, guid: cf5ca584f8814bc9ae81b09b9ac1af70, type: 3}
+  prefab: {fileID: 710001001, guid: 6010fcd839b64b81bbc956e24eb497d2, type: 3}
+  placeholderShape: 0
   placeholderColor: {r: 0.55, g: 0.75, b: 0.22, a: 1}
   placeholderColliderSize: {x: 1.35, y: 1.75}
   draftWeight: 1

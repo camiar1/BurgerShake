@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Strawberry
   description: +2 Points per touching Fruit.
-  sprite: {fileID: 0}
-  prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
-  placeholderShape: 4
+  sprite: {fileID: 4333353932631399637, guid: 4fce7003bcad4d2cb61217a2c998e675, type: 3}
+  prefab: {fileID: 710001001, guid: d827d30a795240dba1ca15b4592ef1b7, type: 3}
+  placeholderShape: 0
   placeholderColor: {r: 0.93, g: 0.18, b: 0.2, a: 1}
   placeholderColliderSize: {x: 1.45, y: 1.6}
   draftWeight: 1
