@@ -9,14 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf0cdf8461272524ea4bc6cbc0c38823, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b9a3070f1416314c8555650ffa19ff6, type: 3}
   m_Name: Chloe
   m_EditorClassIdentifier: Assembly-CSharp::CustomerDefinition
   customerName: Chloe
   description: Can you make mine extra interesting? Surprise me!
-  sprite: {fileID: 21300000, guid: e9d4a534a902b8a459ce27298f3450bb, type: 3}
-  baseGoalScore: 6
-  baseRewardCoins: 2
+  portrait: {fileID: -8761668844828579111, guid: 4bd9a403eda907b4da4dd34a20a89ac3, type: 3}
+  visualOffset: {x: 0, y: 0}
+  visualScale: 1
+  baseGoalScore: 12
+  baseRewardCoins: 5
   restrictions:
   - {fileID: 11400000, guid: 5ea071823d6f4ea1c304253748596a7b, type: 2}
   preferences: []
