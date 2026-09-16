@@ -9,14 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf0cdf8461272524ea4bc6cbc0c38823, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b9a3070f1416314c8555650ffa19ff6, type: 3}
   m_Name: Tommy
   m_EditorClassIdentifier: Assembly-CSharp::CustomerDefinition
   customerName: Tommy
   description: Whoa, the cat picks the ingredients? Okay, I'm in.
-  sprite: {fileID: 21300000, guid: 8baa60886f5396c4bb9911331961567c, type: 3}
-  baseGoalScore: 8
-  baseRewardCoins: 3
+  portrait: {fileID: -2814219684746900926, guid: fbdcfc11f6da4b546b5d07ae9f2c5163, type: 3}
+  visualOffset: {x: 0, y: 0}
+  visualScale: 1
+  baseGoalScore: 12
+  baseRewardCoins: 5
   restrictions:
   - {fileID: 11400000, guid: 5ea071823d6f4ea1c304253748596a7b, type: 2}
   preferences: []
