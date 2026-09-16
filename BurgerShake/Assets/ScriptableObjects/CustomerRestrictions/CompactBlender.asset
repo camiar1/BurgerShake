@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CompactBlender
   m_EditorClassIdentifier: Assembly-CSharp::CustomerRestriction
   restrictionName: Compact Blender
-  description: Blender is 8% smaller.
+  description: Blender is 8% narrower.
   type: 0
   floatValue: 0.92
   intValue: 0
