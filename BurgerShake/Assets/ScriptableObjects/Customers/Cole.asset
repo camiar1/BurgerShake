@@ -9,14 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf0cdf8461272524ea4bc6cbc0c38823, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b9a3070f1416314c8555650ffa19ff6, type: 3}
   m_Name: Cole
   m_EditorClassIdentifier: Assembly-CSharp::CustomerDefinition
   customerName: Cole
   description: Keep it quick. I have somewhere to be.
-  sprite: {fileID: 21300000, guid: df421427fd28e3a41b3a7aff706721c8, type: 3}
-  baseGoalScore: 7
-  baseRewardCoins: 2
+  portrait: {fileID: 7136881898635167237, guid: 12d67c38a9f4faa499e4e38797b3f111, type: 3}
+  visualOffset: {x: 0, y: 0}
+  visualScale: 1
+  baseGoalScore: 12
+  baseRewardCoins: 5
   restrictions:
   - {fileID: 11400000, guid: 6fb182934e7a4fb2d4153648596a7b8c, type: 2}
   preferences: []
