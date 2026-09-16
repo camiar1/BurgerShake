@@ -15,6 +15,7 @@ This file tracks what is currently known, what changed recently, what still need
 - `RunManager` includes `StartingDraft`, customer intro, assembly, score reveal, customer outro, shop, won, and lost states.
 - Auto-start enters the Starting Ingredient Draft rather than a fixed Starting Pantry.
 - `RegularRun` currently contains Chad, Glorb, and Gregg, making it the active 3-customer vertical-slice run.
+- Passing the final customer skips the shop and transitions through CustomerOutro into `RunState.Won`.
 
 ### Starting Ingredient Draft
 - `StartingIngredientDraftController` exists and is scene-wired.
@@ -55,8 +56,8 @@ This file tracks what is currently known, what changed recently, what still need
 
 ### Customer restrictions
 - Six reusable restriction assets now exist:
-  - Compact Blender — blender is 8% smaller.
-  - Tight Blender — blender is 14% smaller.
+  - Compact Blender — blender is 8% narrower.
+  - Tight Blender — blender is 14% narrower.
   - Chunky Ingredients — ingredients are 8% larger.
   - Big Ingredients — ingredients are 15% larger.
   - Two Choice Toss — cat toss offers 2 choices instead of 3.
@@ -73,6 +74,8 @@ This file tracks what is currently known, what changed recently, what still need
   - Ronda — Big Ingredients.
   - Tommy — Two Choice Toss.
 - These restrictions use the existing generic `CustomerRestriction` / `GameplayModifiers` architecture; no customer-specific gameplay branches were added.
+- Blender-width restrictions now squeeze only the X axis of the physics BlenderRoot and the visible BlenderFront artwork together. The original Y scale remains unchanged.
+- The user confirmed the visible blender now correctly narrows with the restriction.
 
 ### Receipt
 - `RoundReceiptUI` is wired in SampleScene.
@@ -84,6 +87,20 @@ This file tracks what is currently known, what changed recently, what still need
   - score goal
 - The existing DescriptionText object in the scene was inactive in the serialized scene, so the receipt script activates it when populating customer details.
 - Visual spacing/layout still needs Unity inspection because longer receipts can exceed the current placeholder text area.
+
+### Win screen
+- A placeholder but complete `WinScreenController` now exists for the vertical slice.
+- It self-creates only in scenes containing a `RunManager`, so no manual scene wiring is required.
+- On `RunState.Won`, after a short delay it shows a full-screen end-of-run panel with:
+  - customers served
+  - final shake score
+  - coins remaining
+  - final pantry with copy counts
+  - owned Helpers
+  - Play Again button
+  - Main Menu button
+- The screen uses the existing `UIButtonAnimator` on its buttons and unscaled-time pop/fade presentation.
+- It is intentionally runtime-generated placeholder UI so it can be replaced later without blocking the vertical slice.
 
 ### Shop / Helpers
 - Existing shop architecture and UI are present.
@@ -106,36 +123,37 @@ This file tracks what is currently known, what changed recently, what still need
 
 Because repository editing cannot run the Unity Editor, these should be checked locally after pulling the latest branch:
 
-1. Project imports/compiles with the new customer and restriction assets.
+1. Project imports/compiles with the new customer, restriction, and Win-screen code.
 2. Starting Draft appears at run start.
 3. Individual reroll replaces only one card and consumes the shared reroll.
 4. First pick transitions into the second round and second pick starts Customer 1.
 5. Runtime pantry contains exactly 3 copies of each selected ingredient.
 6. Chad plays with normal blender/ingredient settings.
-7. Glorb's receipt shows `Blender is 8% smaller.` and the blender actually scales down for his challenge.
+7. Glorb's receipt shows `Blender is 8% narrower.` and both collider width and BlenderFront art squeeze together. Visual behavior is already user-confirmed; receipt wording still needs a normal run check.
 8. Gregg's receipt shows `Ingredients are 8% larger.` and dropped ingredients actually scale up for his challenge.
 9. Restrictions reset correctly when moving from one customer to the next.
 10. Receipt details remain readable with the new restriction section.
 11. All 14 current ingredients apply both their base +1/+2/+3 score and their special rule.
-12. Three-customer flow reaches shop/customer transitions and the Won state without stale ingredients or blocked UI.
-13. Each new customer definition previews the correct portrait in the Inspector.
+12. Three-customer flow reaches the final Won state without stale ingredients or blocked UI.
+13. The Win screen appears after Gregg leaves, shows correct run summary data, and both Play Again / Main Menu work.
+14. Each new customer definition previews the correct portrait in the Inspector.
 
 ## Immediate next work
 
 Priority order:
 
-1. Validate and harden the 3-customer vertical slice, especially customer-to-customer modifier reset and the final Won transition.
-2. Add/finish a proper Win presentation for the 3-customer slice.
-3. Build a formal 30-ingredient interaction matrix before adding large quantities of ingredient content.
+1. Validate the new Win screen and complete end-of-run flow in Unity.
+2. Build the formal 30-ingredient interaction matrix before adding the next ingredient-content batch.
+3. Turn that matrix into reusable scoring-rule additions only where the current rule library cannot express a planned ingredient.
 4. Improve receipt layout after visual Unity feedback.
-5. Audit current Helper architecture and expand it only after the vertical slice is stable.
+5. Audit Helper architecture and design the 20-Helper interaction matrix after the ingredient interaction vocabulary is stable.
 
 ## Current milestone
 
-`M3 — Three-customer vertical slice` is the main near-term target, while M1/M2 receive fixes discovered during testing.
+`M3 — Three-customer vertical slice` is now feature-complete at the repository level and awaits Unity validation of the final Win transition/UI.
 
-A successful near-term build should play:
+A successful vertical-slice build should play:
 
-Main Menu → Starting Draft → Customer 1 → Assembly → Score → Shop → Customer 2 → Shop → Customer 3 → Win
+Main Menu → Starting Draft → Customer 1 → Assembly → Score → Shop → Customer 2 → Shop → Customer 3 → Win Screen → Play Again / Main Menu
 
 without requiring Inspector changes during the run.
