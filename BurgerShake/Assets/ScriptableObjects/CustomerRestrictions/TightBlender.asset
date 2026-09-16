@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TightBlender
   m_EditorClassIdentifier: Assembly-CSharp::CustomerRestriction
   restrictionName: Tight Blender
-  description: Blender is 14% smaller.
+  description: Blender is 14% narrower.
   type: 0
   floatValue: 0.86
   intValue: 0
