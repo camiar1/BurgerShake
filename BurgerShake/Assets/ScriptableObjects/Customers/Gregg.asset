@@ -19,5 +19,6 @@ MonoBehaviour:
   visualScale: 1
   baseGoalScore: 12
   baseRewardCoins: 5
-  restrictions: []
+  restrictions:
+  - {fileID: 11400000, guid: 3c8e5f601b4d4c8fa1e2034253647586, type: 2}
   preferences: []
