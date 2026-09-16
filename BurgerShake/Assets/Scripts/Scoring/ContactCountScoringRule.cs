@@ -17,9 +17,18 @@ public class ContactCountScoringRule :
     )]
     public int maximumContacts = -1;
 
+    [Header("Optional Tag Filter")]
+    [Tooltip(
+        "When enabled, only touching ingredients with Contact Tag are counted."
+    )]
+    public bool filterByTag;
+
+    public IngredientTag contactTag;
+
+    [Header("Reward")]
     [Tooltip(
         "If enabled, Amount is awarded once " +
-        "for every touching ingredient."
+        "for every counted touching ingredient."
     )]
     public bool rewardPerContact;
 
@@ -33,7 +42,11 @@ public class ContactCountScoringRule :
         }
 
         int count =
-            ingredient.TouchingCount;
+            filterByTag
+                ? ingredient.CountTouchingWithTag(
+                    contactTag
+                )
+                : ingredient.TouchingCount;
 
         if (count < minimumContacts)
         {
