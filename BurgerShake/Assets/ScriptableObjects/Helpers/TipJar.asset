@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TipJar
   m_EditorClassIdentifier: Assembly-CSharp::RunUpgradeDefinition
   upgradeName: Tip Jar
-  description: 
+  description: Earn +2 bonus coins whenever you satisfy a customer.
   icon: {fileID: 0}
   cost: 3
   effectType: 3

@@ -5,7 +5,8 @@ public enum RunUpgradeEffectType
     DraftChoiceBonus,
     StartingMultBonus,
     IngredientScaleMultiplier,
-    BonusCoinsPerWin
+    BonusCoinsPerWin,
+    DispenseBonus
 }
 
 [CreateAssetMenu(fileName = "NewRunUpgrade", menuName = "Burger Shake/Run Upgrade")]

@@ -17,6 +17,6 @@ MonoBehaviour:
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 3
+  amount: 2
   minimumUniqueNeighbors: 1
   rewardPerUniqueNeighbor: 1

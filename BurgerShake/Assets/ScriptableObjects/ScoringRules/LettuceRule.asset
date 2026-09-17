@@ -17,7 +17,7 @@ MonoBehaviour:
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 6
+  amount: 4
   relationship: 2
   minimumVerticalDifference: 0.01
   requireTag: 0

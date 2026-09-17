@@ -410,18 +410,10 @@ public class RunManager : MonoBehaviour
             return;
         }
 
-        float multiplier =
-            runDefinition
-                .goalMultiplierByDay
-                .Evaluate(
-                    progress.Day
-                );
-
         CurrentGoalScore =
-            Mathf.RoundToInt(
+            runDefinition.GetGoalScore(
+                progress.Day,
                 CurrentCustomer
-                    .baseGoalScore *
-                multiplier
             );
 
         waitingForCustomerWindow =

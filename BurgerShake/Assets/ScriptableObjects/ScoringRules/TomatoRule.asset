@@ -17,4 +17,4 @@ MonoBehaviour:
   requiredTag: 1
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 2
+  amount: 1

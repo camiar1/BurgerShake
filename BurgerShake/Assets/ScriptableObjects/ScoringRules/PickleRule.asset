@@ -17,5 +17,5 @@ MonoBehaviour:
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 5
+  amount: 3
   rewardPerBridgePair: 0

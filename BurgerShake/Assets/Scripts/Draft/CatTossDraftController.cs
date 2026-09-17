@@ -24,6 +24,12 @@ public class CatTossDraftController : MonoBehaviour
     [SerializeField]
     private GameplayModifiers gameplayModifiers;
 
+    [SerializeField]
+    private RunManager runManager;
+
+    [SerializeField]
+    private RunProgress runProgress;
+
     [Header("UI Layout")]
     [SerializeField]
     private RectTransform choiceParent;
@@ -156,6 +162,16 @@ public class CatTossDraftController : MonoBehaviour
             gameplayModifiers = FindFirstObjectByType<GameplayModifiers>();
         }
 
+        if (runManager == null)
+        {
+            runManager = FindFirstObjectByType<RunManager>();
+        }
+
+        if (runProgress == null)
+        {
+            runProgress = FindFirstObjectByType<RunProgress>();
+        }
+
         if (ingredientContainer != null)
         {
             knownPlacedCount =
@@ -236,7 +252,18 @@ public class CatTossDraftController : MonoBehaviour
                 null;
         }
 
-        activeDispensesPerRound = Mathf.Max(1, dispensesPerRound);
+        int baseDispenses = dispensesPerRound;
+
+        if (runManager != null && runManager.Definition != null && runProgress != null)
+        {
+            baseDispenses = runManager.Definition.GetBaseDispenses(runProgress.Day);
+        }
+
+        int bonusDispenses = gameplayModifiers != null
+            ? gameplayModifiers.DispenseBonus
+            : 0;
+
+        activeDispensesPerRound = Mathf.Max(1, baseDispenses + bonusDispenses);
 
         if (gameplayModifiers != null && gameplayModifiers.DropLimit > 0)
         {

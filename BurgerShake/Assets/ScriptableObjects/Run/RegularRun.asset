@@ -176,9 +176,19 @@ MonoBehaviour:
     m_PostInfinity: 0
     m_RotationOrder: 4
   startingCoins: 0
-  shopAfterCustomers:
-  - 2
-  - 4
-  - 6
-  - 8
-  allowCustomerRetry: 1
+  shopAfterCustomers: []
+  allowCustomerRetry: 0
+  goalScoreByCustomer:
+  - 18
+  - 26
+  - 36
+  - 48
+  - 62
+  - 78
+  - 96
+  - 116
+  - 138
+  - 162
+  startingDispenses: 5
+  customersPerDispenseIncrease: 2
+  maxBaseDispenses: 9

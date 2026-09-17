@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: daecb4b0933ba154b8e1062d6326d343, type: 3}
-  m_Name: HeadStart
+  m_Name: ExtraScoop
   m_EditorClassIdentifier: Assembly-CSharp::RunUpgradeDefinition
-  upgradeName: Head Start
-  description: Start each customer with +0.15 Mult.
+  upgradeName: Extra Scoop
+  description: Permanently gain +1 ingredient dispense each customer.
   icon: {fileID: 0}
   cost: 7
-  effectType: 1
-  amount: 0.15
+  effectType: 4
+  amount: 1

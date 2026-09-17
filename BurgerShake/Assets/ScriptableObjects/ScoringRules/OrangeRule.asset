@@ -17,7 +17,7 @@ MonoBehaviour:
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 4
+  amount: 3
   minimumContacts: 1
   maximumContacts: 1
   rewardPerContact: 0

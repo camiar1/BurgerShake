@@ -17,7 +17,7 @@ MonoBehaviour:
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 1
-  amount: 0.33
+  amount: 0.18
   countedTags: 000000000e00000001000000
   minimumDifferentTags: 1
   rewardPerDifferentTag: 1

@@ -7221,6 +7221,7 @@ MonoBehaviour:
   availableHelpers:
   - {fileID: 11400000, guid: 9b7ef8819ddc1474aa08daeae71edd9e, type: 2}
   - {fileID: 11400000, guid: 447dacec8e54d284f8edf2b357a762a7, type: 2}
+  - {fileID: 11400000, guid: d15e7a1135f64d44a93ed33a8c671001, type: 2}
   helperOffersPerShop: 2
 --- !u!114 &700821257
 MonoBehaviour:

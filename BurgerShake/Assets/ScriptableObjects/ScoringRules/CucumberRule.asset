@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a3dc8f72e6b4a53bca2f2983117b8c4, type: 3}
   m_Name: CucumberRule
   m_EditorClassIdentifier: Assembly-CSharp::OrientationScoringRule
-  description: +4 Points when within 15 degrees of horizontal and touching at least 2 ingredients.
+  description: +3 Points when within 15 degrees of horizontal and touching at least 2 ingredients.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 4
+  amount: 3
   orientation: 0
   angleTolerance: 15
   minimumContacts: 2

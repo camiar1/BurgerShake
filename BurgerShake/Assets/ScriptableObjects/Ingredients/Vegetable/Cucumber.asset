@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cucumber
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Cucumber
-  description: +4 Points when within 15 degrees of horizontal and touching at least 2 ingredients.
+  description: +3 Points when within 15 degrees of horizontal and touching at least 2 ingredients.
   sprite: {fileID: 0}
   prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
   placeholderShape: 5

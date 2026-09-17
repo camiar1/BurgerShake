@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a3dc8f72e6b4a53bca2f2983117b8c4, type: 3}
   m_Name: CarrotRule
   m_EditorClassIdentifier: Assembly-CSharp::OrientationScoringRule
-  description: +0.25 Mult when within 15 degrees of vertical and touching at least 1 ingredient.
+  description: +0.12 Mult when within 15 degrees of vertical and touching at least 1 ingredient.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 1
-  amount: 0.25
+  amount: 0.12
   orientation: 1
   angleTolerance: 15
   minimumContacts: 1

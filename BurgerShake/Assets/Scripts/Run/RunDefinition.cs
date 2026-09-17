@@ -68,7 +68,15 @@ public class RunDefinition :
     public List<int> shopAfterCustomers = new List<int>();
 
     [Tooltip("When enabled, a failed order can retry the current customer without resetting the run.")]
-    public bool allowCustomerRetry = true;
+    public bool allowCustomerRetry = false;
+
+    [Header("Difficulty Progression")]
+    [Tooltip("Exact score goals by customer number. If a day has no entry, the legacy curve is used as fallback.")]
+    public List<int> goalScoreByCustomer = new List<int>();
+
+    [Min(1)] public int startingDispenses = 5;
+    [Min(1)] public int customersPerDispenseIncrease = 2;
+    [Min(1)] public int maxBaseDispenses = 9;
 
     public bool ShouldOpenShopAfterCustomer(int customerNumber)
     {
@@ -79,6 +87,22 @@ public class RunDefinition :
             return true;
 
         return shopAfterCustomers.Contains(customerNumber);
+    }
+
+    public int GetGoalScore(int customerNumber, CustomerDefinition customer)
+    {
+        int index = Mathf.Max(1, customerNumber) - 1;
+        if (goalScoreByCustomer != null && index < goalScoreByCustomer.Count)
+            return Mathf.Max(1, goalScoreByCustomer[index]);
+
+        float multiplier = goalMultiplierByDay.Evaluate(customerNumber);
+        return Mathf.Max(1, Mathf.RoundToInt((customer != null ? customer.baseGoalScore : 1) * multiplier));
+    }
+
+    public int GetBaseDispenses(int customerNumber)
+    {
+        int increases = (Mathf.Max(1, customerNumber) - 1) / Mathf.Max(1, customersPerDispenseIncrease);
+        return Mathf.Min(maxBaseDispenses, startingDispenses + increases);
     }
 
     public IReadOnlyList<IngredientDefinition>

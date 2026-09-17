@@ -14,6 +14,7 @@ public class GameplayModifiers : MonoBehaviour
     public float IngredientScale { get; private set; } = 1f;
     public int DraftChoiceCount { get; private set; } = 3;
     public int DropLimit { get; private set; } = -1;
+    public int DispenseBonus { get; private set; }
 
     public event Action Changed;
 
@@ -28,6 +29,7 @@ public class GameplayModifiers : MonoBehaviour
         IngredientScale = defaultIngredientScale;
         DraftChoiceCount = defaultDraftChoiceCount;
         DropLimit = defaultDropLimit;
+        DispenseBonus = 0;
 
         Changed?.Invoke();
     }
@@ -87,6 +89,9 @@ public class GameplayModifiers : MonoBehaviour
                     break;
                 case RunUpgradeEffectType.IngredientScaleMultiplier:
                     IngredientScale *= Mathf.Max(0.1f, upgrade.amount);
+                    break;
+                case RunUpgradeEffectType.DispenseBonus:
+                    DispenseBonus += Mathf.Max(0, Mathf.RoundToInt(upgrade.amount));
                     break;
             }
         }

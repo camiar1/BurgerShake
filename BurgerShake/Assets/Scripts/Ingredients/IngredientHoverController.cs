@@ -9,6 +9,7 @@ public class IngredientHoverController : MonoBehaviour
     [SerializeField] private Camera gameplayCamera;
     [SerializeField] private RunManager runManager;
     [SerializeField] private ViewController viewController;
+    [SerializeField] private IngredientTooltipUI tooltipUI;
 
     [Header("Detection")]
     [SerializeField]
@@ -63,6 +64,17 @@ public class IngredientHoverController : MonoBehaviour
         {
             viewController =
                 FindFirstObjectByType<ViewController>();
+        }
+
+        if (tooltipUI == null)
+        {
+            tooltipUI = FindFirstObjectByType<IngredientTooltipUI>();
+        }
+
+        if (tooltipUI == null)
+        {
+            GameObject tooltipObject = new GameObject("[Runtime] Ingredient Tooltip");
+            tooltipUI = tooltipObject.AddComponent<IngredientTooltipUI>();
         }
     }
 
@@ -120,6 +132,11 @@ public class IngredientHoverController : MonoBehaviour
             ingredient;
 
         RefreshHighlights();
+
+        if (hoveredIngredient != null)
+            tooltipUI?.Show(hoveredIngredient);
+        else
+            tooltipUI?.Hide();
     }
 
     private Ingredient FindIngredientAtPoint(
@@ -312,6 +329,8 @@ public class IngredientHoverController : MonoBehaviour
 
         hoveredIngredient =
             null;
+
+        tooltipUI?.Hide();
     }
 
     private bool CanHover()
