@@ -21,6 +21,9 @@ public class CatTossDraftController : MonoBehaviour
     [SerializeField]
     private Transform ingredientContainer;
 
+    [SerializeField]
+    private GameplayModifiers gameplayModifiers;
+
     [Header("UI Layout")]
     [SerializeField]
     private RectTransform choiceParent;
@@ -122,14 +125,16 @@ public class CatTossDraftController : MonoBehaviour
     private int knownPlacedCount;
 
     private int dispensesRemaining;
+    private int activeDispensesPerRound;
 
     private Coroutine delayedNextTossRoutine;
 
-    public int DispensesRemaining =>
-        dispensesRemaining;
+    public int DispensesRemaining => dispensesRemaining;
 
     public int DispensesPerRound =>
-        dispensesPerRound;
+        activeDispensesPerRound > 0
+            ? activeDispensesPerRound
+            : dispensesPerRound;
 
     public bool HasDispensesRemaining =>
         dispensesRemaining > 0;
@@ -143,8 +148,12 @@ public class CatTossDraftController : MonoBehaviour
     {
         if (choiceParent == null)
         {
-            choiceParent =
-                transform as RectTransform;
+            choiceParent = transform as RectTransform;
+        }
+
+        if (gameplayModifiers == null)
+        {
+            gameplayModifiers = FindFirstObjectByType<GameplayModifiers>();
         }
 
         if (ingredientContainer != null)
@@ -227,11 +236,17 @@ public class CatTossDraftController : MonoBehaviour
                 null;
         }
 
-        dispensesRemaining =
-            Mathf.Max(
-                1,
-                dispensesPerRound
+        activeDispensesPerRound = Mathf.Max(1, dispensesPerRound);
+
+        if (gameplayModifiers != null && gameplayModifiers.DropLimit > 0)
+        {
+            activeDispensesPerRound = Mathf.Min(
+                activeDispensesPerRound,
+                gameplayModifiers.DropLimit
             );
+        }
+
+        dispensesRemaining = activeDispensesPerRound;
 
         NotifyDispensesChanged();
 
@@ -540,7 +555,7 @@ public class CatTossDraftController : MonoBehaviour
     {
         DispensesChanged?.Invoke(
             dispensesRemaining,
-            dispensesPerRound
+            DispensesPerRound
         );
     }
 
