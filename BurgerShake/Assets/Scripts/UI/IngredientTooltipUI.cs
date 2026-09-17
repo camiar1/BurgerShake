@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+[ExecuteAlways]
 public class IngredientTooltipUI : MonoBehaviour
 {
     private Canvas canvas;
@@ -18,7 +19,19 @@ public class IngredientTooltipUI : MonoBehaviour
     private void Awake()
     {
         BuildUI();
-        Hide();
+
+        if (Application.isPlaying)
+            Hide();
+        else
+            ShowEditorPreview();
+    }
+
+    private void OnEnable()
+    {
+        BuildUI();
+
+        if (!Application.isPlaying)
+            ShowEditorPreview();
     }
 
     private void LateUpdate()
@@ -36,6 +49,11 @@ public class IngredientTooltipUI : MonoBehaviour
             Hide();
             return;
         }
+        BuildUI();
+
+        if (bodyText == null || panel == null || canvasGroup == null)
+            return;
+
         bodyText.text = BuildTooltipText(ingredient);
         bodyText.ForceMeshUpdate();
 
@@ -158,6 +176,16 @@ public class IngredientTooltipUI : MonoBehaviour
 
     private void BuildUI()
     {
+        Transform existingCanvas = transform.Find("IngredientTooltipCanvas");
+
+        if (existingCanvas != null)
+        {
+            ResolveExistingUI(existingCanvas);
+
+            if (canvas != null && panel != null && bodyText != null && canvasGroup != null)
+                return;
+        }
+
         GameObject canvasObject = new GameObject(
             "IngredientTooltipCanvas",
             typeof(RectTransform),
@@ -209,6 +237,45 @@ public class IngredientTooltipUI : MonoBehaviour
         bodyText.enableWordWrapping = true;
         bodyText.raycastTarget = false;
         bodyText.richText = true;
+    }
+
+    private void ResolveExistingUI(Transform existingCanvas)
+    {
+        canvas = existingCanvas.GetComponent<Canvas>();
+        canvasRect = existingCanvas as RectTransform;
+        canvasGroup = existingCanvas.GetComponent<CanvasGroup>();
+
+        Transform panelTransform = existingCanvas.Find("TooltipPanel");
+        panel = panelTransform as RectTransform;
+
+        if (panelTransform != null)
+        {
+            Transform textTransform = panelTransform.Find("TooltipText");
+            bodyText = textTransform != null
+                ? textTransform.GetComponent<TMP_Text>()
+                : null;
+        }
+    }
+
+    private void ShowEditorPreview()
+    {
+        if (bodyText == null || panel == null || canvasGroup == null)
+            return;
+
+        bodyText.text =
+            "<size=30><b>INGREDIENT NAME</b></size>\n" +
+            "<b>TYPE:</b> Fruit / Protein / Vegetable\n" +
+            "<b>TOUCHING:</b> 2\n\n" +
+            "<b>SCORING</b>\n" +
+            "• Hovered ingredient scoring relationship\n\n" +
+            "<size=18><color=#C8C8C8>Tags: Preview</color></size>";
+
+        bodyText.ForceMeshUpdate();
+        panel.sizeDelta = new Vector2(Width, 220f);
+        canvasGroup.alpha = 1f;
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+        panel.anchoredPosition = new Vector2(40f, -40f);
     }
 
     private void PositionNearCursor(Vector2 screenPosition)

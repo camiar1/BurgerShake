@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class IngredientHoverController : MonoBehaviour
@@ -92,16 +91,6 @@ public class IngredientHoverController : MonoBehaviour
         if (
             mouse == null ||
             gameplayCamera == null
-        )
-        {
-            ClearHighlights();
-            return;
-        }
-
-        if (
-            EventSystem.current != null &&
-            EventSystem.current
-                .IsPointerOverGameObject()
         )
         {
             ClearHighlights();

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[ExecuteAlways]
 public class WinScreenController : MonoBehaviour
 {
     [Header("Game")]
@@ -62,11 +63,24 @@ public class WinScreenController : MonoBehaviour
     {
         ResolveReferences();
         BuildFallbackUI();
-        HideInstant();
+
+        if (Application.isPlaying)
+            HideInstant();
+        else
+            ShowEditorPreview();
     }
 
     private void OnEnable()
     {
+        ResolveReferences();
+        BuildFallbackUI();
+
+        if (!Application.isPlaying)
+        {
+            ShowEditorPreview();
+            return;
+        }
+
         if (runManager != null)
         {
             runManager.StateChanged += HandleRunStateChanged;
@@ -85,6 +99,9 @@ public class WinScreenController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (!Application.isPlaying)
+            return;
+
         if (runManager != null)
         {
             runManager.StateChanged -= HandleRunStateChanged;
@@ -350,6 +367,53 @@ public class WinScreenController : MonoBehaviour
         return builder.ToString().TrimEnd();
     }
 
+    private void ResolveExistingUI()
+    {
+        Transform canvasTransform = transform.Find("WinScreenCanvas");
+        if (canvasTransform == null)
+            return;
+
+        screenRoot = canvasTransform.gameObject;
+        canvasGroup = canvasTransform.GetComponent<CanvasGroup>();
+
+        Transform panelTransform = canvasTransform.Find("WinPanel");
+        panelRect = panelTransform as RectTransform;
+        if (panelTransform == null)
+            return;
+
+        customersText = panelTransform.Find("CustomersText")?.GetComponent<TMP_Text>();
+        finalScoreText = panelTransform.Find("FinalScoreText")?.GetComponent<TMP_Text>();
+        coinsText = panelTransform.Find("CoinsText")?.GetComponent<TMP_Text>();
+        pantryText = panelTransform.Find("PantryText")?.GetComponent<TMP_Text>();
+        helpersText = panelTransform.Find("HelpersText")?.GetComponent<TMP_Text>();
+        playAgainButton = panelTransform.Find("PlayAgainButton")?.GetComponent<Button>();
+        mainMenuButton = panelTransform.Find("MainMenuButton")?.GetComponent<Button>();
+    }
+
+    private void ShowEditorPreview()
+    {
+        ResolveExistingUI();
+        if (screenRoot == null)
+            return;
+
+        screenRoot.SetActive(true);
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 1f;
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+        }
+
+        if (panelRect != null)
+            panelRect.localScale = Vector3.one;
+
+        if (customersText != null) customersText.text = "10/10 CUSTOMERS SERVED";
+        if (finalScoreText != null) finalScoreText.text = "FINAL SHAKE  162";
+        if (coinsText != null) coinsText.text = "COINS LEFT  $12";
+        if (pantryText != null) pantryText.text = "PANTRY\nEditor preview";
+        if (helpersText != null) helpersText.text = "HELPERS\nEditor preview";
+    }
+
     private void HideInstant()
     {
         if (screenRoot != null)
@@ -374,6 +438,8 @@ public class WinScreenController : MonoBehaviour
 
     private void BuildFallbackUI()
     {
+        ResolveExistingUI();
+
         if (screenRoot != null)
         {
             return;
