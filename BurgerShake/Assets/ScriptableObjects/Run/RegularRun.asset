@@ -31,6 +31,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: aa100000000000000000000000000002, type: 2}
   - {fileID: 11400000, guid: aa100000000000000000000000000003, type: 2}
   - {fileID: 11400000, guid: aa100000000000000000000000000004, type: 2}
+  - {fileID: 11400000, guid: 8ce00bab2ec542ee96f2587a305aa541, type: 2}
+  - {fileID: 11400000, guid: e79756bf5570492687ea77f4f8c09792, type: 2}
+  - {fileID: 11400000, guid: 1dac2d3e44d94fe08b5817785258f6cf, type: 2}
   startingDraftSynergies:
   - ingredient: {fileID: 11400000, guid: 2d6f87638f3aedf4cb89463a0c55fb50, type: 2}
     partners:
@@ -122,6 +125,21 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 9528b8a1a5559374b86cdfe38ce28552, type: 2}
     - {fileID: 11400000, guid: d95271a6072e1a1479cfad4048212100, type: 2}
     - {fileID: 11400000, guid: ea5e17f00abd1304bbbb08d171edf410, type: 2}
+  - ingredient: {fileID: 11400000, guid: 8ce00bab2ec542ee96f2587a305aa541, type: 2}
+    partners:
+    - {fileID: 11400000, guid: aa100000000000000000000000000004, type: 2}
+    - {fileID: 11400000, guid: d95271a6072e1a1479cfad4048212100, type: 2}
+    - {fileID: 11400000, guid: 9528b8a1a5559374b86cdfe38ce28552, type: 2}
+  - ingredient: {fileID: 11400000, guid: e79756bf5570492687ea77f4f8c09792, type: 2}
+    partners:
+    - {fileID: 11400000, guid: fa283ccee0c73304a93a70d4de002711, type: 2}
+    - {fileID: 11400000, guid: aa100000000000000000000000000002, type: 2}
+    - {fileID: 11400000, guid: d6a224a0fa58db34c8f40676519d608b, type: 2}
+  - ingredient: {fileID: 11400000, guid: 1dac2d3e44d94fe08b5817785258f6cf, type: 2}
+    partners:
+    - {fileID: 11400000, guid: fa283ccee0c73304a93a70d4de002711, type: 2}
+    - {fileID: 11400000, guid: aa100000000000000000000000000002, type: 2}
+    - {fileID: 11400000, guid: d780b1a3b60acff4aacbdcc7b1df3fe9, type: 2}
   customers:
   - {fileID: 11400000, guid: 36b240fd6087f3a4c89533d80df971e7, type: 2}
   - {fileID: 11400000, guid: a7b2ae837dd6e944f83d225bbc321076, type: 2}

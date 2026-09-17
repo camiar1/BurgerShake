@@ -2,7 +2,7 @@
 
 This is the first content-complete ingredient design pass for the final game target. It defines the intended interaction network before the remaining art/prefabs/ScriptableObjects are created.
 
-**Important:** the 14 ingredients already in the project remain the only fully implemented ingredient content right now. The 16 new entries below are design-locked targets, not yet added to `RegularRun` or crates. Their exact numbers are initial tuning values and can change during playtesting.
+**Current content:** 21 ingredients are configured in `RegularRun` and the scene shop pool: the original 14 plus Cheese, Tofu, Avocado, Strawberry, Banana, Carrot, and Cucumber. The orientation batch uses procedural placeholder art and awaits Unity playtesting. The remaining 9 entries are design-locked targets. Exact numbers are initial tuning values and can change during playtesting.
 
 ## Design rules
 
@@ -23,12 +23,12 @@ This is the first content-complete ingredient design pass for the final game tar
 | Bacon | Existing | +3 | **+0.5 Mult if touching at least 2 Proteins.** | High-value Protein payoff |
 | Egg | Existing | +2 | **+0.5 Mult if nothing is touching above it.** | Top-of-stack precision |
 | Sausage | Existing | +3 | **+1 Point per touching ingredient.** | Crowding / contact payoff |
-| Cheese | Planned | +1 | **+0.15 Mult per touching Protein.** | Flexible Protein multiplier |
+| Cheese | Added | +1 | **+0.15 Mult per touching Protein.** | Flexible Protein multiplier |
 | Chicken Nugget | Planned | +2 | If connected to at least 1 other Nugget, **+1 Point per member of its connected Nugget cluster.** | Same-type cluster build |
 | Ham | Planned | +2 | **+0.3 Mult if something touches it above and below.** | Sandwich / vertical payoff |
 | Meatball | Planned | +3 | **+5 Points if touching exactly 2 ingredients.** | Precision contact count |
 | Shrimp | Planned | +2 | **+0.15 Mult per touching Fruit.** | Protein/Fruit crossover |
-| Tofu | Planned | +1 | **+2 Points per touching Vegetable.** | Protein/Vegetable connector |
+| Tofu | Added | +1 | **+2 Points per touching Vegetable.** | Protein/Vegetable connector |
 
 ## Vegetable — 10
 
@@ -40,9 +40,9 @@ This is the first content-complete ingredient design pass for the final game tar
 | Pickle | Existing | +2 | **+5 Points when it bridges two neighbors that are not touching each other.** | Bridge geometry |
 | Red Chili | Existing | +2 | **+0.15 Mult per touching Protein.** | Spicy Protein multiplier |
 | Tomato | Existing | +1 | **+2 Points per touching Vegetable.** | Vegetable engine |
-| Avocado | Planned | +2 | **+0.3 Mult if touching both a Protein and a Vegetable.** | Mixed-category payoff |
-| Carrot | Planned | +3 | **+0.25 Mult when nearly vertical and touching at least 1 ingredient.** | Orientation / precision |
-| Cucumber | Planned | +2 | **+4 Points when nearly horizontal and touching at least 2 ingredients.** | Orientation / bridge-like placement |
+| Avocado | Added | +2 | **+0.3 Mult if touching both a Protein and a Vegetable.** | Mixed-category payoff |
+| Carrot | Added | +3 | **+0.25 Mult when nearly vertical and touching at least 1 ingredient.** | Orientation / precision |
+| Cucumber | Added | +2 | **+4 Points when nearly horizontal and touching at least 2 ingredients.** | Orientation / bridge-like placement |
 | Corn | Planned | +3 | **+2 Points per unique neighboring ingredient type after the first.** | Diversity payoff with a floor |
 
 ## Fruit — 10
@@ -53,8 +53,8 @@ This is the first content-complete ingredient design pass for the final game tar
 | Blueberry | Existing | +1 | **+2 Points per touching ingredient.** | Tiny gap-filler / dense scoring |
 | Orange | Existing | +2 | **+4 Points if touching exactly 1 ingredient.** | Precise low-contact placement |
 | Pineapple | Existing | +3 | **+5 Points if touching both a Protein and a Vegetable.** | Cross-category anchor |
-| Banana | Planned | +3 | **+0.3 Mult when nearly horizontal.** | Awkward orientation payoff |
-| Strawberry | Planned | +2 | **+2 Points per touching Fruit.** | Fruit engine |
+| Banana | Added | +3 | **+0.3 Mult when nearly horizontal.** | Awkward orientation payoff |
+| Strawberry | Added | +2 | **+2 Points per touching Fruit.** | Fruit engine |
 | Grape | Planned | +1 | In a connected Grape cluster of at least 3, **+0.05 Mult per cluster member.** | Same-type cluster multiplier |
 | Watermelon | Planned | +3 | **+0.5 Mult if touching at least 3 ingredients.** | Large crowded centerpiece |
 | Cherry | Planned | +1 | **+0.4 Mult if touching no other ingredient.** | Risky isolation build |

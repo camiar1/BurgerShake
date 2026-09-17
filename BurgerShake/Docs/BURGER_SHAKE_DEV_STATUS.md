@@ -5,7 +5,7 @@ This file tracks what is currently known, what changed recently, what still need
 ## Current branch
 
 - Repository: camiar1/BurgerShake
-- Working branch: agent/burger-shake-foundation
+- Working branch: agent/ingredient-batch-followup (based on agent/burger-shake-foundation)
 - User baseline: `Agent Update`, followed by local Unity fixes in `updated from agent errors`.
 - Development has explicit permission to modify gameplay systems, create/move placeholder UI, and use legal/free resources.
 
@@ -20,7 +20,7 @@ This file tracks what is currently known, what changed recently, what still need
 
 - 2 rounds, 3 choices each, 3 copies per selected ingredient, 1 shared per-slot reroll.
 - Round 2 supports curated synergy partners.
-- `RegularRun` starter eligibility has expanded from 14 to **18 ingredients** with the first placeholder content batch.
+- `RegularRun` starter eligibility has expanded from 14 to **21 ingredients** with the first placeholder content batch.
 
 ## Playable ingredient content
 
@@ -35,7 +35,15 @@ New temporary-playable ingredients:
 - **Avocado** — +2 base; +0.3 Mult when touching both a Protein and a Vegetable.
 - **Strawberry** — +2 base; +2 Points per touching Fruit.
 
-The final first-pass roster remains 30 ingredients. The remaining planned additions are Chicken Nugget, Ham, Meatball, Shrimp, Carrot, Cucumber, Corn, Banana, Grape, Watermelon, Cherry, and Lemon.
+- **Banana** — +3 base; +0.3 Mult within 15 degrees of horizontal.
+- **Carrot** — +3 base; +0.25 Mult within 15 degrees of vertical with at least one ingredient contact.
+- **Cucumber** — +2 base; +4 Points within 15 degrees of horizontal with at least two ingredient contacts.
+
+The orientation batch uses the shared placeholder prefab and colored, elongated procedural sprites. All three have a horizontal local long axis, including Carrot, so the existing rotation-based rule measures their physical orientation correctly. Their temporary box colliders match the 1.8 by 0.84 visible silhouette bounds; curved/tapered silhouettes remain future art work.
+
+The scene shop pool now includes all 21 ingredients. The previous four additions were missing from that pool even though they were in the opening draft. New ingredients also have curated second-round draft partners.
+
+The final first-pass roster remains 30 ingredients. The remaining planned additions are Chicken Nugget, Ham, Meatball, Shrimp, Corn, Grape, Watermelon, Cherry, and Lemon.
 
 ## Temporary ingredient art / physics framework
 
@@ -99,4 +107,10 @@ After pulling this batch, check:
 
 ## Current milestone
 
-`M4 — Ingredient content expansion` is active. The project now has 18 starter-eligible ingredients, including the first four temporary-playable additions.
+`M4 — Ingredient content expansion` is active. The project now has 21 starter-eligible ingredients, including seven additions.
+
+## Orientation batch verification
+
+Static asset validation checks all new GUID references, rule types and values, base scores, category tags, valid physics prefab components, draft eligibility/partners, and shop inclusion. Unity is unavailable in the development environment; import, rendered UI, actual collisions, and a complete run are not yet playtested.
+
+In Unity, check the three new pieces in draft cards and drop previews, then rotate/drop them. Banana scores 3 Points plus 0.3 Mult horizontally and just 3 Points vertically. Carrot scores 3 Points plus 0.25 Mult vertically only with an ingredient neighbor. Cucumber scores 6 Points horizontally with two or more ingredient neighbors, otherwise 2 Points. Blender walls do not count as ingredient neighbors. Test flipped orientations and both sides of the 15-degree cutoff. Check the seven additions in their matching shop crate, then finish the Chad → Glorb → Gregg run.

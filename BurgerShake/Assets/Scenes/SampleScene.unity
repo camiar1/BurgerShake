@@ -7206,6 +7206,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d95271a6072e1a1479cfad4048212100, type: 2}
   - {fileID: 11400000, guid: 3d67c3ae331f5094f8f9d295d8319b28, type: 2}
   - {fileID: 11400000, guid: ea5e17f00abd1304bbbb08d171edf410, type: 2}
+  - {fileID: 11400000, guid: aa100000000000000000000000000001, type: 2}
+  - {fileID: 11400000, guid: aa100000000000000000000000000002, type: 2}
+  - {fileID: 11400000, guid: aa100000000000000000000000000003, type: 2}
+  - {fileID: 11400000, guid: aa100000000000000000000000000004, type: 2}
+  - {fileID: 11400000, guid: 8ce00bab2ec542ee96f2587a305aa541, type: 2}
+  - {fileID: 11400000, guid: e79756bf5570492687ea77f4f8c09792, type: 2}
+  - {fileID: 11400000, guid: 1dac2d3e44d94fe08b5817785258f6cf, type: 2}
   availableCrates:
   - {fileID: 11400000, guid: 7aceabdf7129cb747a84f87eee06dfba, type: 2}
   - {fileID: 11400000, guid: 991e2c9f70188294b8572c487cbf74cf, type: 2}
