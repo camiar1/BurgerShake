@@ -63,6 +63,24 @@ public class RunDefinition :
     public int startingCoins =
         0;
 
+    [Header("Run Flow")]
+    [Tooltip("Customer numbers after which the shop opens. Leave empty to shop after every successful customer.")]
+    public List<int> shopAfterCustomers = new List<int>();
+
+    [Tooltip("When enabled, a failed order can retry the current customer without resetting the run.")]
+    public bool allowCustomerRetry = true;
+
+    public bool ShouldOpenShopAfterCustomer(int customerNumber)
+    {
+        if (customers == null || customerNumber >= customers.Count)
+            return false;
+
+        if (shopAfterCustomers == null || shopAfterCustomers.Count == 0)
+            return true;
+
+        return shopAfterCustomers.Contains(customerNumber);
+    }
+
     public IReadOnlyList<IngredientDefinition>
         GetStartingDraftPartners(
             IngredientDefinition ingredient

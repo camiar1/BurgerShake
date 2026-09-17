@@ -144,6 +144,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 36b240fd6087f3a4c89533d80df971e7, type: 2}
   - {fileID: 11400000, guid: a7b2ae837dd6e944f83d225bbc321076, type: 2}
   - {fileID: 11400000, guid: 679151be843f0104b9039498e9b238f9, type: 2}
+  - {fileID: 11400000, guid: 70c293a45f8b40c3e52647596a7b8c9d, type: 2}
+  - {fileID: 11400000, guid: 81d3a4b5609c41d4f637586a7b8c9dae, type: 2}
+  - {fileID: 11400000, guid: 92e4b5c671ad42e50849697b8c9daebf, type: 2}
+  - {fileID: 11400000, guid: a3f5c6d782be43f6195a7a8c9daebfc0, type: 2}
+  - {fileID: 11400000, guid: b406d7e893cf44072a6b8b9daebfc0d1, type: 2}
+  - {fileID: 11400000, guid: c517e8f9a4d045183b7c9caebfc0d1e2, type: 2}
+  - {fileID: 11400000, guid: d628f90ab5e146294c8dadbfc0d1e2f3, type: 2}
   goalMultiplierByDay:
     serializedVersion: 2
     m_Curve:
@@ -169,3 +176,9 @@ MonoBehaviour:
     m_PostInfinity: 0
     m_RotationOrder: 4
   startingCoins: 0
+  shopAfterCustomers:
+  - 2
+  - 4
+  - 6
+  - 8
+  allowCustomerRetry: 1

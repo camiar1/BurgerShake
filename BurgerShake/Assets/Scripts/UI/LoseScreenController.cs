@@ -148,6 +148,7 @@ public class LoseScreenController : MonoBehaviour
     {
         if (state != RunState.Lost)
         {
+            loseScreenAnimator?.Hide();
             return;
         }
 
@@ -224,16 +225,16 @@ public class LoseScreenController : MonoBehaviour
 
     private void HandleRetryPressed()
     {
-        Time.timeScale =
-            1f;
+        Time.timeScale = 1f;
 
-        Scene scene =
-            SceneManager
-                .GetActiveScene();
+        if (runManager != null && runManager.RetryCurrentCustomer())
+        {
+            loseScreenAnimator?.Hide();
+            return;
+        }
 
-        SceneManager.LoadScene(
-            scene.name
-        );
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
     }
 
     private void HandleMainMenuPressed()

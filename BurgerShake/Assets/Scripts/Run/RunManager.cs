@@ -532,6 +532,19 @@ public class RunManager : MonoBehaviour
             );
     }
 
+    public bool RetryCurrentCustomer()
+    {
+        if (State != RunState.Lost || runDefinition == null || !runDefinition.allowCustomerRetry)
+            return false;
+
+        waitingForCustomerWindow = false;
+        waitingForAssembly = false;
+        waitingForOutroWindow = false;
+
+        StartCurrentDay();
+        return true;
+    }
+
     public void ContinueAfterShop()
     {
         if (
@@ -714,10 +727,7 @@ public class RunManager : MonoBehaviour
     {
         if (!passed)
         {
-            SetState(
-                RunState.Lost
-            );
-
+            SetState(RunState.Lost);
             return;
         }
 
@@ -737,10 +747,13 @@ public class RunManager : MonoBehaviour
             stateAfterOutro =
                 RunState.Won;
         }
+        else if (runDefinition.ShouldOpenShopAfterCustomer(progress.Day))
+        {
+            stateAfterOutro = RunState.Shop;
+        }
         else
         {
-            stateAfterOutro =
-                RunState.Shop;
+            stateAfterOutro = RunState.CustomerIntro;
         }
 
         BeginCustomerOutro();
@@ -853,12 +866,16 @@ public class RunManager : MonoBehaviour
                 );
         }
 
-        outroRoutine =
-            null;
+        outroRoutine = null;
 
-        SetState(
-            stateAfterOutro
-        );
+        if (stateAfterOutro == RunState.CustomerIntro)
+        {
+            progress?.AdvanceDay();
+            StartCurrentDay();
+            yield break;
+        }
+
+        SetState(stateAfterOutro);
     }
 
     private void SetState(
