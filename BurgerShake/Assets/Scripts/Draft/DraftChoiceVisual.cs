@@ -80,6 +80,7 @@ public class DraftChoiceVisual :
 
     private bool isHovered;
     private bool hoverEnabled;
+    private IngredientTooltipUI tooltipUI;
 
     private float particleTimer;
 
@@ -116,6 +117,8 @@ public class DraftChoiceVisual :
                     HandleClicked
                 );
         }
+
+        tooltipUI = FindFirstObjectByType<IngredientTooltipUI>();
 
         ResetHoverVisuals();
     }
@@ -792,6 +795,11 @@ public class DraftChoiceVisual :
 
         isHovered =
             true;
+
+        if (tooltipUI == null)
+            tooltipUI = FindFirstObjectByType<IngredientTooltipUI>();
+
+        tooltipUI?.Show(definition);
     }
 
     public void OnPointerExit(
@@ -800,6 +808,8 @@ public class DraftChoiceVisual :
     {
         isHovered =
             false;
+
+        tooltipUI?.Hide();
     }
 
     private void HandleClicked()
@@ -828,6 +838,8 @@ public class DraftChoiceVisual :
 
         isHovered =
             false;
+
+        tooltipUI?.Hide();
 
         particleTimer =
             0f;

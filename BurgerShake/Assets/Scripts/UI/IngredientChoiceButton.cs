@@ -53,6 +53,14 @@ public class IngredientChoiceButton : MonoBehaviour
             button.onClick.RemoveListener(Choose);
             button.onClick.AddListener(Choose);
         }
+
+        IngredientTooltipTrigger tooltipTrigger =
+            gameObject.GetComponent<IngredientTooltipTrigger>();
+
+        if (tooltipTrigger == null)
+            tooltipTrigger = gameObject.AddComponent<IngredientTooltipTrigger>();
+
+        tooltipTrigger.Setup(ingredient);
     }
 
     public void SetInteractable(bool interactable)

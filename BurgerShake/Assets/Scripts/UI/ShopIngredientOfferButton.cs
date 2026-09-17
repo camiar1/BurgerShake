@@ -116,6 +116,18 @@ public class ShopIngredientOfferButton :
             chooseButton.interactable =
                 true;
         }
+
+        GameObject tooltipTarget = chooseButton != null
+            ? chooseButton.gameObject
+            : gameObject;
+
+        IngredientTooltipTrigger tooltipTrigger =
+            tooltipTarget.GetComponent<IngredientTooltipTrigger>();
+
+        if (tooltipTrigger == null)
+            tooltipTrigger = tooltipTarget.AddComponent<IngredientTooltipTrigger>();
+
+        tooltipTrigger.Setup(ingredient);
     }
 
     private void HandlePressed()

@@ -337,6 +337,16 @@ public class StartingIngredientDraftUI :
             choiceButtons[index]
                 .interactable =
                     hasIngredient;
+
+            IngredientTooltipTrigger tooltipTrigger =
+                choiceButtons[index]
+                    .GetComponent<IngredientTooltipTrigger>();
+
+            if (tooltipTrigger == null)
+                tooltipTrigger = choiceButtons[index]
+                    .gameObject.AddComponent<IngredientTooltipTrigger>();
+
+            tooltipTrigger.Setup(ingredient);
         }
 
         if (

@@ -49,12 +49,29 @@ public class IngredientTooltipUI : MonoBehaviour
             Hide();
             return;
         }
+
+        ShowDefinition(ingredient.Definition, ingredient.TouchingCount);
+    }
+
+    public void Show(IngredientDefinition definition)
+    {
+        if (definition == null)
+        {
+            Hide();
+            return;
+        }
+
+        ShowDefinition(definition, null);
+    }
+
+    private void ShowDefinition(IngredientDefinition definition, int? touchingCount)
+    {
         BuildUI();
 
         if (bodyText == null || panel == null || canvasGroup == null)
             return;
 
-        bodyText.text = BuildTooltipText(ingredient);
+        bodyText.text = BuildTooltipText(definition, touchingCount);
         bodyText.ForceMeshUpdate();
 
         float height = Mathf.Clamp(bodyText.preferredHeight + 34f, 120f, 420f);
@@ -75,9 +92,8 @@ public class IngredientTooltipUI : MonoBehaviour
         canvasGroup.interactable = false;
     }
 
-    private string BuildTooltipText(Ingredient ingredient)
+    private string BuildTooltipText(IngredientDefinition definition, int? touchingCount)
     {
-        IngredientDefinition definition = ingredient.Definition;
         StringBuilder builder = new StringBuilder();
 
         builder.Append("<size=30><b>");
@@ -85,8 +101,12 @@ public class IngredientTooltipUI : MonoBehaviour
         builder.AppendLine("</b></size>");
         builder.Append("<b>TYPE:</b> ");
         builder.AppendLine(GetPrimaryType(definition));
-        builder.Append("<b>TOUCHING:</b> ");
-        builder.AppendLine(ingredient.TouchingCount.ToString());
+
+        if (touchingCount.HasValue)
+        {
+            builder.Append("<b>TOUCHING:</b> ");
+            builder.AppendLine(touchingCount.Value.ToString());
+        }
 
         if (!string.IsNullOrWhiteSpace(definition.description))
         {
