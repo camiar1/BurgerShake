@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Watermelon
   description: Base +3 Points. +3 Points when touching at least 2 ingredients.
-  sprite: {fileID: 0}
+  sprite: {fileID: 21300000, guid: e1000000000000000000000000000007, type: 3}
   prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
   placeholderShape: 2
   placeholderColor: {r: 0.27, g: 0.62, b: 0.28, a: 1}
