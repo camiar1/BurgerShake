@@ -12,10 +12,12 @@ public class UpgradeManager : MonoBehaviour
     {
         BonusCoinsPerWin = 0;
         float startingMultBonus = 0f;
+        int startingPointsBonus = 0;
 
         if (progress == null)
         {
             scoreManager?.SetStartingMultBonus(0f);
+            scoreManager?.SetStartingPointsBonus(0);
             return;
         }
 
@@ -36,9 +38,13 @@ public class UpgradeManager : MonoBehaviour
                 case RunUpgradeEffectType.BonusCoinsPerWin:
                     BonusCoinsPerWin += Mathf.RoundToInt(upgrade.amount);
                     break;
+                case RunUpgradeEffectType.StartingPointsBonus:
+                    startingPointsBonus += Mathf.Max(0, Mathf.RoundToInt(upgrade.amount));
+                    break;
             }
         }
 
         scoreManager?.SetStartingMultBonus(startingMultBonus);
+        scoreManager?.SetStartingPointsBonus(startingPointsBonus);
     }
 }

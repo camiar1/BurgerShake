@@ -4,7 +4,9 @@ public enum CustomerPreferenceType
 {
     IngredientCount,
     TagCount,
-    ScoreOverGoal
+    ScoreOverGoal,
+    MajorTypeDiversity,
+    TotalContacts
 }
 
 [CreateAssetMenu(fileName = "NewCustomerPreference", menuName = "Burger Shake/Customer Preference")]
@@ -33,6 +35,12 @@ public class CustomerPreference : ScriptableObject
 
             case CustomerPreferenceType.TagCount:
                 return CountTag(ingredients) >= requiredCount;
+
+            case CustomerPreferenceType.MajorTypeDiversity:
+                return CountMajorTypes(ingredients) >= requiredCount;
+
+            case CustomerPreferenceType.TotalContacts:
+                return CountContacts(ingredients) >= requiredCount;
 
             default:
                 return false;
@@ -63,5 +71,39 @@ public class CustomerPreference : ScriptableObject
             }
         }
         return count;
+    }
+
+    private int CountMajorTypes(Ingredient[] ingredients)
+    {
+        bool hasFruit = false;
+        bool hasProtein = false;
+        bool hasVegetable = false;
+
+        foreach (Ingredient instance in ingredients)
+        {
+            if (instance == null || instance.Definition == null)
+                continue;
+
+            hasFruit |= instance.Definition.HasTag(IngredientTag.Fruit);
+            hasProtein |= instance.Definition.HasTag(IngredientTag.Protein);
+            hasVegetable |= instance.Definition.HasTag(IngredientTag.Vegetable);
+        }
+
+        return (hasFruit ? 1 : 0) +
+               (hasProtein ? 1 : 0) +
+               (hasVegetable ? 1 : 0);
+    }
+
+    private int CountContacts(Ingredient[] ingredients)
+    {
+        int totalTouches = 0;
+
+        foreach (Ingredient instance in ingredients)
+        {
+            if (instance != null)
+                totalTouches += instance.TouchingCount;
+        }
+
+        return totalTouches / 2;
     }
 }

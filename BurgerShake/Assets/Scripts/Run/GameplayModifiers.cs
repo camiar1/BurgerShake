@@ -93,6 +93,9 @@ public class GameplayModifiers : MonoBehaviour
                 case RunUpgradeEffectType.DispenseBonus:
                     DispenseBonus += Mathf.Max(0, Mathf.RoundToInt(upgrade.amount));
                     break;
+                case RunUpgradeEffectType.BlenderScaleMultiplier:
+                    BlenderScale *= Mathf.Max(0.1f, upgrade.amount);
+                    break;
             }
         }
 

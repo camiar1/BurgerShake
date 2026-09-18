@@ -18,7 +18,8 @@ MonoBehaviour:
   visualOffset: {x: 0, y: 0}
   visualScale: 1
   baseGoalScore: 12
-  baseRewardCoins: 5
+  baseRewardCoins: 7
   restrictions:
   - {fileID: 11400000, guid: 2b7d4e5f1a3c4b7e9c0d2f3141526374, type: 2}
-  preferences: []
+  preferences:
+  - {fileID: 11400000, guid: b22c33d44e55f6677889900aabbcc008, type: 2}

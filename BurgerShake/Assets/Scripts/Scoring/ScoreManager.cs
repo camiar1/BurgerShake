@@ -13,6 +13,7 @@ public class ScoreManager : MonoBehaviour
     private float startingMult = 1f;
 
     private float startingMultBonus;
+    private int startingPointsBonus;
 
     private readonly List<IngredientScoreStep>
         lastBreakdown =
@@ -57,18 +58,28 @@ public class ScoreManager : MonoBehaviour
             bonus;
     }
 
+    public void SetStartingPointsBonus(
+        int bonus
+    )
+    {
+        startingPointsBonus =
+            Mathf.Max(0, bonus);
+    }
+
     public void ResetScore()
     {
         lastBreakdown.Clear();
 
         Points =
-            0;
+            startingPointsBonus;
 
         Mult =
             StartingMultValue;
 
         TotalScore =
-            0;
+            Mathf.RoundToInt(
+                Points * Mult
+            );
 
         ScoreChanged?.Invoke();
     }
@@ -81,14 +92,17 @@ public class ScoreManager : MonoBehaviour
             GetScorableIngredientsInOrder();
 
         int runningPoints =
-            0;
+            startingPointsBonus;
 
         float rawRunningMult =
             startingMult +
             startingMultBonus;
 
         int runningTotal =
-            0;
+            Mathf.RoundToInt(
+                runningPoints *
+                Mathf.Max(0f, rawRunningMult)
+            );
 
         foreach (
             Ingredient ingredient
