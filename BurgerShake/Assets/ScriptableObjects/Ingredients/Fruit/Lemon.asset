@@ -15,7 +15,7 @@ MonoBehaviour:
   ingredientName: Lemon
   description: Base +2 Points. +0.18 Mult when touching both a Protein and a Fruit.
   sprite: {fileID: 21300000, guid: e1000000000000000000000000000009, type: 3}
-  prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
+  prefab: {fileID: 7099728767775027775, guid: badd53413210b5b4f99abe6bd4442f0e, type: 3}
   placeholderShape: 2
   placeholderColor: {r: 0.97, g: 0.83, b: 0.16, a: 1}
   placeholderColliderSize: {x: 1.25, y: 0.82}

@@ -15,7 +15,7 @@ MonoBehaviour:
   ingredientName: Ham
   description: Base +2 Points. +3 Points when touching at least 2 ingredients.
   sprite: {fileID: 21300000, guid: e1000000000000000000000000000002, type: 3}
-  prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
+  prefab: {fileID: 1968359329505861655, guid: e47e72f64145071458045ca2e9ff73bd, type: 3}
   placeholderShape: 3
   placeholderColor: {r: 0.88, g: 0.48, b: 0.52, a: 1}
   placeholderColliderSize: {x: 1.55, y: 0.85}
