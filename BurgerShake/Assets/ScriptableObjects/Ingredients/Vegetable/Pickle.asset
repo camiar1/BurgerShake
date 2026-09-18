@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pickle
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Pickle
-  description: 
+  description: Base +2 Points. +3 Points when bridging two ingredients that are not touching each other.
   sprite: {fileID: 0}
   prefab: {fileID: 4087950493650753132, guid: c38fb93010a58dd48be14a0fdbda006a, type: 3}
   draftWeight: 1

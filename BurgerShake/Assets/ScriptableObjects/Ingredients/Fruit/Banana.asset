@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Banana
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Banana
-  description: +0.15 Mult when within 15 degrees of horizontal.
+  description: Base +3 Points. +0.12 Mult when within 15 degrees of horizontal.
   sprite: {fileID: 0}
   prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
   placeholderShape: 5

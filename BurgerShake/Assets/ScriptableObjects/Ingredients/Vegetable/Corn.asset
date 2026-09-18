@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56220a5e1287f1340aacabe2dd0d04e0, type: 3}
+  m_Name: Corn
+  m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
+  ingredientName: Corn
+  description: Base +2 Points. +2 Points when touching exactly 2 ingredients.
+  sprite: {fileID: 0}
+  prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
+  placeholderShape: 5
+  placeholderColor: {r: 0.95, g: 0.76, b: 0.16, a: 1}
+  placeholderColliderSize: {x: 1.55, y: 0.78}
+  draftWeight: 1
+  copiesPerCycle: 3
+  scoringRules:
+  - {fileID: 11400000, guid: d9000000000000000000000000000005, type: 2}
+  - {fileID: 11400000, guid: 327f6cecda8ed3048a14101322a1cff5, type: 2}
+  tags: 01000000

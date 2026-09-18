@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pineapple
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Pineapple
-  description: 
+  description: Base +3 Points. +2 Points if touching both a Vegetable and a Fruit.
   sprite: {fileID: 0}
   prefab: {fileID: 7553029791708652651, guid: 76c1e69df2d0f5244a11414f1b702a7b, type: 3}
   draftWeight: 1

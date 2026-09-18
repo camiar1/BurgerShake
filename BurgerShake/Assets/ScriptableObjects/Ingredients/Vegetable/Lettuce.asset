@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Lettuce
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Lettuce
-  description: 
+  description: Base +1 Point. +3 Points when touching an ingredient above and below.
   sprite: {fileID: 0}
   prefab: {fileID: 6129104059103207348, guid: 556632da9eaf2344e9d43f9cafa9e620, type: 3}
   draftWeight: 1

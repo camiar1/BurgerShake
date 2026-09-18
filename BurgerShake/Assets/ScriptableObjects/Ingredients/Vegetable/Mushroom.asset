@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Mushroom
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Mushroom
-  description: 
+  description: Base +2 Points. When touching at least 3 ingredients, gain +1 Point per touch.
   sprite: {fileID: 0}
   prefab: {fileID: 3799619244517587955, guid: 1c57f2e099978994a941a5ab37e4492a, type: 3}
   draftWeight: 1

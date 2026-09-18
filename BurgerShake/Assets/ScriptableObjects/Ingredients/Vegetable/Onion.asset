@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Onion
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Onion
-  description: 
+  description: Base +2 Points. +1 Point per unique neighboring ingredient type.
   sprite: {fileID: 0}
   prefab: {fileID: 3612487842040495511, guid: 372ef3af60cbafd4cb1b48bd5c81809d, type: 3}
   draftWeight: 1

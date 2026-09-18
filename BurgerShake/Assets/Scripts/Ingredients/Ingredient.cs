@@ -61,14 +61,6 @@ public class Ingredient : MonoBehaviour
             return;
         }
 
-        BoxCollider2D boxCollider =
-            GetComponent<BoxCollider2D>();
-
-        if (boxCollider == null)
-        {
-            return;
-        }
-
         Vector2 size =
             definition.placeholderColliderSize;
 
@@ -84,8 +76,85 @@ public class Ingredient : MonoBehaviour
                 size.y
             );
 
-        boxCollider.size =
-            size;
+        BoxCollider2D box =
+            GetComponent<BoxCollider2D>();
+
+        CircleCollider2D circle =
+            GetComponent<CircleCollider2D>();
+
+        CapsuleCollider2D capsule =
+            GetComponent<CapsuleCollider2D>();
+
+        PolygonCollider2D polygon =
+            GetComponent<PolygonCollider2D>();
+
+        SetColliderEnabled(box, false);
+        SetColliderEnabled(circle, false);
+        SetColliderEnabled(capsule, false);
+        SetColliderEnabled(polygon, false);
+
+        switch (definition.placeholderShape)
+        {
+            case PlaceholderIngredientShape.Round:
+                if (circle == null)
+                    circle = gameObject.AddComponent<CircleCollider2D>();
+
+                circle.radius =
+                    Mathf.Min(size.x, size.y) * 0.5f;
+
+                circle.enabled = true;
+                break;
+
+            case PlaceholderIngredientShape.Oval:
+            case PlaceholderIngredientShape.Long:
+                if (capsule == null)
+                    capsule = gameObject.AddComponent<CapsuleCollider2D>();
+
+                capsule.size = size;
+                capsule.direction =
+                    size.x >= size.y
+                        ? CapsuleDirection2D.Horizontal
+                        : CapsuleDirection2D.Vertical;
+
+                capsule.enabled = true;
+                break;
+
+            case PlaceholderIngredientShape.Triangle:
+                if (polygon == null)
+                    polygon = gameObject.AddComponent<PolygonCollider2D>();
+
+                polygon.pathCount = 1;
+                polygon.SetPath(
+                    0,
+                    new Vector2[]
+                    {
+                        new Vector2(0f, size.y * 0.5f),
+                        new Vector2(-size.x * 0.5f, -size.y * 0.5f),
+                        new Vector2(size.x * 0.5f, -size.y * 0.5f)
+                    }
+                );
+
+                polygon.enabled = true;
+                break;
+
+            case PlaceholderIngredientShape.Box:
+            default:
+                if (box == null)
+                    box = gameObject.AddComponent<BoxCollider2D>();
+
+                box.size = size;
+                box.enabled = true;
+                break;
+        }
+    }
+
+    private void SetColliderEnabled(
+        Collider2D collider,
+        bool enabled
+    )
+    {
+        if (collider != null)
+            collider.enabled = enabled;
     }
 
     public ScoreValue EvaluateScore()

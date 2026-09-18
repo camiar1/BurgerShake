@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6d3b3bcd5f5a5c429f8e6eec15a6696, type: 3}
   m_Name: PineappleRule
   m_EditorClassIdentifier: Assembly-CSharp::CrossTagScoringRule
-  description: 
+  description: +2 Points if touching both a Vegetable and a Fruit.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 1
+  amount: 2
   firstTag: 1
   secondTag: 14

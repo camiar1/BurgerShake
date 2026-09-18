@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bacon
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Bacon
-  description: 
+  description: Base +3 Points. +0.15 Mult when touching at least 2 Proteins.
   sprite: {fileID: 0}
   prefab: {fileID: 8950917730861901495, guid: 5c6139f2a53fdc042833cbedcd22ee92, type: 3}
   draftWeight: 1

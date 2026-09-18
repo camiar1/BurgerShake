@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebc9f83661cfcfe4b963e6c4e4d3f968, type: 3}
   m_Name: OnionRule
   m_EditorClassIdentifier: Assembly-CSharp::UniqueNeighborScoringRule
-  description: 
+  description: +1 Point per unique neighboring ingredient type.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 2
+  amount: 1
   minimumUniqueNeighbors: 1
   rewardPerUniqueNeighbor: 1

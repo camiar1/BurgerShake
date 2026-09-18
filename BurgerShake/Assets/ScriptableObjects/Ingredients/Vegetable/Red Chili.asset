@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Red Chili
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Red Chili
-  description: 
+  description: Base +2 Points. +0.08 Mult per major ingredient category touched, requiring at least 2 categories.
   sprite: {fileID: 0}
   prefab: {fileID: 4510162856744410949, guid: c60ef0b758ebb5f4ca25ccd5356f3042, type: 3}
   draftWeight: 1

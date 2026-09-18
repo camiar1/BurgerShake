@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6d3b3bcd5f5a5c429f8e6eec15a6696, type: 3}
   m_Name: AvocadoRule
   m_EditorClassIdentifier: Assembly-CSharp::CrossTagScoringRule
-  description: +0.15 Mult if touching both a Protein and a Vegetable.
+  description: +0.12 Mult if touching both a Protein and a Vegetable.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 1
-  amount: 0.15
+  amount: 0.12
   firstTag: 0
   secondTag: 1
