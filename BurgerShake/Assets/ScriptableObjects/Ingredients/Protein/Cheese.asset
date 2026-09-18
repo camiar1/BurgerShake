@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cheese
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Cheese
-  description: +0.08 Mult per touching Protein.
+  description: Base +1 Point. +0.08 Mult per touching Protein.
   sprite: {fileID: 5547417771902212560, guid: 7c4883f30e2044e8afdb953d8df2cee5, type: 3}
   prefab: {fileID: 710001001, guid: a5a8d1e7a5584e0298a3db39d6d74161, type: 3}
   placeholderShape: 0

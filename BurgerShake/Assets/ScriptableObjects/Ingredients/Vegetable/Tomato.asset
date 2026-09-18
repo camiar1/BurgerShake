@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Tomato
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Tomato
-  description: 
+  description: Base +1 Point. +1 Point per touching Vegetable.
   sprite: {fileID: 0}
   prefab: {fileID: 860329935842512600, guid: 511400b0a4a4f59469810bd488699fa6, type: 3}
   draftWeight: 1

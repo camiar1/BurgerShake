@@ -543,7 +543,9 @@ public class StartingIngredientDraftController :
     )
     {
         return
-            ingredient != null &&
+            IsEligibleStartingIngredient(
+                ingredient
+            ) &&
             !seenIngredients.Contains(
                 ingredient
             ) &&
@@ -551,6 +553,19 @@ public class StartingIngredientDraftController :
                 ingredient
             ) &&
             !currentChoices.Contains(
+                ingredient
+            );
+    }
+
+    private bool IsEligibleStartingIngredient(
+        IngredientDefinition ingredient
+    )
+    {
+        return
+            ingredient != null &&
+            runDefinition != null &&
+            runDefinition.startingDraftIngredients != null &&
+            runDefinition.startingDraftIngredients.Contains(
                 ingredient
             );
     }

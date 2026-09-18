@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Gregg
   m_EditorClassIdentifier: Assembly-CSharp::CustomerDefinition
   customerName: Gregg
-  description: egg...
+  description: egg... or something protein-y.
   portrait: {fileID: 4884028340168989115, guid: 7416abd1a40b13e42878e67f1601ec32, type: 3}
   visualOffset: {x: 0, y: 0}
   visualScale: 1
@@ -22,4 +22,4 @@ MonoBehaviour:
   restrictions:
   - {fileID: 11400000, guid: 3c8e5f601b4d4c8fa1e2034253647586, type: 2}
   preferences:
-  - {fileID: 11400000, guid: b22c33d44e55f6677889900aabbcc001, type: 2}
+  - {fileID: 11400000, guid: b22c33d44e55f6677889900aabbcc002, type: 2}

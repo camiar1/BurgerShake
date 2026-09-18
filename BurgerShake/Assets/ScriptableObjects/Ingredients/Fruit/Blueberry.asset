@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Blueberry
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Blueberry
-  description: 
+  description: Base +1 Point. +1 Point per touching ingredient.
   sprite: {fileID: 0}
   prefab: {fileID: 614846904682437627, guid: bb3a820c5b44b4e4d96326bc520e7ab6, type: 3}
   draftWeight: 1

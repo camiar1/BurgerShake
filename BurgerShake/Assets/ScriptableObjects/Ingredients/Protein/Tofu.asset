@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Tofu
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Tofu
-  description: +1 Point per touching Vegetable.
+  description: Base +1 Point. +1 Point per touching Vegetable.
   sprite: {fileID: 6358309481160918528, guid: db62a9afc5e3479980c822178926938d, type: 3}
   prefab: {fileID: 710001001, guid: 2a431d6a78bc499b8895f7e4f5b73571, type: 3}
   placeholderShape: 0

@@ -364,10 +364,60 @@ public class ShopManager : MonoBehaviour
                 candidates.Count
             );
 
-        for (
-            int i = 0;
-            i < choiceCount;
-            i++
+        // Crates are the main discovery path for
+        // ingredients outside the starter pool.
+        // Guarantee one unowned option whenever
+        // that crate category still has one.
+        if (choiceCount > 0)
+        {
+            List<IngredientDefinition>
+                unownedCandidates =
+                    new List<
+                        IngredientDefinition
+                    >();
+
+            foreach (
+                IngredientDefinition candidate
+                in candidates
+            )
+            {
+                if (
+                    candidate != null &&
+                    progress.GetIngredientCopies(
+                        candidate
+                    ) <= 0
+                )
+                {
+                    unownedCandidates.Add(
+                        candidate
+                    );
+                }
+            }
+
+            if (unownedCandidates.Count > 0)
+            {
+                IngredientDefinition discovery =
+                    unownedCandidates[
+                        Random.Range(
+                            0,
+                            unownedCandidates.Count
+                        )
+                    ];
+
+                currentIngredientChoices.Add(
+                    discovery
+                );
+
+                candidates.Remove(
+                    discovery
+                );
+            }
+        }
+
+        while (
+            currentIngredientChoices.Count <
+                choiceCount &&
+            candidates.Count > 0
         )
         {
             int randomIndex =
