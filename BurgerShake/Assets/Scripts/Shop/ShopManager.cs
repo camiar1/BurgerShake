@@ -194,6 +194,17 @@ public class ShopManager : MonoBehaviour
     private int helperOffersPerShop =
         2;
 
+    [Header("Reroll")]
+    [SerializeField]
+    [Min(0)]
+    private int rerollCost = 2;
+
+    [SerializeField]
+    [Min(0)]
+    private int maxRerollsPerShop = 1;
+
+    private int rerollsRemaining;
+
     private readonly List<ShopOffer>
         currentOffers =
             new List<ShopOffer>();
@@ -222,6 +233,11 @@ public class ShopManager : MonoBehaviour
     public ShopOffer ActiveCrateOffer =>
         activeCrateOffer;
 
+    public int RerollCost => rerollCost;
+    public int RerollsRemaining => rerollsRemaining;
+
+    public event System.Action OffersChanged;
+
     private void Awake()
     {
         if (progress == null)
@@ -235,18 +251,45 @@ public class ShopManager : MonoBehaviour
 
     public void BeginShop()
     {
+        rerollsRemaining =
+            Mathf.Max(0, maxRerollsPerShop);
+
+        GenerateFreshOffers();
+    }
+
+    public bool CanRerollOffers()
+    {
+        return
+            progress != null &&
+            !HasOpenIngredientCrate &&
+            rerollsRemaining > 0 &&
+            progress.Coins >= rerollCost;
+    }
+
+    public bool RerollOffers()
+    {
+        if (!CanRerollOffers())
+            return false;
+
+        if (!progress.TrySpendCoins(rerollCost))
+            return false;
+
+        rerollsRemaining--;
+        GenerateFreshOffers();
+        return true;
+    }
+
+    private void GenerateFreshOffers()
+    {
         currentOffers.Clear();
-
         currentIngredientChoices.Clear();
-
-        activeCrateOffer =
-            null;
+        activeCrateOffer = null;
 
         GenerateCrateOffers();
-
         GenerateHelperOffers();
-
         ShuffleOffers();
+
+        OffersChanged?.Invoke();
     }
 
     public bool CanPurchaseOffer(

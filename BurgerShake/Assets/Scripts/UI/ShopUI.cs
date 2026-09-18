@@ -87,6 +87,12 @@ public class ShopUI : MonoBehaviour
                     HandleContinuePressed
                 );
         }
+
+        if (shopManager != null)
+        {
+            shopManager.OffersChanged +=
+                HandleOffersChanged;
+        }
     }
 
     private void OnDisable()
@@ -104,6 +110,12 @@ public class ShopUI : MonoBehaviour
                 .RemoveListener(
                     HandleContinuePressed
                 );
+        }
+
+        if (shopManager != null)
+        {
+            shopManager.OffersChanged -=
+                HandleOffersChanged;
         }
     }
 
@@ -127,6 +139,11 @@ public class ShopUI : MonoBehaviour
                 false
             );
         }
+    }
+
+    private void HandleOffersChanged()
+    {
+        RefreshUI();
     }
 
     private void HandleRunStateChanged(

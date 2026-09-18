@@ -13,7 +13,8 @@ public class IngredientTooltipUI : MonoBehaviour
     private TMP_Text bodyText;
     private CanvasGroup canvasGroup;
 
-    private readonly Vector2 cursorOffset = new Vector2(22f, -18f);
+    private const float CursorGap = 14f;
+    private const float ScreenPadding = 10f;
     private const float Width = 430f;
 
     private void Awake()
@@ -233,9 +234,9 @@ public class IngredientTooltipUI : MonoBehaviour
         GameObject panelObject = new GameObject("TooltipPanel", typeof(RectTransform), typeof(Image));
         panelObject.transform.SetParent(canvasObject.transform, false);
         panel = panelObject.GetComponent<RectTransform>();
-        panel.anchorMin = new Vector2(0f, 1f);
-        panel.anchorMax = new Vector2(0f, 1f);
-        panel.pivot = new Vector2(0f, 1f);
+        panel.anchorMin = new Vector2(0.5f, 0.5f);
+        panel.anchorMax = new Vector2(0.5f, 0.5f);
+        panel.pivot = new Vector2(0.5f, 1f);
         panel.sizeDelta = new Vector2(Width, 180f);
 
         Image background = panelObject.GetComponent<Image>();
@@ -254,7 +255,7 @@ public class IngredientTooltipUI : MonoBehaviour
         bodyText.fontSize = 21f;
         bodyText.color = new Color(1f, 0.94f, 0.82f, 1f);
         bodyText.alignment = TextAlignmentOptions.TopLeft;
-        bodyText.enableWordWrapping = true;
+        bodyText.textWrappingMode = TextWrappingModes.Normal;
         bodyText.raycastTarget = false;
         bodyText.richText = true;
     }
@@ -267,6 +268,12 @@ public class IngredientTooltipUI : MonoBehaviour
 
         Transform panelTransform = existingCanvas.Find("TooltipPanel");
         panel = panelTransform as RectTransform;
+
+        if (panel != null)
+        {
+            panel.anchorMin = new Vector2(0.5f, 0.5f);
+            panel.anchorMax = new Vector2(0.5f, 0.5f);
+        }
 
         if (panelTransform != null)
         {
@@ -292,10 +299,13 @@ public class IngredientTooltipUI : MonoBehaviour
 
         bodyText.ForceMeshUpdate();
         panel.sizeDelta = new Vector2(Width, 220f);
+        panel.anchorMin = new Vector2(0.5f, 0.5f);
+        panel.anchorMax = new Vector2(0.5f, 0.5f);
+        panel.pivot = new Vector2(0.5f, 1f);
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
-        panel.anchoredPosition = new Vector2(40f, -40f);
+        panel.anchoredPosition = new Vector2(0f, 170f);
     }
 
     private void PositionNearCursor(Vector2 screenPosition)
@@ -310,13 +320,46 @@ public class IngredientTooltipUI : MonoBehaviour
             out Vector2 localPoint
         );
 
-        Vector2 pos = localPoint + cursorOffset;
+        panel.anchorMin = new Vector2(0.5f, 0.5f);
+        panel.anchorMax = new Vector2(0.5f, 0.5f);
+
+        bool cursorInTopHalf =
+            screenPosition.y >= Screen.height * 0.5f;
+
+        panel.pivot = cursorInTopHalf
+            ? new Vector2(0.5f, 1f)
+            : new Vector2(0.5f, 0f);
+
+        Vector2 pos =
+            localPoint +
+            Vector2.up * (cursorInTopHalf ? -CursorGap : CursorGap);
+
         Rect bounds = canvasRect.rect;
-        float width = panel.rect.width;
+        float halfWidth = panel.rect.width * 0.5f;
         float height = panel.rect.height;
 
-        if (pos.x + width > bounds.xMax) pos.x = bounds.xMax - width - 10f;
-        if (pos.y - height < bounds.yMin) pos.y = bounds.yMin + height + 10f;
+        pos.x = Mathf.Clamp(
+            pos.x,
+            bounds.xMin + halfWidth + ScreenPadding,
+            bounds.xMax - halfWidth - ScreenPadding
+        );
+
+        if (cursorInTopHalf)
+        {
+            pos.y = Mathf.Clamp(
+                pos.y,
+                bounds.yMin + height + ScreenPadding,
+                bounds.yMax - ScreenPadding
+            );
+        }
+        else
+        {
+            pos.y = Mathf.Clamp(
+                pos.y,
+                bounds.yMin + ScreenPadding,
+                bounds.yMax - height - ScreenPadding
+            );
+        }
 
         panel.anchoredPosition = pos;
     }
