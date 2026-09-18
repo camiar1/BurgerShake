@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Apple
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Apple
-  description: Base +2 Points. Starting with the 3rd unique neighboring ingredient type, gain +0.05 Mult per unique type.
+  description: Base +2 Points. Starting with the 3rd unique neighboring ingredient type, gain +0.07 Mult per unique type.
   sprite: {fileID: 0}
   prefab: {fileID: 5820235951498904601, guid: d10b2af7e0792e649b33e7e6261f0770, type: 3}
   draftWeight: 1

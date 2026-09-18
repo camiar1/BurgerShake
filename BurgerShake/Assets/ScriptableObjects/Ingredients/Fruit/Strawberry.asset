@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Strawberry
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Strawberry
-  description: Base +2 Points. +1 Point per touching Fruit.
+  description: Base +2 Points. +2 Points per touching Fruit.
   sprite: {fileID: 4333353932631399637, guid: 4fce7003bcad4d2cb61217a2c998e675, type: 3}
   prefab: {fileID: 710001001, guid: d827d30a795240dba1ca15b4592ef1b7, type: 3}
   placeholderShape: 0

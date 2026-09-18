@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2632587c7b21ea43a3f5503eee91192, type: 3}
   m_Name: WatermelonRule
   m_EditorClassIdentifier: Assembly-CSharp::ContactCountScoringRule
-  description: +2 Points when touching at least 2 ingredients.
+  description: +3 Points when touching at least 2 ingredients.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 2.0
+  amount: 3
   minimumContacts: 2
   maximumContacts: -1
   filterByTag: 0

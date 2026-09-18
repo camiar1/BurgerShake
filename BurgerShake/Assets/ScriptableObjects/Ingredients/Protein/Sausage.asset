@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sausage
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Sausage
-  description: Base +2 Points. +1 Point per touching ingredient.
+  description: Base +2 Points. +2 Points per touching ingredient.
   sprite: {fileID: 0}
   prefab: {fileID: 7475341462610798214, guid: c023bced733cf2b4f9e15cc44096a908, type: 3}
   draftWeight: 1

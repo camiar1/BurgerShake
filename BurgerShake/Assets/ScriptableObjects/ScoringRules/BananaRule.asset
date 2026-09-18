@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a3dc8f72e6b4a53bca2f2983117b8c4, type: 3}
   m_Name: BananaRule
   m_EditorClassIdentifier: Assembly-CSharp::OrientationScoringRule
-  description: +0.12 Mult when within 15 degrees of horizontal.
+  description: +0.18 Mult when within 15 degrees of horizontal.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 1
-  amount: 0.12
+  amount: 0.18
   orientation: 0
   angleTolerance: 15
   minimumContacts: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cherry
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Cherry
-  description: Base +2 Points. +0.05 Mult per touching Fruit.
+  description: Base +2 Points. +0.07 Mult per touching Fruit.
   sprite: {fileID: 0}
   prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
   placeholderShape: 1

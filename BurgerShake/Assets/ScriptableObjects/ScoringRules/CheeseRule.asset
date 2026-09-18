@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfa9835a8e6e2974cbfb46c2b5b9e495, type: 3}
   m_Name: CheeseRule
   m_EditorClassIdentifier: Assembly-CSharp::IngredientScoringRule
-  description: +0.08 Mult per touching Protein.
+  description: +0.10 Mult per touching Protein.
   target: 2
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 1
-  amount: 0.08
+  amount: 0.1

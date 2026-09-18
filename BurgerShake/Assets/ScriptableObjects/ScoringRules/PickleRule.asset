@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 128f783abfeca6f499b048939d5b3631, type: 3}
   m_Name: PickleRule
   m_EditorClassIdentifier: Assembly-CSharp::BridgeScoringRule
-  description: 
+  description: +4 Points when bridging two ingredients that are not touching each other.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 3
+  amount: 4
   rewardPerBridgePair: 0

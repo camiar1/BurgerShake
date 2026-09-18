@@ -71,9 +71,9 @@ MonoBehaviour:
     - {fileID: 11400000, guid: aa100000000000000000000000000003, type: 2}
   - ingredient: {fileID: 11400000, guid: c9000000000000000000000000000001, type: 2}
     partners:
-    - {fileID: 11400000, guid: 2d6f87638f3aedf4cb89463a0c55fb50, type: 2}
-    - {fileID: 11400000, guid: aa100000000000000000000000000001, type: 2}
-    - {fileID: 11400000, guid: c9000000000000000000000000000002, type: 2}
+    - {fileID: 11400000, guid: d95271a6072e1a1479cfad4048212100, type: 2}
+    - {fileID: 11400000, guid: aa100000000000000000000000000004, type: 2}
+    - {fileID: 11400000, guid: c9000000000000000000000000000008, type: 2}
   - ingredient: {fileID: 11400000, guid: c9000000000000000000000000000002, type: 2}
     partners:
     - {fileID: 11400000, guid: 2d6f87638f3aedf4cb89463a0c55fb50, type: 2}

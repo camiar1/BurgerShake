@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Lemon
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Lemon
-  description: Base +1 Point. +0.12 Mult when touching both a Protein and a Fruit.
+  description: Base +2 Points. +0.18 Mult when touching both a Protein and a Fruit.
   sprite: {fileID: 0}
   prefab: {fileID: 710001001, guid: 3d7e6c95f4c54ca18e936df6d8b7b331, type: 3}
   placeholderShape: 2
@@ -23,5 +23,5 @@ MonoBehaviour:
   copiesPerCycle: 3
   scoringRules:
   - {fileID: 11400000, guid: d9000000000000000000000000000009, type: 2}
-  - {fileID: 11400000, guid: f9bbc67f9a0d3f64e8be4919d92b63bf, type: 2}
+  - {fileID: 11400000, guid: 327f6cecda8ed3048a14101322a1cff5, type: 2}
   tags: 0e000000

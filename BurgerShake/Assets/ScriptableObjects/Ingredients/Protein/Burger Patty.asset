@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Burger Patty
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Burger Patty
-  description: Base +3 Points. +1 Point per touching Protein.
+  description: Base +3 Points. +2 Points per touching Protein.
   sprite: {fileID: 0}
   prefab: {fileID: 5212345153762044476, guid: 5ffc32d21cbb2344cb0cc3a66a7ea448, type: 3}
   draftWeight: 1

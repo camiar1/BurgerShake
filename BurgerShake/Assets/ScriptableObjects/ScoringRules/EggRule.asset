@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bd080224e721b4099c9d3079693d18, type: 3}
   m_Name: EggRule
   m_EditorClassIdentifier: Assembly-CSharp::VerticalRelationshipScoringRule
-  description: +0.15 Mult if nothing is touching above it.
+  description: +0.20 Mult if nothing is touching above it.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 1
-  amount: 0.15
+  amount: 0.2
   relationship: 3
   minimumVerticalDifference: 0.01
   requireTag: 0

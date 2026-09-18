@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2632587c7b21ea43a3f5503eee91192, type: 3}
   m_Name: ShrimpRule
   m_EditorClassIdentifier: Assembly-CSharp::ContactCountScoringRule
-  description: +0.12 Mult when touching at least 1 Fruit.
+  description: +0.18 Mult when touching at least 1 Fruit.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 1
-  amount: 0.12
+  amount: 0.18
   minimumContacts: 1
   maximumContacts: -1
   filterByTag: 1
