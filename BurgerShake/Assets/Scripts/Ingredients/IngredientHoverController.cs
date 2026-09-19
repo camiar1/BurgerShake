@@ -41,6 +41,9 @@ public class IngredientHoverController : MonoBehaviour
 
     private Ingredient hoveredIngredient;
 
+    private CenterlineHoverGuide
+        activeCenterlineGuide;
+
     private readonly HashSet<Ingredient>
         highlightedIngredients =
             new HashSet<Ingredient>();
@@ -223,6 +226,7 @@ public class IngredientHoverController : MonoBehaviour
         // Hide the previous outlines,
         // but DO NOT clear hoveredIngredient.
         HideHighlightLines();
+        HideCenterlineGuide();
 
         if (hoveredIngredient == null)
         {
@@ -234,6 +238,8 @@ public class IngredientHoverController : MonoBehaviour
             hoveredColor,
             hoveredWidth
         );
+
+        ShowCenterlineGuide();
 
         foreach (
             Ingredient touching
@@ -251,6 +257,73 @@ public class IngredientHoverController : MonoBehaviour
                 touchingColor,
                 touchingWidth
             );
+        }
+    }
+
+    private void ShowCenterlineGuide()
+    {
+        if (
+            hoveredIngredient == null ||
+            hoveredIngredient.Definition == null ||
+            hoveredIngredient.Definition
+                .scoringRules == null
+        )
+        {
+            return;
+        }
+
+        foreach (
+            IngredientScoringRule rule
+            in hoveredIngredient.Definition
+                .scoringRules
+        )
+        {
+            if (
+                rule is not
+                CenterlineScoringRule
+                    centerlineRule
+            )
+            {
+                continue;
+            }
+
+            CenterlineHoverGuide guide =
+                hoveredIngredient
+                    .GetComponent<
+                        CenterlineHoverGuide
+                    >();
+
+            if (guide == null)
+            {
+                guide =
+                    hoveredIngredient
+                        .gameObject
+                        .AddComponent<
+                            CenterlineHoverGuide
+                        >();
+            }
+
+            guide.Show(
+                centerlineRule,
+                gameplayCamera,
+                hoveredColor
+            );
+
+            activeCenterlineGuide =
+                guide;
+
+            return;
+        }
+    }
+
+    private void HideCenterlineGuide()
+    {
+        if (
+            activeCenterlineGuide != null
+        )
+        {
+            activeCenterlineGuide.Hide();
+            activeCenterlineGuide = null;
         }
     }
 
@@ -315,6 +388,7 @@ public class IngredientHoverController : MonoBehaviour
     private void ClearHighlights()
     {
         HideHighlightLines();
+        HideCenterlineGuide();
 
         hoveredIngredient =
             null;
