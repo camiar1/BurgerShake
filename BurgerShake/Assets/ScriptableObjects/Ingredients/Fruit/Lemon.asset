@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Lemon
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Lemon
-  description: Base +2 Points. +0.06 Mult per touching Protein.
+  description: Base +2 Points. +0.10 Mult per touching Protein.
   sprite: {fileID: 21300000, guid: e1000000000000000000000000000009, type: 3}
   prefab: {fileID: 7099728767775027775, guid: badd53413210b5b4f99abe6bd4442f0e, type: 3}
   placeholderShape: 2

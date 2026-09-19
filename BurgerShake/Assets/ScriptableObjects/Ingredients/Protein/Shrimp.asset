@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shrimp
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Shrimp
-  description: Base +2 Points. +0.08 Mult per touching Fruit.
+  description: Base +2 Points. +0.15 Mult per touching Fruit.
   sprite: {fileID: 21300000, guid: e1000000000000000000000000000004, type: 3}
   prefab: {fileID: 7914965442260344720, guid: 95d889518ddb29241b5f210f2dab6cc8, type: 3}
   placeholderShape: 5

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Meatball
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Meatball
-  description: Base +2 Points. +0.05 Mult per touching Small ingredient.
+  description: Base +2 Points. +0.10 Mult per touching Small ingredient.
     type, gain +2 Points per unique type.
   sprite: {fileID: 21300000, guid: e1000000000000000000000000000003, type: 3}
   prefab: {fileID: 3622656534689250724, guid: 289959ad5aaa58645803b0480f10931c, type: 3}

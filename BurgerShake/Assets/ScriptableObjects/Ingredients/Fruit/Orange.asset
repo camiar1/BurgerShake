@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Orange
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Orange
-  description: Base +2 Points. +0.05 Mult per touching Round ingredient.
+  description: Base +2 Points. +0.10 Mult per touching Round ingredient.
   sprite: {fileID: 0}
   prefab: {fileID: 2805112740976925974, guid: 039df6504139e3d4a9925381f548fbf0, type: 3}
   draftWeight: 1

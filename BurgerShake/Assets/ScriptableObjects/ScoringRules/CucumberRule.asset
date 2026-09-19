@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e2c5d430c947f2ac59a9513857f4e1, type: 3}
   m_Name: CucumberRule
   m_EditorClassIdentifier: Assembly-CSharp::CenterlineScoringRule
-  description: +0.05 Mult per unique ingredient crossing its projected centerline anywhere in the blender.
+  description: +0.15 Mult per unique ingredient crossing its projected centerline anywhere in the blender.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 1
-  amount: 0.05
+  amount: 0.15
   axis: 0
   lineLength: 100
   widthFraction: 0.2

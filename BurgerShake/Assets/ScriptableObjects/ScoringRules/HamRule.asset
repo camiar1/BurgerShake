@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2632587c7b21ea43a3f5503eee91192, type: 3}
   m_Name: HamRule
   m_EditorClassIdentifier: Assembly-CSharp::ContactCountScoringRule
-  description: +0.06 Mult per touching Flat ingredient.
+  description: +0.10 Mult per touching Flat ingredient.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 1
-  amount: 0.06
+  amount: 0.10
   minimumContacts: 0
   maximumContacts: -1
   filterByTag: 1
