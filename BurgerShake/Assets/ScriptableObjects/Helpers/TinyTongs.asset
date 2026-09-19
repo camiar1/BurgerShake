@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TinyTongs
   m_EditorClassIdentifier: Assembly-CSharp::RunUpgradeDefinition
   upgradeName: Tiny Tongs
-  description: Ingredients are 8% smaller, giving you more room to build.
+  description: Ingredients are 8% smaller, making dense contact and centerline layouts easier.
   icon: {fileID: 0}
   cost: 5
   effectType: 2

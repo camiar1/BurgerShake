@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CounterExtension
   m_EditorClassIdentifier: Assembly-CSharp::RunUpgradeDefinition
   upgradeName: Counter Extension
-  description: The blender is 6% wider for every customer.
+  description: The blender is 6% wider, giving you more room for stacks and centerline setups.
   icon: {fileID: 0}
   cost: 6
   effectType: 6

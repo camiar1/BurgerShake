@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53bd080224e721b4099c9d3079693d18, type: 3}
   m_Name: LettuceRule
   m_EditorClassIdentifier: Assembly-CSharp::VerticalRelationshipScoringRule
-  description: +4 Points when touching an ingredient above and below.
+  description: +2 Points per ingredient touching above it.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 4
-  relationship: 2
+  amount: 2
+  relationship: 0
   minimumVerticalDifference: 0.01
   requireTag: 0
   touchingTag: 0
-  rewardPerMatchingIngredient: 0
+  rewardPerMatchingIngredient: 1

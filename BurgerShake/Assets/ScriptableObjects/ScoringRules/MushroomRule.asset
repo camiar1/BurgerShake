@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2632587c7b21ea43a3f5503eee91192, type: 3}
   m_Name: MushroomRule
   m_EditorClassIdentifier: Assembly-CSharp::ContactCountScoringRule
-  description: 
+  description: +1 Point per touching Round ingredient.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
   amount: 1
-  minimumContacts: 3
+  minimumContacts: 0
   maximumContacts: -1
+  filterByTag: 1
+  contactTag: 10
   rewardPerContact: 1

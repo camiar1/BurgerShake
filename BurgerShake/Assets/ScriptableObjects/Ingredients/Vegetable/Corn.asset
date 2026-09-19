@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Corn
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Corn
-  description: Base +2 Points. +3 Points when touching exactly 2 ingredients.
+  description: Base +2 Points. +1 Point per touching Long ingredient.
   sprite: {fileID: 21300000, guid: e1000000000000000000000000000005, type: 3}
   prefab: {fileID: 6255338296080397673, guid: 1258b96951192e948ac7b10bebef73ec, type: 3}
   placeholderShape: 5
@@ -24,4 +24,4 @@ MonoBehaviour:
   scoringRules:
   - {fileID: 11400000, guid: d9000000000000000000000000000005, type: 2}
   - {fileID: 11400000, guid: 327f6cecda8ed3048a14101322a1cff5, type: 2}
-  tags: 01000000
+  tags: 010000000b000000

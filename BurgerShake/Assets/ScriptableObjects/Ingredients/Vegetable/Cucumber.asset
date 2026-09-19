@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cucumber
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Cucumber
-  description: Base +2 Points. +4 Points when horizontal and touching at least 2
+  description: Base +2 Points. +0.05 Mult per unique ingredient crossing its centerline.
     ingredients.
   sprite: {fileID: 21300000, guid: 71e5cf7ff4b75bf4b9cb6de4accffb9a, type: 3}
   prefab: {fileID: 7099728767775027775, guid: 608de421a4f884f48868e07068903aed, type: 3}

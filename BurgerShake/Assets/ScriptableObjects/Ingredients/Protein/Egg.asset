@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Egg
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Egg
-  description: Base +2 Points. +0.20 Mult if nothing is touching above it.
+  description: Base +2 Points. +0.10 Mult per ingredient touching below it.
   sprite: {fileID: 0}
   prefab: {fileID: 9051470400439627296, guid: 1ea5843d4e4e39b4e89ffb4d911a3246, type: 3}
   draftWeight: 1
@@ -21,4 +21,4 @@ MonoBehaviour:
   scoringRules:
   - {fileID: 11400000, guid: 906f8bb442d121046abaf5369b5e4b7b, type: 2}
   - {fileID: 11400000, guid: 327f6cecda8ed3048a14101322a1cff5, type: 2}
-  tags: 000000000a000000
+  tags: 000000000a00000008000000

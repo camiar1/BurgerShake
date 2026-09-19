@@ -9,13 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 128f783abfeca6f499b048939d5b3631, type: 3}
+  m_Script: {fileID: 11500000, guid: df49205b72ef28a4282269199a68c28a, type: 3}
   m_Name: PickleRule
-  m_EditorClassIdentifier: Assembly-CSharp::BridgeScoringRule
-  description: +4 Points when bridging two ingredients that are not touching each other.
+  m_EditorClassIdentifier: Assembly-CSharp::TagDiversityScoringRule
+  description: +1 Point per major ingredient category touching it.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 0
-  amount: 4
-  rewardPerBridgePair: 0
+  amount: 1
+  countedTags: 000000000e00000001000000
+  minimumDifferentTags: 1
+  rewardPerDifferentTag: 1

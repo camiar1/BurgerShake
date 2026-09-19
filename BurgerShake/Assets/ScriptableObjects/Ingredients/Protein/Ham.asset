@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ham
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Ham
-  description: Base +2 Points. +3 Points when touching at least 2 ingredients.
+  description: Base +2 Points. +0.06 Mult per touching Flat ingredient.
   sprite: {fileID: 21300000, guid: e1000000000000000000000000000002, type: 3}
   prefab: {fileID: 1968359329505861655, guid: e47e72f64145071458045ca2e9ff73bd, type: 3}
   placeholderShape: 3
@@ -24,4 +24,4 @@ MonoBehaviour:
   scoringRules:
   - {fileID: 11400000, guid: d9000000000000000000000000000002, type: 2}
   - {fileID: 11400000, guid: 327f6cecda8ed3048a14101322a1cff5, type: 2}
-  tags: 00000000
+  tags: 000000000c00000009000000

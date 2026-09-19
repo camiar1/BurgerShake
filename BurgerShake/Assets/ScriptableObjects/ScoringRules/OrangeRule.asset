@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2632587c7b21ea43a3f5503eee91192, type: 3}
   m_Name: OrangeRule
   m_EditorClassIdentifier: Assembly-CSharp::ContactCountScoringRule
-  description: +4 Points when touching exactly 1 ingredient.
+  description: +0.05 Mult per touching Round ingredient.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
-  reward: 0
-  amount: 4
-  minimumContacts: 1
-  maximumContacts: 1
-  rewardPerContact: 0
+  reward: 1
+  amount: 0.05
+  minimumContacts: 0
+  maximumContacts: -1
+  filterByTag: 1
+  contactTag: 10
+  rewardPerContact: 1

@@ -397,12 +397,9 @@ public class ShopManager : MonoBehaviour
             if (unownedCandidates.Count > 0)
             {
                 IngredientDefinition discovery =
-                    unownedCandidates[
-                        Random.Range(
-                            0,
-                            unownedCandidates.Count
-                        )
-                    ];
+                    PickSynergyWeighted(
+                        unownedCandidates
+                    );
 
                 currentIngredientChoices.Add(
                     discovery
@@ -420,23 +417,22 @@ public class ShopManager : MonoBehaviour
             candidates.Count > 0
         )
         {
-            int randomIndex =
-                Random.Range(
-                    0,
-                    candidates.Count
+            IngredientDefinition chosen =
+                PickSynergyWeighted(
+                    candidates
                 );
 
-            IngredientDefinition chosen =
-                candidates[
-                    randomIndex
-                ];
+            if (chosen == null)
+            {
+                break;
+            }
 
             currentIngredientChoices.Add(
                 chosen
             );
 
-            candidates.RemoveAt(
-                randomIndex
+            candidates.Remove(
+                chosen
             );
         }
 
@@ -702,6 +698,236 @@ public class ShopManager : MonoBehaviour
                 index
             );
         }
+    }
+
+    private IngredientDefinition
+        PickSynergyWeighted(
+            List<IngredientDefinition>
+                candidates
+        )
+    {
+        if (
+            candidates == null ||
+            candidates.Count == 0
+        )
+        {
+            return null;
+        }
+
+        float totalWeight = 0f;
+
+        foreach (
+            IngredientDefinition candidate
+            in candidates
+        )
+        {
+            totalWeight +=
+                1f +
+                GetPantrySynergyScore(
+                    candidate
+                );
+        }
+
+        float roll =
+            Random.Range(
+                0f,
+                totalWeight
+            );
+
+        foreach (
+            IngredientDefinition candidate
+            in candidates
+        )
+        {
+            roll -=
+                1f +
+                GetPantrySynergyScore(
+                    candidate
+                );
+
+            if (roll <= 0f)
+            {
+                return candidate;
+            }
+        }
+
+        return candidates[
+            candidates.Count - 1
+        ];
+    }
+
+    private int GetPantrySynergyScore(
+        IngredientDefinition candidate
+    )
+    {
+        if (
+            candidate == null ||
+            progress == null
+        )
+        {
+            return 0;
+        }
+
+        int score = 0;
+
+        foreach (
+            RunIngredientEntry entry
+            in progress.Pantry
+        )
+        {
+            IngredientDefinition owned =
+                entry != null
+                    ? entry.Ingredient
+                    : null;
+
+            if (
+                owned == null ||
+                owned == candidate
+            )
+            {
+                continue;
+            }
+
+            score +=
+                ScoreRulesAgainst(
+                    candidate,
+                    owned
+                );
+
+            score +=
+                ScoreRulesAgainst(
+                    owned,
+                    candidate
+                );
+        }
+
+        return Mathf.Min(
+            12,
+            score
+        );
+    }
+
+    private int ScoreRulesAgainst(
+        IngredientDefinition source,
+        IngredientDefinition neighbor
+    )
+    {
+        if (
+            source == null ||
+            neighbor == null ||
+            source.scoringRules == null
+        )
+        {
+            return 0;
+        }
+
+        int score = 0;
+
+        foreach (
+            IngredientScoringRule rule
+            in source.scoringRules
+        )
+        {
+            if (rule == null)
+            {
+                continue;
+            }
+
+            if (
+                rule is
+                ContactCountScoringRule
+                    contact
+            )
+            {
+                if (
+                    !contact.filterByTag ||
+                    neighbor.HasTag(
+                        contact.contactTag
+                    )
+                )
+                {
+                    score += 2;
+                }
+
+                continue;
+            }
+
+            if (
+                rule is
+                TagDiversityScoringRule
+                    diversity
+            )
+            {
+                foreach (
+                    IngredientTag tag
+                    in diversity.countedTags
+                )
+                {
+                    if (
+                        neighbor.HasTag(
+                            tag
+                        )
+                    )
+                    {
+                        score += 2;
+                        break;
+                    }
+                }
+
+                continue;
+            }
+
+            if (
+                rule is
+                CenterlineScoringRule
+            )
+            {
+                score +=
+                    neighbor.HasTag(
+                        IngredientTag.Long
+                    ) ||
+                    neighbor.HasTag(
+                        IngredientTag.Flat
+                    )
+                        ? 2
+                        : 1;
+
+                continue;
+            }
+
+            if (
+                rule is
+                UniqueNeighborScoringRule ||
+                rule is
+                VerticalRelationshipScoringRule
+            )
+            {
+                score += 1;
+                continue;
+            }
+
+            if (
+                rule.target ==
+                    ScoringTarget
+                        .TouchingAny
+            )
+            {
+                score += 1;
+            }
+            else if (
+                rule.target ==
+                    ScoringTarget
+                        .TouchingTag &&
+                neighbor.HasTag(
+                    rule.requiredTag
+                )
+            )
+            {
+                score += 3;
+            }
+        }
+
+        return score;
     }
 
     private List<IngredientDefinition>

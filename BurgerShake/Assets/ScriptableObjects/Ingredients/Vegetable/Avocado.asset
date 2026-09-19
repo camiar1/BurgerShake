@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Avocado
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Avocado
-  description: Base +2 Points. +0.16 Mult if touching both a Protein and a Vegetable.
+  description: Base +2 Points. +0.08 Mult per touching Vegetable.
   sprite: {fileID: 3810102869644336656, guid: cf5ca584f8814bc9ae81b09b9ac1af70, type: 3}
   prefab: {fileID: 710001001, guid: 6010fcd839b64b81bbc956e24eb497d2, type: 3}
   placeholderShape: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Chicken Nugget
   m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
   ingredientName: Chicken Nugget
-  description: Base +2 Points. +3 Points when touching at least 1 Fruit.
+  description: Base +2 Points. +2 Points per touching Fruit.
   sprite: {fileID: 21300000, guid: e1000000000000000000000000000001, type: 3}
   prefab: {fileID: 6185500074193343498, guid: e595ea3ede2f08c418084d97ed538dba, type: 3}
   placeholderShape: 3
@@ -24,4 +24,4 @@ MonoBehaviour:
   scoringRules:
   - {fileID: 11400000, guid: d9000000000000000000000000000001, type: 2}
   - {fileID: 11400000, guid: 327f6cecda8ed3048a14101322a1cff5, type: 2}
-  tags: 00000000
+  tags: 0000000008000000

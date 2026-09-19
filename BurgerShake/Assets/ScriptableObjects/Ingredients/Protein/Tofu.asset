@@ -24,4 +24,4 @@ MonoBehaviour:
   scoringRules:
   - {fileID: 11400000, guid: ab100000000000000000000000000002, type: 2}
   - {fileID: 11400000, guid: 327f6cecda8ed3048a14101322a1cff5, type: 2}
-  tags: 00000000
+  tags: 00000000080000000c000000

@@ -21,4 +21,4 @@ MonoBehaviour:
   baseRewardCoins: 4
   restrictions: []
   preferences:
-  - {fileID: 11400000, guid: b22c33d44e55f6677889900aabbcc002, type: 2}
+  - {fileID: 11400000, guid: b22c33d44e55f6677889900aabbcc010, type: 2}

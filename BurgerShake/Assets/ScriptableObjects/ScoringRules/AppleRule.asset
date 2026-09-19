@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebc9f83661cfcfe4b963e6c4e4d3f968, type: 3}
   m_Name: AppleRule
   m_EditorClassIdentifier: Assembly-CSharp::UniqueNeighborScoringRule
-  description: Starting with the 3rd unique neighboring ingredient type, gain +0.07 Mult per unique type.
+  description: +0.04 Mult per unique neighboring ingredient type.
   target: 0
   requiredTag: 0
   requiredIngredient: {fileID: 0}
   reward: 1
-  amount: 0.07
-  minimumUniqueNeighbors: 3
+  amount: 0.04
+  minimumUniqueNeighbors: 1
   rewardPerUniqueNeighbor: 1
-  uniqueNeighborsIgnoredForReward: 2
+  uniqueNeighborsIgnoredForReward: 0
