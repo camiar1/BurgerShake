@@ -18,8 +18,12 @@ public class CenterlineScoringRule :
     public CenterlineAxis axis =
         CenterlineAxis.Horizontal;
 
-    [Range(0.25f, 1.25f)]
-    public float lengthScale = 0.9f;
+    [Min(1f)]
+    [Tooltip(
+        "World-space length of the projected centerline band. " +
+        "Keep this larger than the blender so it behaves like an infinite line."
+    )]
+    public float lineLength = 100f;
 
     [Range(0.05f, 0.5f)]
     [Tooltip(
@@ -71,9 +75,7 @@ public class CenterlineScoringRule :
                 new Vector2(
                     Mathf.Max(
                         0.05f,
-                        localSize.x *
-                        sx *
-                        lengthScale
+                        lineLength
                     ),
                     Mathf.Max(
                         0.05f,
@@ -95,9 +97,7 @@ public class CenterlineScoringRule :
                     ),
                     Mathf.Max(
                         0.05f,
-                        localSize.y *
-                        sy *
-                        lengthScale
+                        lineLength
                     )
                 );
         }
