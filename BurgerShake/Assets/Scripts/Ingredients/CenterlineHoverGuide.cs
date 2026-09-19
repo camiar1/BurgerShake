@@ -4,9 +4,17 @@ using UnityEngine;
 public class CenterlineHoverGuide :
     MonoBehaviour
 {
-    private const float DotSpacing = 0.42f;
-    private const float DotSize = 0.075f;
-    private const int MaxDots = 96;
+    private const float DotSpacing = 0.16f;
+    private const float DotSize = 0.09f;
+    private const int MaxDots = 256;
+
+    private static readonly Color GuideColor =
+        new Color(
+            0.05f,
+            1f,
+            1f,
+            0.95f
+        );
 
     private static Sprite dotSprite;
 
@@ -28,12 +36,7 @@ public class CenterlineHoverGuide :
     {
         activeRule = rule;
         activeCamera = camera;
-        activeColor = color;
-        activeColor.a =
-            Mathf.Min(
-                activeColor.a,
-                0.55f
-            );
+        activeColor = GuideColor;
 
         RefreshDots();
     }
@@ -123,8 +126,8 @@ public class CenterlineHoverGuide :
         int sortingOrder =
             sourceRenderer != null
                 ? sourceRenderer
-                    .sortingOrder + 20
-                : 20;
+                    .sortingOrder + 50
+                : 50;
 
         Vector2 localDirection =
             activeRule.axis ==
