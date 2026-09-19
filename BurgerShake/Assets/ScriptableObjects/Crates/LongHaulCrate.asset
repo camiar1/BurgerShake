@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 100c013c1a829e44a80ea19cde3eca8f, type: 3}
-  m_Name: ProteinCrate
+  m_Name: LongHaulCrate
   m_EditorClassIdentifier: Assembly-CSharp::IngredientCrateDefinition
-  crateName: Protein Crate
-  description: Offers ingredients with the Protein tag.
+  crateName: Long Haul Crate
+  description: Offers ingredients with the Long tag.
   icon: {fileID: 0}
-  requiredTag: 0
+  requiredTag: 11
   choices: 3
   newIngredientCopies: 2
   existingIngredientCopies: 1

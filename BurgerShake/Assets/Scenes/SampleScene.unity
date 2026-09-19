@@ -8776,6 +8776,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7aceabdf7129cb747a84f87eee06dfba, type: 2}
   - {fileID: 11400000, guid: 991e2c9f70188294b8572c487cbf74cf, type: 2}
   - {fileID: 11400000, guid: cbbd8c7ffce215d4e86f6bbffd6b1375, type: 2}
+  - {fileID: 11400000, guid: 30641eb1b64f4e509713ab22f38ecb44, type: 2}
+  - {fileID: 11400000, guid: 60b35bdd59ea48a8af100a9f73555547, type: 2}
+  - {fileID: 11400000, guid: 3411141c2db4444798895e7680c3e588, type: 2}
+  - {fileID: 11400000, guid: 58047a14f9d749dc936d63f40bec1352, type: 2}
+  - {fileID: 11400000, guid: 92ad5726aad14530be8405e16e21b0a8, type: 2}
   crateOffersPerShop: 2
   availableHelpers:
   - {fileID: 11400000, guid: 9b7ef8819ddc1474aa08daeae71edd9e, type: 2}

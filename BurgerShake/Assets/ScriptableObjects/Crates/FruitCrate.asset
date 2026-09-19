@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: FruitCrate
   m_EditorClassIdentifier: Assembly-CSharp::IngredientCrateDefinition
   crateName: Fruit Crate
-  description: 
+  description: Offers ingredients with the Fruit tag.
+  icon: {fileID: 0}
   requiredTag: 14
   choices: 3
+  newIngredientCopies: 2
+  existingIngredientCopies: 1
   cost: 5
