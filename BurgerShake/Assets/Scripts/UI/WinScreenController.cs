@@ -587,7 +587,7 @@ public class WinScreenController : MonoBehaviour
         text.color = color;
         text.fontStyle = fontStyle;
         text.alignment = alignment;
-        text.enableWordWrapping = true;
+        text.textWrappingMode = TextWrappingModes.Normal;
         text.raycastTarget = false;
         text.overflowMode = TextOverflowModes.Overflow;
 
