@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56220a5e1287f1340aacabe2dd0d04e0, type: 3}
+  m_Name: Avocado
+  m_EditorClassIdentifier: Assembly-CSharp::IngredientDefinition
+  ingredientName: Avocado
+  description: +0.3 Mult if touching both a Protein and a Vegetable.
+  sprite: {fileID: 3810102869644336656, guid: cf5ca584f8814bc9ae81b09b9ac1af70, type: 3}
+  prefab: {fileID: 710001001, guid: 6010fcd839b64b81bbc956e24eb497d2, type: 3}
+  placeholderShape: 0
+  placeholderColor: {r: 0.55, g: 0.75, b: 0.22, a: 1}
+  placeholderColliderSize: {x: 1.35, y: 1.75}
+  draftWeight: 1
+  copiesPerCycle: 3
+  scoringRules:
+  - {fileID: 11400000, guid: ab100000000000000000000000000003, type: 2}
+  - {fileID: 11400000, guid: 327f6cecda8ed3048a14101322a1cff5, type: 2}
+  tags: 010000000a000000
