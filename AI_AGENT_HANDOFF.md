@@ -942,4 +942,25 @@ First actions for a new AI agent:
 
 If anything in this file conflicts with the live project, the live project wins, but investigate why before overwriting or reverting anything.
 
+
+## 23. Collider authoring update — 2026-11-07
+
+Commit 5970d86 replaces PolygonColliderScaler's automatic percentage-scaling behavior with an explicit outline authoring tool. Class name, script GUID, saved originalPaths and legacy scale fields are retained. No ingredient prefabs or sprite assets were regenerated.
+
+- No ExecuteAlways, OnEnable regeneration, or OnValidate collider writes. Existing saved collider paths survive reloads and spawning; manual Edit Collider changes persist.
+- Inspector buttons: Generate From Sprite + Inset; Apply Inset From Captured Outline; Capture Manual Edits (Reset Inset to 0); Restore Captured Outline.
+- Generation reads Sprite.GetPhysicsShape, transforms renderer coordinates into collider-local space, accounts for flipX/flipY and Collider2D.offset, and captures the clean source outline.
+- Inset Distance is an even edge offset in collider-local units, NOT a percentage. Default 0.02. Simplification Tolerance defaults to 0.005; use 0 to keep all source vertices.
+- Apply Inset always starts from the captured source, avoiding cumulative shrinking. Capture Manual Edits saves current points unchanged and resets inset/simplification to 0.
+- Degenerate/self-intersecting, overlapping or nested outlines are rejected before mutation. Narrow features cause the tool to retry smaller insets and report the effective amount.
+- This tool supports simple solid outlines and separate islands. It does not interpret nested loops as holes. Sprite Editor > Custom Physics Shape is the source for silhouette detail; a missing physics shape produces a warning rather than a rectangle fallback.
+- Undo, prefab instance override recording and scene dirty marking are included. Authoring actions are blocked in Play Mode. Saved collider paths are used at runtime.
+- Legacy ApplyColliderScale remains as an explicit context-menu action only.
+
+Suggested workflow: open ingredient prefab outside Play Mode, start with Inset Distance 0.02 and Simplification Tolerance 0.005, click Generate From Sprite + Inset, then manually touch up vertices and save. No Bake button is needed because regeneration is never automatic. Click Capture Manual Edits only when those edits should become the baseline for subsequent insets.
+
+Verification: whitespace/diff checks and Python-ported geometry checks passed for both windings, convex/concave shapes, narrow stems, excessive inset, invalid/multiple paths, simplification error bounds and the actual committed Watermelon collider (66 to 52 vertices, effective inset 0.02). Source checks verified no automatic path writes. These checks are not a Unity compilation or Play Mode test. Both Desktop Commander devices were offline, so local application, Unity compilation, Inspector interaction, Undo and prefab reload checks remain to be verified on the user's machine.
+
+Earlier handoff details superseded by recent committed work: the Fruit Art overhaul is now on GitHub; the previously local-only replacement art was committed. Five fruit IngredientDefinition.sprite references remain empty (Banana, Cherry, Grape, Lemon, Watermelon), and RegularRun now has 10 startingDraftIngredients rather than the older documented 15.
+
 End of handoff.
