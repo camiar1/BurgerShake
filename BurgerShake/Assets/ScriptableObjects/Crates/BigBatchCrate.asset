@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IngredientCrateDefinition
   crateName: Big Batch Crate
   description: Offers ingredients with the Large tag.
-  icon: {fileID: 0}
   requiredTag: 9
   choices: 3
   newIngredientCopies: 2
   existingIngredientCopies: 1
   cost: 5
+  icon: {fileID: 21300000, guid: 5936cd2fe74844cd8fcc5d8ce126380e, type: 3}

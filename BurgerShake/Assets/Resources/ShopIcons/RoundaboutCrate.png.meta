@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: fefd25c5d4994258ab866a91118919c4
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: 974ea934520b42d89128b402c752f69e
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: RoundaboutCrate

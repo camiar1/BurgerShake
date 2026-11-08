@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: d47e9eacf3ab45d9a8c7346e4c47b0f7
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: c4915c1f5a2042dbb19130ab8103efeb
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: CounterExtension

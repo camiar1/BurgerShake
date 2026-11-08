@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: c91f8b46018a4f91810271c38fefd236
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: 32cb395c19ef46d5b46d958055f98b7a
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: VegetableCrate

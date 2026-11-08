@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: 02a1603ce8c642bc88a1bb65d85248b7
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: 0a1d1a2d40324427b485771763b81180
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: TipJar

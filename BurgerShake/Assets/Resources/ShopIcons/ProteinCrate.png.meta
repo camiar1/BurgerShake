@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: db224d8631e24b7aa54880570ec351f2
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: f57ba8da4ea74b11a503b0b856c080f6
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: ProteinCrate

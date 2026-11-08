@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RunUpgradeDefinition
   upgradeName: Prep Board
   description: Start each customer with +3 Points, making Mult-heavy ingredient builds stronger.
-  icon: {fileID: 0}
   cost: 5
   effectType: 5
   amount: 3
+  icon: {fileID: 21300000, guid: 48e153da13084e7ba6de6cd5dac2562b, type: 3}

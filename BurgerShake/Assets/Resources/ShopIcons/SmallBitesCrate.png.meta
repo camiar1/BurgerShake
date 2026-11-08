@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: 20e676feb3d44373a96cfd58fda1ab8d
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: 70557f162d4540718ccbff5ae9b6c5a8
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: SmallBitesCrate

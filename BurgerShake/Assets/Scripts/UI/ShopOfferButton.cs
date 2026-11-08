@@ -59,6 +59,8 @@ public class ShopOfferButton :
         Action<ShopOffer> onPressed
     )
     {
+        ShopCardLayout.StyleOffer(transform, icon, typeText, nameText,
+            descriptionText, costText, buttonText);
         offer =
             newOffer;
 

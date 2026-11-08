@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RunUpgradeDefinition
   upgradeName: Extra Scoop
   description: Permanently gain +1 ingredient dispense each customer, giving every synergy more chances to trigger.
-  icon: {fileID: 0}
   cost: 7
   effectType: 4
   amount: 1
+  icon: {fileID: 21300000, guid: bcae16a2808b4a1e9e222d1b05111b69, type: 3}
