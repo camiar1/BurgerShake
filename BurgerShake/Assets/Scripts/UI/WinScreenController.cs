@@ -45,7 +45,7 @@ public class WinScreenController : MonoBehaviour
     private Coroutine showRoutine;
 
     private readonly Color backdropColor =
-        new Color(0.08f, 0.045f, 0.025f, 0.9f);
+        new Color(0.08f, 0.045f, 0.025f, 0.72f);
 
     private readonly Color panelColor =
         new Color(0.98f, 0.89f, 0.71f, 1f);
@@ -290,7 +290,8 @@ public class WinScreenController : MonoBehaviour
     private string BuildPantrySummary()
     {
         StringBuilder builder = new StringBuilder();
-        builder.AppendLine("PANTRY");
+        builder.AppendLine("<b>PANTRY</b>");
+        builder.AppendLine();
 
         if (
             runProgress == null ||
@@ -329,7 +330,8 @@ public class WinScreenController : MonoBehaviour
     private string BuildHelperSummary()
     {
         StringBuilder builder = new StringBuilder();
-        builder.AppendLine("HELPERS");
+        builder.AppendLine("<b>HELPERS</b>");
+        builder.AppendLine();
 
         if (
             runProgress == null ||
@@ -442,6 +444,7 @@ public class WinScreenController : MonoBehaviour
 
         if (screenRoot != null)
         {
+            ApplyTheme();
             return;
         }
 
@@ -603,6 +606,32 @@ public class WinScreenController : MonoBehaviour
             secondaryButtonColor,
             inkColor
         );
+        ApplyTheme();
+    }
+
+    private void ApplyTheme()
+    {
+        if (panelRect == null) return;
+        BurgerShakeGeneratedUITheme.Surface(panelRect.GetComponent<Image>());
+        // Only known children of the code-generated WinPanel are styled here.
+        TMP_Text title = panelRect.Find("Title")?.GetComponent<TMP_Text>();
+        TMP_Text subtitle = panelRect.Find("Subtitle")?.GetComponent<TMP_Text>();
+        BurgerShakeGeneratedUITheme.Text(title, 56f, true);
+        if (title != null) title.color = BurgerShakeGeneratedUITheme.Accent;
+        BurgerShakeGeneratedUITheme.Text(subtitle, 20f, false, true);
+        BurgerShakeGeneratedUITheme.Text(customersText, 28f, true);
+        BurgerShakeGeneratedUITheme.Text(finalScoreText, 26f, true);
+        BurgerShakeGeneratedUITheme.Text(coinsText, 26f, true);
+        BurgerShakeGeneratedUITheme.Text(pantryText, 23f);
+        BurgerShakeGeneratedUITheme.Text(helpersText, 23f);
+        if (pantryText != null) { pantryText.enableAutoSizing = true; pantryText.fontSizeMin = 17f; pantryText.fontSizeMax = 23f; }
+        if (helpersText != null) { helpersText.enableAutoSizing = true; helpersText.fontSizeMin = 17f; helpersText.fontSizeMax = 23f; }
+        Image divider = panelRect.Find("Divider")?.GetComponent<Image>();
+        if (divider != null) { divider.color = BurgerShakeGeneratedUITheme.Rule; divider.rectTransform.sizeDelta = new Vector2(760f, 1f); }
+        Image backdrop = screenRoot.transform.Find("Backdrop")?.GetComponent<Image>();
+        if (backdrop != null) backdrop.color = backdropColor;
+        BurgerShakeGeneratedUITheme.Button(playAgainButton, playAgainButton?.transform.Find("Label")?.GetComponent<TMP_Text>(), true);
+        BurgerShakeGeneratedUITheme.Button(mainMenuButton, mainMenuButton?.transform.Find("Label")?.GetComponent<TMP_Text>(), false);
     }
 
     private RectTransform CreateRect(
@@ -653,7 +682,7 @@ public class WinScreenController : MonoBehaviour
         text.color = color;
         text.fontStyle = fontStyle;
         text.alignment = alignment;
-        text.enableWordWrapping = true;
+        text.textWrappingMode = TextWrappingModes.Normal;
         text.raycastTarget = false;
         text.overflowMode = TextOverflowModes.Overflow;
 

@@ -16,7 +16,7 @@ public class RunStatusHUDController : MonoBehaviour
     private TMP_Text resourcesText;
 
     private const float Width = 620f;
-    private const float Height = 92f;
+    private const float Height = 108f;
 
     private void Awake()
     {
@@ -127,7 +127,10 @@ public class RunStatusHUDController : MonoBehaviour
             ResolveExistingUI(existingCanvas);
 
             if (canvasGroup != null && customerText != null && resourcesText != null)
+            {
+                ApplyTheme();
                 return;
+            }
         }
 
         GameObject canvasObject = new GameObject(
@@ -185,6 +188,22 @@ public class RunStatusHUDController : MonoBehaviour
             19f,
             FontStyles.Normal
         );
+        ApplyTheme();
+    }
+
+    private void ApplyTheme()
+    {
+        RectTransform panel = customerText.transform.parent as RectTransform;
+        panel.sizeDelta = new Vector2(Width, Height);
+        BurgerShakeGeneratedUITheme.Surface(panel.GetComponent<Image>());
+        BurgerShakeGeneratedUITheme.Text(customerText, 23f, true);
+        customerText.enableAutoSizing = true;
+        customerText.fontSizeMin = 17f;
+        customerText.fontSizeMax = 23f;
+        BurgerShakeGeneratedUITheme.Text(resourcesText, 20f, false, true);
+        BurgerShakeGeneratedUITheme.TopLeft(customerText.rectTransform, 22f, 17f, Width - 44f, 31f);
+        BurgerShakeGeneratedUITheme.TopLeft(resourcesText.rectTransform, 22f, 62f, Width - 44f, 28f);
+        BurgerShakeGeneratedUITheme.Divider(panel, "BS_StatusDivider", 53f, 22f);
     }
 
     private void ResolveExistingUI(Transform existingCanvas)

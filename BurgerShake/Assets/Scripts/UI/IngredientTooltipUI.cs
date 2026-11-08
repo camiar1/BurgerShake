@@ -11,11 +11,14 @@ public class IngredientTooltipUI : MonoBehaviour
     private RectTransform canvasRect;
     private RectTransform panel;
     private TMP_Text bodyText;
+    private TMP_Text titleText;
+    private TMP_Text metaText;
+    private TMP_Text traitsText;
     private CanvasGroup canvasGroup;
 
     private const float CursorGap = 14f;
     private const float ScreenPadding = 10f;
-    private const float Width = 430f;
+    private const float Width = 420f;
 
     private void Awake()
     {
@@ -72,11 +75,12 @@ public class IngredientTooltipUI : MonoBehaviour
         if (bodyText == null || panel == null || canvasGroup == null)
             return;
 
+        titleText.text = definition.ingredientName.ToUpperInvariant();
+        metaText.text = GetPrimaryType(definition).ToUpperInvariant() +
+            (touchingCount.HasValue ? $"   /   {touchingCount.Value} CONTACTS" : "");
+        traitsText.text = "TRAITS   " + string.Join("  /  ", definition.tags);
         bodyText.text = BuildTooltipText(definition, touchingCount);
-        bodyText.ForceMeshUpdate();
-
-        float height = Mathf.Clamp(bodyText.preferredHeight + 34f, 120f, 420f);
-        panel.sizeDelta = new Vector2(Width, height);
+        FitContent();
 
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = false;
@@ -97,30 +101,11 @@ public class IngredientTooltipUI : MonoBehaviour
     {
         StringBuilder builder = new StringBuilder();
 
-        builder.Append("<size=30><b>");
-        builder.Append(definition.ingredientName);
-        builder.AppendLine("</b></size>");
-        builder.Append("<b>TYPE:</b> ");
-        builder.AppendLine(GetPrimaryType(definition));
-
-        if (touchingCount.HasValue)
-        {
-            builder.Append("<b>TOUCHING:</b> ");
-            builder.AppendLine(touchingCount.Value.ToString());
-        }
-
-        if (!string.IsNullOrWhiteSpace(definition.description))
-        {
-            builder.AppendLine();
-            builder.AppendLine(definition.description.Trim());
-        }
-
-        builder.AppendLine();
-        builder.AppendLine("<b>SCORING</b>");
+        builder.AppendLine("<size=15><b>SCORING</b></size>");
 
         if (definition.scoringRules == null || definition.scoringRules.Count == 0)
         {
-            builder.Append("• No special scoring rule");
+            builder.Append(string.IsNullOrWhiteSpace(definition.description) ? "No special scoring rule" : definition.description.Trim());
             return builder.ToString();
         }
         foreach (IngredientScoringRule rule in definition.scoringRules)
@@ -132,10 +117,6 @@ public class IngredientTooltipUI : MonoBehaviour
             builder.AppendLine(GetRuleText(rule));
         }
 
-        builder.AppendLine();
-        builder.Append("<size=18><color=#C8C8C8>Tags: ");
-        builder.Append(string.Join(", ", definition.tags));
-        builder.Append("</color></size>");
         return builder.ToString();
     }
 
@@ -204,7 +185,10 @@ public class IngredientTooltipUI : MonoBehaviour
             ResolveExistingUI(existingCanvas);
 
             if (canvas != null && panel != null && bodyText != null && canvasGroup != null)
+            {
+                ApplyTheme();
                 return;
+            }
         }
 
         GameObject canvasObject = new GameObject(
@@ -258,6 +242,7 @@ public class IngredientTooltipUI : MonoBehaviour
         bodyText.textWrappingMode = TextWrappingModes.Normal;
         bodyText.raycastTarget = false;
         bodyText.richText = true;
+        ApplyTheme();
     }
 
     private void ResolveExistingUI(Transform existingCanvas)
@@ -289,16 +274,11 @@ public class IngredientTooltipUI : MonoBehaviour
         if (bodyText == null || panel == null || canvasGroup == null)
             return;
 
-        bodyText.text =
-            "<size=30><b>INGREDIENT NAME</b></size>\n" +
-            "<b>TYPE:</b> Fruit / Protein / Vegetable\n" +
-            "<b>TOUCHING:</b> 2\n\n" +
-            "<b>SCORING</b>\n" +
-            "• Hovered ingredient scoring relationship\n\n" +
-            "<size=18><color=#C8C8C8>Tags: Preview</color></size>";
-
-        bodyText.ForceMeshUpdate();
-        panel.sizeDelta = new Vector2(Width, 220f);
+        titleText.text = "APPLE";
+        metaText.text = "FRUIT   /   2 CONTACTS";
+        traitsText.text = "TRAITS   Fruit  /  Round";
+        bodyText.text = "<size=15><b>SCORING</b></size>\n• Base +2 Points.\n• +0.10 Mult per unique neighboring ingredient type.";
+        FitContent();
         panel.anchorMin = new Vector2(0.5f, 0.5f);
         panel.anchorMax = new Vector2(0.5f, 0.5f);
         panel.pivot = new Vector2(0.5f, 1f);
@@ -306,6 +286,49 @@ public class IngredientTooltipUI : MonoBehaviour
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
         panel.anchoredPosition = new Vector2(0f, 170f);
+    }
+
+    private void ApplyTheme()
+    {
+        BurgerShakeGeneratedUITheme.Surface(panel.GetComponent<Image>());
+        titleText = BurgerShakeGeneratedUITheme.Label(panel, "BS_TooltipTitle");
+        metaText = BurgerShakeGeneratedUITheme.Label(panel, "BS_TooltipMeta");
+        traitsText = BurgerShakeGeneratedUITheme.Label(panel, "BS_TooltipTraits");
+        BurgerShakeGeneratedUITheme.Text(titleText, 30f, true);
+        titleText.enableAutoSizing = true;
+        titleText.fontSizeMin = 21f;
+        titleText.fontSizeMax = 30f;
+        titleText.textWrappingMode = TextWrappingModes.NoWrap;
+        BurgerShakeGeneratedUITheme.Text(metaText, 15f, false, true);
+        BurgerShakeGeneratedUITheme.Text(traitsText, 15f, false, true);
+        BurgerShakeGeneratedUITheme.Text(bodyText, 20f);
+        bodyText.textWrappingMode = TextWrappingModes.Normal;
+        bodyText.enableAutoSizing = true;
+        bodyText.fontSizeMin = 15f;
+        bodyText.fontSizeMax = 20f;
+        BurgerShakeGeneratedUITheme.Divider(panel, "BS_TooltipDivider", 82f, 24f);
+    }
+
+    private void FitContent()
+    {
+        float width = canvasRect != null && canvasRect.rect.width > 0f
+            ? Mathf.Min(Width, canvasRect.rect.width - ScreenPadding * 2f) : Width;
+        float contentWidth = Mathf.Max(80f, width - 48f);
+        // Measure at the normal body size, then allow auto-sizing on short screens.
+        bodyText.enableAutoSizing = false;
+        bodyText.fontSize = 20f;
+        float bodyHeight = bodyText.GetPreferredValues(bodyText.text, contentWidth, Mathf.Infinity).y + 8f;
+        float footerHeight = traitsText.GetPreferredValues(traitsText.text, contentWidth, Mathf.Infinity).y + 4f;
+        float maxHeight = canvasRect != null && canvasRect.rect.height > 0f
+            ? canvasRect.rect.height - ScreenPadding * 2f : 800f;
+        float height = Mathf.Min(Mathf.Max(208f, 100f + bodyHeight + footerHeight + 36f), maxHeight);
+        panel.sizeDelta = new Vector2(width, height);
+        BurgerShakeGeneratedUITheme.TopLeft(titleText.rectTransform, 24f, 18f, contentWidth, 38f);
+        BurgerShakeGeneratedUITheme.TopLeft(metaText.rectTransform, 24f, 58f, contentWidth, 22f);
+        BurgerShakeGeneratedUITheme.TopLeft(bodyText.rectTransform, 24f, 98f, contentWidth,
+            Mathf.Max(30f, height - 98f - footerHeight - 36f));
+        BurgerShakeGeneratedUITheme.TopLeft(traitsText.rectTransform, 24f, height - footerHeight - 20f, contentWidth, footerHeight);
+        bodyText.enableAutoSizing = true;
     }
 
     private void PositionNearCursor(Vector2 screenPosition)

@@ -976,4 +976,27 @@ Manual-edit protection, snapshot capture, Undo, renderer coordinate conversion, 
 
 Verification: native Clipper2 from the same pinned release executed 10 regression cases covering a full 0.53 inset, reversed winding, narrow stems disappearing, a narrow waist splitting, separate islands, complete erosion, zero inset, and the actual committed Apple and Watermelon source outlines. Apple area changed from 8.1440 to 3.4625 at 0.53 (about 57% reduction). Source checks confirm removal of global halving and preservation of no automatic collider rewriting and Undo. These are native geometry and source checks, not a Unity/C# compilation or editor-interaction test; Unity verification remains outstanding.
 
+
+## 25. Generated UI visual overhaul — 2026-11-07
+
+User scope: restyle assistant-generated UI only. Do not alter any user-provided UI element or source asset.
+
+Changed: IngredientTooltipUI, RunStatusHUDController, ShopBuildSummaryUI (including its reroll button), and WinScreenController. Their generated panels opt into BurgerShakeGeneratedUITheme. Supplied art in Assets/Art/UI, menus, receipt, speech bubble, blender, customer/draft cards, scene layouts, fonts and ingredient assets were not edited.
+
+Visual direction: cream paper nine-sliced frames, dark brown outlines, subtle offset shadows, warm brown text and terracotta primary actions. Header typography reuses BarberChop; body copy uses the project's default TMP font. The new surfaces are generated independently, with no writes to existing PNGs. Styling uses exact generated hierarchy paths; no global UI recoloring or scene-wide component scan.
+
+Tooltip: separate title/category/contact/traits hierarchy, adaptive height and screen clamping, one scoring list instead of duplicated ingredient description plus scoring list. Existing scoring rule text formatting and hover entry points remain. HUD and shop summary have clearer spacing and dividers. Existing reroll availability, pricing and button callbacks remain. Win-screen summary, scene navigation and animations remain.
+
+BarberChop atlas has zero padding and gradient scale 1; its distance-field material washed out small headings. Only new generated labels receive a separate bitmap material. The original font asset/material and pre-existing text are untouched.
+
+Local verification on Unity 6000.3.8f1:
+- Gameplay assembly compiled using Unity's bundled Roslyn compiler/references, followed by successful Unity asset refresh/editor compilation.
+- Isolated preview-scene renders for all four generated panels at 1920x1080, 1280x720 and 1024x768: bounds passed; no text overflow reported.
+- All 30 actual ingredient definitions rendered as tooltips at 1920x1080: bounds passed; no text overflow reported.
+- Visually reviewed tooltips, HUD, shop summary and win screen, including the smaller 4:3 render.
+- Protected Assets/Art/UI file hashes unchanged. No scene was saved. Existing local fruit collider prefab edits remain uncommitted and separate.
+- Full interactive gameplay/button playtesting has not been performed in this pass.
+
+Editor review command: Tools > Burger Shake > Review Generated UI. It creates isolated preview scenes and saves its temporary report/PNGs under Temp/GeneratedUIReview; it never saves gameplay scenes.
+
 End of handoff.

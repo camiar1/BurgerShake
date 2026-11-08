@@ -17,7 +17,7 @@ public class ShopBuildSummaryUI : MonoBehaviour
     private TMP_Text rerollButtonText;
 
     private const float Width = 500f;
-    private const float Height = 360f;
+    private const float Height = 400f;
 
     private void Awake()
     {
@@ -77,10 +77,10 @@ public class ShopBuildSummaryUI : MonoBehaviour
             canvasGroup.interactable = false;
             titleText.text = "YOUR BUILD";
             bodyText.text =
-                "Helpers: Extra Scoop, Head Start\n" +
+                "<b>HELPERS</b>\nExtra Scoop, Head Start\n" +
                 "+1 Dispense  •  +0.15 Starting Mult\n" +
-                "Pantry: 6 types  •  18 total copies\n\n" +
-                "NEXT: CHLOE  •  GOAL 48";
+                "\n<b>PANTRY</b>   6 types  /  18 copies\n\n" +
+                "<b>NEXT CUSTOMER</b>\nCHLOE  /  Goal 48";
 
             if (rerollButtonText != null)
                 rerollButtonText.text = "REROLL OFFERS  $2";
@@ -118,7 +118,7 @@ public class ShopBuildSummaryUI : MonoBehaviour
 
     private void AppendHelperNames(StringBuilder builder)
     {
-        builder.Append("Helpers: ");
+        builder.AppendLine("<b>HELPERS</b>");
 
         if (runProgress == null ||
             runProgress.Upgrades == null ||
@@ -275,7 +275,8 @@ public class ShopBuildSummaryUI : MonoBehaviour
             }
         }
 
-        builder.AppendLine($"Pantry: {types} types  •  {copies} total copies");
+        builder.AppendLine();
+        builder.AppendLine($"<b>PANTRY</b>   {types} types  /  {copies} copies");
     }
 
     private void AppendNextCustomer(StringBuilder builder)
@@ -308,7 +309,7 @@ public class ShopBuildSummaryUI : MonoBehaviour
 
         builder.AppendLine();
         builder.Append(
-            $"NEXT: {nextCustomer.customerName.ToUpperInvariant()}  •  GOAL {goal}"
+            $"<b>NEXT CUSTOMER</b>\n{nextCustomer.customerName.ToUpperInvariant()}  /  Goal {goal}"
         );
     }
 
@@ -327,6 +328,7 @@ public class ShopBuildSummaryUI : MonoBehaviour
                 rerollButton != null &&
                 rerollButtonText != null)
             {
+                ApplyTheme();
                 return;
             }
         }
@@ -401,6 +403,23 @@ public class ShopBuildSummaryUI : MonoBehaviour
         );
 
         CreateRerollButton(panel);
+        ApplyTheme();
+    }
+
+    private void ApplyTheme()
+    {
+        RectTransform panel = titleText.transform.parent as RectTransform;
+        BurgerShakeGeneratedUITheme.Surface(panel.GetComponent<Image>());
+        BurgerShakeGeneratedUITheme.Text(titleText, 28f, true);
+        BurgerShakeGeneratedUITheme.Text(bodyText, 20f);
+        bodyText.enableAutoSizing = true;
+        bodyText.fontSizeMin = 15f;
+        bodyText.fontSizeMax = 20f;
+        BurgerShakeGeneratedUITheme.TopLeft(titleText.rectTransform, 24f, 18f, Width - 48f, 38f);
+        BurgerShakeGeneratedUITheme.TopLeft(bodyText.rectTransform, 24f, 80f, Width - 48f, Height - 162f);
+        BurgerShakeGeneratedUITheme.Divider(panel, "BS_BuildDivider", 64f, 24f);
+        BurgerShakeGeneratedUITheme.TopLeft(rerollButton.GetComponent<RectTransform>(), 24f, Height - 72f, Width - 48f, 48f);
+        BurgerShakeGeneratedUITheme.Button(rerollButton, rerollButtonText, false);
     }
 
     private void ResolveExistingUI(Transform existingCanvas)
@@ -518,7 +537,7 @@ public class ShopBuildSummaryUI : MonoBehaviour
         RectTransform rect = CreateRect(
             "RerollButton",
             panel,
-            new Vector2(18f, -302f),
+            new Vector2(24f, -(Height - 72f)),
             new Vector2(Width - 36f, 42f)
         );
 
