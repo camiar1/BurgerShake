@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Clipper2Lib;
 
 // Editor authoring tool: saved PolygonCollider2D paths are the runtime authority.
 // Never regenerate in OnEnable/OnValidate; that would erase manual vertex edits.
@@ -10,7 +11,7 @@ public class PolygonColliderScaler : MonoBehaviour
     [Header("Outline Authoring")]
     [Tooltip("SpriteRenderer on this object, or a child. Assign explicitly if there are several.")]
     [SerializeField] private SpriteRenderer sourceRenderer;
-    [Tooltip("Distance inside the outline, in collider-local units. Not a percentage.")]
+    [Tooltip("Distance inside the outline, in collider-local units. Thin details can disappear or split into separate islands. The distance is never silently reduced.")]
     [Min(0f)] [SerializeField] private float insetDistance = 0.02f;
     [Tooltip("Removes small outline details. 0 keeps every source vertex.")]
     [Min(0f)] [SerializeField] private float simplificationTolerance = 0.005f;
@@ -129,24 +130,49 @@ public class PolygonColliderScaler : MonoBehaviour
         // Simplifying can change topology. Prefer the intact source if that happens.
         if (!ValidPaths(simplified)) simplified = clean;
 
-        float effectiveInset = insetDistance;
-        List<ColliderPath> result = null;
-        // Narrow necks can collapse under an offset. Reduce globally to preserve all paths.
-        for (int attempt = 0; attempt < 12; attempt++)
+        List<ColliderPath> result;
+        try
         {
-            var candidate = new List<ColliderPath>();
+            var polygons = new PathsD();
             foreach (ColliderPath path in simplified)
-                candidate.Add(new ColliderPath { points = Inset(path.points, effectiveInset) });
-            if (ValidPaths(candidate) && InsideSource(candidate, simplified, effectiveInset))
             {
-                result = candidate;
-                break;
+                var polygon = new PathD();
+                foreach (Vector2 point in path.points) polygon.Add(new PointD(point.x, point.y));
+                // All accepted input paths are solid islands, not holes. Clipper uses winding
+                // to distinguish these, so normalize each island before offsetting.
+                if (Clipper.Area(polygon) < 0) polygon.Reverse();
+                polygons.Add(polygon);
             }
-            effectiveInset *= 0.5f;
+            // A proper polygon erosion resolves collapsed stems and self-intersections.
+            // It can change vertex/path counts instead of shrinking the WHOLE inset to
+            // preserve the narrowest feature. Round joins avoid sharp inward spikes.
+            PathsD inset = insetDistance == 0f ? polygons : Clipper.InflatePaths(
+                polygons, -insetDistance, JoinType.Round, EndType.Polygon,
+                miterLimit: 2.0, precision: 5, arcTolerance: 0.002);
+            result = new List<ColliderPath>();
+            foreach (PathD polygon in inset)
+            {
+                var points = new Vector2[polygon.Count];
+                for (int i = 0; i < points.Length; i++)
+                    points[i] = new Vector2((float)polygon[i].x, (float)polygon[i].y);
+                points = Clean(points);
+                if (points.Length >= 3 && Mathf.Abs(Area(points)) > Epsilon)
+                    result.Add(new ColliderPath { points = points });
+            }
         }
-        if (result == null)
+        catch (Exception error)
         {
-            Warn("Could not make a safe inset. Reduce Inset Distance or simplify the outline manually. Collider was not changed.");
+            Warn("Inset failed: " + error.Message + ". Collider was not changed.");
+            return;
+        }
+        if (result.Count == 0)
+        {
+            Warn("Inset " + insetDistance.ToString("G4") + " removes the entire outline. Reduce Inset Distance. Collider was not changed.");
+            return;
+        }
+        if (!ValidPaths(result))
+        {
+            Warn("Inset produced invalid geometry after conversion to Unity coordinates. Collider was not changed; try a slightly different distance.");
             return;
         }
 
@@ -159,10 +185,9 @@ public class PolygonColliderScaler : MonoBehaviour
             colliderOffset = Vector2.zero;
         }
         SetPaths(result);
-        string message = "Outline applied. Effective inset: " + effectiveInset.ToString("G4") +
+        string message = "Applied requested inset: " + insetDistance.ToString("G4") +
+            ". Thin details may disappear or separate. Output paths: " + result.Count +
             ". Manual vertex edits are safe; nothing regenerates on reload or spawn.";
-        if (effectiveInset < insetDistance)
-            message += " Requested inset was reduced to preserve narrow details.";
         FinishEdit(message);
     }
 
@@ -261,25 +286,6 @@ public class PolygonColliderScaler : MonoBehaviour
         return p.ToArray();
     }
 
-    private static Vector2[] Inset(Vector2[] p, float distance)
-    {
-        if (distance == 0f) return (Vector2[])p.Clone();
-        var result = new Vector2[p.Length];
-        float winding = Mathf.Sign(Area(p));
-        for (int i = 0; i < p.Length; i++)
-        {
-            Vector2 incoming = (p[i] - p[(i + p.Length - 1) % p.Length]).normalized;
-            Vector2 outgoing = (p[(i + 1) % p.Length] - p[i]).normalized;
-            Vector2 n1 = new Vector2(-incoming.y, incoming.x) * winding;
-            Vector2 n2 = new Vector2(-outgoing.y, outgoing.x) * winding;
-            Vector2 bisector = n1 + n2;
-            float divisor = Vector2.Dot(bisector, n1);
-            if (divisor < Epsilon) return null; // Hairpin: no finite miter.
-            result[i] = p[i] + bisector * (distance / divisor);
-        }
-        return result;
-    }
-
     private static bool SegmentsIntersect(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
     {
         float abC = Cross(b - a, c - a), abD = Cross(b - a, d - a);
@@ -335,28 +341,6 @@ public class PolygonColliderScaler : MonoBehaviour
         return true;
     }
 
-    private static bool InsideSource(List<ColliderPath> result, List<ColliderPath> source, float distance)
-    {
-        for (int k = 0; k < result.Count; k++)
-        {
-            Vector2[] p = result[k].points, q = source[k].points;
-            if (Mathf.Sign(Area(p)) != Mathf.Sign(Area(q)) || Mathf.Abs(Area(p)) > Mathf.Abs(Area(q)) + Epsilon) return false;
-            if (distance == 0f) continue;
-            for (int i = 0; i < p.Length; i++)
-            {
-                if (!Contains(q, p[i])) return false;
-                // An overlarge inset can reverse an edge while retaining winding.
-                if (Vector2.Dot(p[(i + 1) % p.Length] - p[i], q[(i + 1) % q.Length] - q[i]) <= 0f) return false;
-                for (int j = 0; j < q.Length; j++)
-                {
-                    if (SegmentDistance(p[i], q[j], q[(j + 1) % q.Length]) < distance - Epsilon) return false;
-                    if (SegmentsIntersect(p[i], p[(i + 1) % p.Length], q[j], q[(j + 1) % q.Length])) return false;
-                }
-            }
-        }
-        return true;
-    }
-
     private bool CanEdit()
     {
 #if UNITY_EDITOR
@@ -387,7 +371,11 @@ public class PolygonColliderScaler : MonoBehaviour
         Debug.Log(message, this);
     }
 
-    private void Warn(string message) { Debug.LogWarning(message, this); }
+    private void Warn(string message)
+    {
+        lastResult = message;
+        Debug.LogWarning(message, this);
+    }
 }
 
 #if UNITY_EDITOR
@@ -398,7 +386,7 @@ public class PolygonColliderScalerEditor : UnityEditor.Editor
     {
         DrawDefaultInspector();
         UnityEditor.EditorGUILayout.HelpBox(
-            "No automatic regeneration. Generate/Apply replaces collider points; manual edits persist until you explicitly use a button. Inset is measured in collider-local units. Use solid silhouettes without holes.",
+            "No automatic regeneration. Generate/Apply replaces collider points; manual edits persist until you explicitly use a button. Inset is measured in collider-local units. Thin details can disappear as the inset increases. Use solid silhouettes without holes.",
             UnityEditor.MessageType.Info);
         using (new UnityEditor.EditorGUI.DisabledScope(Application.isPlaying))
         {

@@ -963,4 +963,17 @@ Verification: whitespace/diff checks and Python-ported geometry checks passed fo
 
 Earlier handoff details superseded by recent committed work: the Fruit Art overhaul is now on GitHub; the previously local-only replacement art was committed. Five fruit IngredientDefinition.sprite references remain empty (Banana, Cherry, Grape, Lemon, Watermelon), and RegularRun now has 10 startingDraftIngredients rather than the older documented 15.
 
+
+## 24. Strong inset correction — 2026-11-07
+
+The screenshot exposed a limitation in section 23's first implementation: requested inset 0.53 was repeatedly halved to 0.03313 to preserve the apple stem. That global reduction has been removed.
+
+PolygonColliderScaler now uses Clipper2 polygon erosion with the exact requested distance (round joins, precision 5, arc tolerance 0.002). Narrow features may disappear and narrow connections may split into separate collider paths. If erosion removes the entire outline, or Unity-coordinate conversion yields invalid paths, the saved collider remains unchanged and a warning is shown. No fallback silently reduces the inset. Inspector status reports the applied requested distance.
+
+The pinned Clipper2 C# dependency is included under Assets/ThirdParty/Clipper2 with a separate auto-referenced assembly, licenses, provenance and Unity metadata. Pull the complete commit, including that directory. Do not copy only PolygonColliderScaler.cs.
+
+Manual-edit protection, snapshot capture, Undo, renderer coordinate conversion, and no automatic runtime/reload regeneration are preserved. Existing prefabs are not regenerated. With an existing captured outline, set the desired Inset Distance and click Apply Inset From Captured Outline. Use Generate From Sprite + Inset to start from sprite physics geometry again.
+
+Verification: native Clipper2 from the same pinned release executed 10 regression cases covering a full 0.53 inset, reversed winding, narrow stems disappearing, a narrow waist splitting, separate islands, complete erosion, zero inset, and the actual committed Apple and Watermelon source outlines. Apple area changed from 8.1440 to 3.4625 at 0.53 (about 57% reduction). Source checks confirm removal of global halving and preservation of no automatic collider rewriting and Undo. These are native geometry and source checks, not a Unity/C# compilation or editor-interaction test; Unity verification remains outstanding.
+
 End of handoff.
