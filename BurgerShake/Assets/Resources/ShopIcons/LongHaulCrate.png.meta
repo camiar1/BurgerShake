@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: 74aa2dec66634b15bb3d70a30fc4b185
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: 38b6953d4bc54fc4be27935bcd3a315d
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: LongHaulCrate

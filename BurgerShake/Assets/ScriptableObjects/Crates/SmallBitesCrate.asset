@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IngredientCrateDefinition
   crateName: Small Bites Crate
   description: Offers ingredients with the Small tag.
-  icon: {fileID: 0}
   requiredTag: 8
   choices: 3
   newIngredientCopies: 2
   existingIngredientCopies: 1
   cost: 5
+  icon: {fileID: 21300000, guid: 20e676feb3d44373a96cfd58fda1ab8d, type: 3}

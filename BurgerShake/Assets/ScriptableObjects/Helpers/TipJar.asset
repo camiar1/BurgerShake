@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: TipJar
   m_EditorClassIdentifier: Assembly-CSharp::RunUpgradeDefinition
   upgradeName: Tip Jar
-  description: Earn +2 bonus coins whenever you satisfy a customer, turning customer synergies into more shop power.
-  icon: {fileID: 0}
+  description: Earn 2 extra coins after each customer win.
   cost: 3
   effectType: 3
   amount: 2
+  icon: {fileID: 21300000, guid: 02a1603ce8c642bc88a1bb65d85248b7, type: 3}

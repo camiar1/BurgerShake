@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: HeadStart
   m_EditorClassIdentifier: Assembly-CSharp::RunUpgradeDefinition
   upgradeName: Head Start
-  description: Start each customer with +0.15 Mult, making Point-heavy ingredient builds stronger.
-  icon: {fileID: 0}
+  description: Start each order with +0.15 Mult.
   cost: 7
   effectType: 1
   amount: 0.15
+  icon: {fileID: 21300000, guid: 6d56970dbd5f41d888a5030e80d2b2bd, type: 3}

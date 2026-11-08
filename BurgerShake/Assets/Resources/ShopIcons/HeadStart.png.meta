@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: 6d56970dbd5f41d888a5030e80d2b2bd
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: ec05b36a5f8443e7bb1d952df5c9dbfb
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: HeadStart

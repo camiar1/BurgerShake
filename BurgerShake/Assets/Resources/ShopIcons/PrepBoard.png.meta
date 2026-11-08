@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: 48e153da13084e7ba6de6cd5dac2562b
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: ceb9817380e647f3ad66b6eb892d8434
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: PrepBoard

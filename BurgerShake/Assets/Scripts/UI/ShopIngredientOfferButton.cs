@@ -55,6 +55,7 @@ public class ShopIngredientOfferButton :
         Action<IngredientDefinition> onChoose
     )
     {
+        ShopCardLayout.StyleIngredient(transform, icon, nameText, copiesText, descriptionText);
         ingredient =
             newIngredient;
 
@@ -69,11 +70,10 @@ public class ShopIngredientOfferButton :
         if (icon != null)
         {
             icon.sprite =
-                ingredient.sprite;
+                ingredient.sprite != null ? ingredient.sprite : IngredientPlaceholderSpriteFactory.GetOrCreate(ingredient);
 
             icon.enabled =
-                ingredient.sprite !=
-                null;
+                icon.sprite != null;
 
             icon.preserveAspect =
                 true;
@@ -167,6 +167,7 @@ public class ShopIngredientOfferButton :
         {
             if (
                 rule == null ||
+                rule.description == definition.description ||
                 string.IsNullOrWhiteSpace(
                     rule.description
                 )

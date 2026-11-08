@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RunUpgradeDefinition
   upgradeName: Counter Extension
   description: The blender is 6% wider, giving you more room for stacks and centerline setups.
-  icon: {fileID: 0}
   cost: 6
   effectType: 6
   amount: 1.06
+  icon: {fileID: 21300000, guid: d47e9eacf3ab45d9a8c7346e4c47b0f7, type: 3}

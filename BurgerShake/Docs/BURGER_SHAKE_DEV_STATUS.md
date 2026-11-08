@@ -114,3 +114,16 @@ After pulling this batch, check:
 Static asset validation checks all new GUID references, rule types and values, base scores, category tags, valid physics prefab components, draft eligibility/partners, and shop inclusion. Unity is unavailable in the development environment; import, rendered UI, actual collisions, and a complete run are not yet playtested.
 
 In Unity, check the three new pieces in draft cards and drop previews, then rotate/drop them. Banana scores 3 Points plus 0.3 Mult horizontally and just 3 Points vertically. Carrot scores 3 Points plus 0.25 Mult vertically only with an ingredient neighbor. Cucumber scores 6 Points horizontally with two or more ingredient neighbors, otherwise 2 Points. Blender walls do not count as ingredient neighbors. Test flipped orientations and both sides of the 15-degree cutoff. Check the seven additions in their matching shop crate, then finish the Chad → Glorb → Gregg run.
+
+
+## Shop card UI follow-up
+
+Branch: `agent/shop-card-ui`, based on `agent/full-run-integration` at `b846d2a` (the latest pantry card presentation).
+
+- ShopUI reuses its existing serialized buttons inside a responsive 2×2 grid. The shop fills its canvas; coins, title, status, and Continue have dedicated areas. The build summary stays to the right.
+- Cards use the same cream/brown generated theme as the pantry selection. Original temporary PNG icons identify all eight crate types and all six helpers; a fifteenth open-crate sprite supports the reveal.
+- Successful crate purchases show a 96% opaque input-blocking modal above the build summary. A real-time shake leads to the open sprite and a short pop, then three ingredient cards fade in. Selection stays locked until the reveal finishes. Existing cost, copy grants, sold state, and purchase validation remain in ShopManager.
+- Ingredient cards show the existing sprite or procedural ingredient placeholder, scoring text, and owned/resulting copy counts. A successful choice dismisses the modal. Continue and other purchases remain blocked while a crate is unresolved.
+- Static checks: scene reference resolution, icon PNG decoding and importer/reference checks, C# syntax parsing, and `git diff --check`. Unity is unavailable here: compilation, actual rendering, navigation, animation timing, and end-to-end purchases still need Play Mode validation.
+
+Unity review: enter a shop and check the 2×2 cards and right-hand build summary at 1920×1080 and 1280×720. Buy each crate type; verify the shake/open/fade works with timeScale 0, the other options are barely visible, and mouse/keyboard cannot buy or continue before choosing. Check both a new and owned ingredient's copy count. Check helper effects, insufficient coins, sold cards, rerolls, and leaving/re-entering the shop. No new Inspector wiring is required.

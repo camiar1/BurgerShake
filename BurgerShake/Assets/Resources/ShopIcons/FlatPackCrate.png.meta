@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: b51f87b5e6004d55a1fcf7a9449dd578
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: 080281fa69da49f991c501d9bd97ec9e
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: FlatPackCrate

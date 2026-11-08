@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: bcae16a2808b4a1e9e222d1b05111b69
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: a7caa30ae773480d9faaca391c721547
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: ExtraScoop

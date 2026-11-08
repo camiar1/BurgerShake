@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: VegetableCrate
   m_EditorClassIdentifier: Assembly-CSharp::IngredientCrateDefinition
   crateName: Vegetable Crate
-  description: Offers ingredients with the Vegetable tag.
-  icon: {fileID: 0}
+  description: Open 3 Vegetable choices. Pick 1 to add to your pantry.
   requiredTag: 1
   choices: 3
   newIngredientCopies: 2
   existingIngredientCopies: 1
   cost: 5
+  icon: {fileID: 21300000, guid: c91f8b46018a4f91810271c38fefd236, type: 3}

@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: 078eef0757914e63b6e0a7d8d7338cd9
+TextureImporter:
+  serializedVersion: 13
+  mipmaps:
+    enableMipMap: 0
+  isReadable: 0
+  textureType: 8
+  spriteMode: 1
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    wrapU: 1
+    wrapV: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites: []
+    outline: []
+    physicsShape: []
+    spriteID: 57d031aa68174a94988e56632872ac4b
+    internalID: 0
+  fileIDToRecycleName:
+    21300000: TinyTongs

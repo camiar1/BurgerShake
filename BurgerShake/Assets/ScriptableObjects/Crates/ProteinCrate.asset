@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: ProteinCrate
   m_EditorClassIdentifier: Assembly-CSharp::IngredientCrateDefinition
   crateName: Protein Crate
-  description: Offers ingredients with the Protein tag.
-  icon: {fileID: 0}
+  description: Open 3 Protein choices. Pick 1 to add to your pantry.
   requiredTag: 0
   choices: 3
   newIngredientCopies: 2
   existingIngredientCopies: 1
   cost: 5
+  icon: {fileID: 21300000, guid: db224d8631e24b7aa54880570ec351f2, type: 3}
