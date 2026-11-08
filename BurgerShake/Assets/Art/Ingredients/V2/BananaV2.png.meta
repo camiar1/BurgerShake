@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7c4883f30e2044e8afdb953d8df2cee5
+guid: b9b84bfcd809d954293168ba746edc6a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5547417771902212560
-    second: Cheese_0
+      213: 5316262894572080940
+    second: BananaV2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 128
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Cheese_0
+      name: BananaV2_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 57
+        y: 50
+        width: 361
+        height: 422
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 40db7964679449549716b83547f91361
-      internalID: 5547417771902212560
+      spriteID: c2f0f839fe827c940800000000000000
+      internalID: 5316262894572080940
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Cheese_0: 5547417771902212560
+      BananaV2_0: 5316262894572080940
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

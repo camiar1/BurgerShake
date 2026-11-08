@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4fce7003bcad4d2cb61217a2c998e675
+guid: 444aa21b73568594385d914bdc18dd0c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4333353932631399637
-    second: Strawberry_0
+      213: -6027073904006706786
+    second: OrangeV3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 128
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Strawberry_0
+      name: OrangeV3_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 106
+        y: 118
+        width: 299
+        height: 328
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4f2b6e9d32a2466caf34f783045d5bd3
-      internalID: 4333353932631399637
+      spriteID: e9947a497388b5ca0800000000000000
+      internalID: -6027073904006706786
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Strawberry_0: 4333353932631399637
+      OrangeV3_0: -6027073904006706786
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

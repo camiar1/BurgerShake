@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 1208111305048818868}
   - component: {fileID: 7434025061528871448}
   - component: {fileID: 3685424467869156594}
-  - component: {fileID: 6527452340044431232}
+  - component: {fileID: 4206105942286380587}
+  - component: {fileID: -3440482838128104006}
   m_Layer: 0
   m_Name: Blueberry
   m_TagString: Untagged
@@ -84,7 +85,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -4901967308228462661, guid: 576c02056b5d80049b83f7347bc3091e, type: 3}
+  m_Sprite: {fileID: 1777316472200992383, guid: 231c60e4fb20d2247999ca5ceb2d6bc2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -134,8 +135,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ingredient
   definition: {fileID: 0}
---- !u!58 &6527452340044431232
-CircleCollider2D:
+--- !u!60 &4206105942286380587
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -169,4 +170,112 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 1.03
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.14, y: 2.2}
+    newSize: {x: 3.98, y: 4.09}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.73279995, y: -0.76028}
+      - {x: 0.88852, y: -0.60455996}
+      - {x: 0.95264, y: -0.46716}
+      - {x: 0.98011994, y: -0.30227998}
+      - {x: 0.98011994, y: 0.01832}
+      - {x: 0.93432, y: 0.21068}
+      - {x: 0.89768, y: 0.33892}
+      - {x: 0.76028, y: 0.55876005}
+      - {x: 0.5954, y: 0.70532}
+      - {x: 0.44884, y: 0.80608}
+      - {x: 0.40304, y: 0.90683997}
+      - {x: 0.37556, y: 0.95264}
+      - {x: 0.19236, y: 0.94347996}
+      - {x: 0.03664, y: 1.0076001}
+      - {x: -0.06412, y: 1.0076001}
+      - {x: -0.20152, y: 0.94347996}
+      - {x: -0.36639997, y: 0.94347996}
+      - {x: -0.40304, y: 0.90683997}
+      - {x: -0.40304, y: 0.8244}
+      - {x: -0.47632, y: 0.79692}
+      - {x: -0.5954, y: 0.70532}
+      - {x: -0.75112, y: 0.55876005}
+      - {x: -0.83356, y: 0.43967998}
+      - {x: -0.90683997, y: 0.29312}
+      - {x: -0.94347996, y: 0.21068}
+      - {x: -0.98011994, y: 0.01832}
+      - {x: -0.98011994, y: -0.30227998}
+      - {x: -0.97095996, y: -0.35724}
+      - {x: -0.94347996, y: -0.49463996}
+      - {x: -0.89768, y: -0.56792}
+      - {x: -0.84272, y: -0.65036}
+      - {x: -0.69616, y: -0.79692}
+      - {x: -0.51296, y: -0.88852}
+      - {x: -0.37556, y: -0.95264}
+      - {x: -0.11908, y: -1.0076001}
+      - {x: 0.15572001, y: -1.0076001}
+      - {x: 0.3206, y: -0.9618}
+      - {x: 0.52212, y: -0.89768}
+      - {x: 0.6412, y: -0.8244}
+  m_UseDelaunayMesh: 1
+--- !u!114 &-3440482838128104006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614846904682437627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2e35bb73e428d1418ff0725e0bc3d09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PolygonColliderScaler
+  overallScale: 0.916
+  horizontalScale: 1
+  verticalScale: 1
+  colliderOffset: {x: 0, y: 0}
+  originalPaths:
+  - points:
+    - {x: 0.79999995, y: -0.83}
+    - {x: 0.96999997, y: -0.65999997}
+    - {x: 1.04, y: -0.51}
+    - {x: 1.0699999, y: -0.32999998}
+    - {x: 1.0699999, y: 0.02}
+    - {x: 1.02, y: 0.22999999}
+    - {x: 0.97999996, y: 0.37}
+    - {x: 0.83, y: 0.61}
+    - {x: 0.65, y: 0.77}
+    - {x: 0.48999998, y: 0.88}
+    - {x: 0.44, y: 0.98999995}
+    - {x: 0.41, y: 1.04}
+    - {x: 0.21, y: 1.03}
+    - {x: 0.04, y: 1.1}
+    - {x: -0.07, y: 1.1}
+    - {x: -0.22, y: 1.03}
+    - {x: -0.39999998, y: 1.03}
+    - {x: -0.44, y: 0.98999995}
+    - {x: -0.44, y: 0.9}
+    - {x: -0.52, y: 0.87}
+    - {x: -0.65, y: 0.77}
+    - {x: -0.82, y: 0.61}
+    - {x: -0.90999997, y: 0.48}
+    - {x: -0.98999995, y: 0.32}
+    - {x: -1.03, y: 0.22999999}
+    - {x: -1.0699999, y: 0.02}
+    - {x: -1.0699999, y: -0.32999998}
+    - {x: -1.06, y: -0.39}
+    - {x: -1.03, y: -0.53999996}
+    - {x: -0.97999996, y: -0.62}
+    - {x: -0.91999996, y: -0.71}
+    - {x: -0.76, y: -0.87}
+    - {x: -0.56, y: -0.96999997}
+    - {x: -0.41, y: -1.04}
+    - {x: -0.13, y: -1.1}
+    - {x: 0.17, y: -1.1}
+    - {x: 0.35, y: -1.05}
+    - {x: 0.57, y: -0.97999996}
+    - {x: 0.7, y: -0.9}
+  originalShapeCaptured: 1

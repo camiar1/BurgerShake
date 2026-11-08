@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 710001003}
   - component: {fileID: 710001004}
   - component: {fileID: 710001005}
-  - component: {fileID: 710001006}
+  - component: {fileID: 7098633812771600558}
+  - component: {fileID: -214306118502315677}
   m_Layer: 0
   m_Name: Strawberry
   m_TagString: Untagged
@@ -84,12 +85,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 4333353932631399637, guid: 4fce7003bcad4d2cb61217a2c998e675, type: 3}
+  m_Sprite: {fileID: -7858017829725915447, guid: 4125b5660f328b044b4bfd323540fb4b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 2.1, y: 2.43}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -133,9 +134,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a6508dd6af1a8646b599c122ec7b51f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ingredient
-  definition: {fileID: 11400000, guid: aa100000000000000000000000000004, type: 2}
---- !u!61 &710001006
-BoxCollider2D:
+  definition: {fileID: 0}
+--- !u!60 &7098633812771600558
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -169,5 +170,132 @@ BoxCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 2.35, y: 2.8}
-  m_EdgeRadius: 0
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.25, y: 2.51}
+    newSize: {x: 2.1, y: 2.43}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.638705, y: -0.739795}
+      - {x: 0.758175, y: -0.555995}
+      - {x: 0.886835, y: -0.298675}
+      - {x: 0.93278503, y: -0.114875}
+      - {x: 0.960355, y: 0.087305}
+      - {x: 0.960355, y: 0.197585}
+      - {x: 0.923595, y: 0.280295}
+      - {x: 1.0154951, y: 0.307865}
+      - {x: 1.033875, y: 0.36300498}
+      - {x: 1.033875, y: 0.418145}
+      - {x: 0.91440505, y: 0.48247498}
+      - {x: 0.81331503, y: 0.555995}
+      - {x: 0.79493505, y: 0.620325}
+      - {x: 0.886835, y: 0.684655}
+      - {x: 0.840885, y: 0.776555}
+      - {x: 0.638705, y: 0.81331503}
+      - {x: 0.473285, y: 0.91440505}
+      - {x: 0.298675, y: 0.960355}
+      - {x: 0.14244501, y: 1.098205}
+      - {x: 0.078115, y: 1.153345}
+      - {x: -0.041355, y: 1.153345}
+      - {x: -0.114875, y: 1.144155}
+      - {x: -0.215965, y: 1.024685}
+      - {x: -0.31705502, y: 0.97873497}
+      - {x: -0.399765, y: 0.97873497}
+      - {x: -0.473285, y: 0.951165}
+      - {x: -0.675465, y: 0.840885}
+      - {x: -0.78574497, y: 0.804125}
+      - {x: -0.850075, y: 0.758175}
+      - {x: -0.840885, y: 0.703035}
+      - {x: -0.758175, y: 0.620325}
+      - {x: -1.033875, y: 0.43652502}
+      - {x: -1.033875, y: 0.36300498}
+      - {x: -1.0063051, y: 0.31705502}
+      - {x: -0.90521497, y: 0.31705502}
+      - {x: -0.941975, y: 0.124065}
+      - {x: -0.93278503, y: -0.114875}
+      - {x: -0.90521497, y: -0.206775}
+      - {x: -0.877645, y: -0.335435}
+      - {x: -0.739795, y: -0.583565}
+      - {x: -0.601945, y: -0.767365}
+      - {x: -0.43652502, y: -0.969545}
+      - {x: -0.271105, y: -1.089015}
+      - {x: -0.18839501, y: -1.1257751}
+      - {x: -0.087305, y: -1.153345}
+      - {x: 0.114875, y: -1.153345}
+      - {x: 0.225155, y: -1.116585}
+      - {x: 0.344625, y: -1.061445}
+      - {x: 0.519235, y: -0.896025}
+  m_UseDelaunayMesh: 1
+--- !u!114 &-214306118502315677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710001001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2e35bb73e428d1418ff0725e0bc3d09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PolygonColliderScaler
+  overallScale: 0.919
+  horizontalScale: 1
+  verticalScale: 1
+  colliderOffset: {x: 0, y: 0}
+  originalPaths:
+  - points:
+    - {x: 0.695, y: -0.805}
+    - {x: 0.825, y: -0.60499996}
+    - {x: 0.965, y: -0.325}
+    - {x: 1.015, y: -0.125}
+    - {x: 1.045, y: 0.095}
+    - {x: 1.045, y: 0.21499999}
+    - {x: 1.005, y: 0.305}
+    - {x: 1.105, y: 0.33499998}
+    - {x: 1.125, y: 0.39499998}
+    - {x: 1.125, y: 0.45499998}
+    - {x: 0.995, y: 0.525}
+    - {x: 0.885, y: 0.60499996}
+    - {x: 0.865, y: 0.675}
+    - {x: 0.965, y: 0.745}
+    - {x: 0.91499996, y: 0.84499997}
+    - {x: 0.695, y: 0.885}
+    - {x: 0.515, y: 0.995}
+    - {x: 0.325, y: 1.045}
+    - {x: 0.155, y: 1.1949999}
+    - {x: 0.085, y: 1.255}
+    - {x: -0.044999998, y: 1.255}
+    - {x: -0.125, y: 1.245}
+    - {x: -0.235, y: 1.115}
+    - {x: -0.345, y: 1.0649999}
+    - {x: -0.435, y: 1.0649999}
+    - {x: -0.515, y: 1.035}
+    - {x: -0.73499995, y: 0.91499996}
+    - {x: -0.85499996, y: 0.875}
+    - {x: -0.92499995, y: 0.825}
+    - {x: -0.91499996, y: 0.765}
+    - {x: -0.825, y: 0.675}
+    - {x: -1.125, y: 0.475}
+    - {x: -1.125, y: 0.39499998}
+    - {x: -1.095, y: 0.345}
+    - {x: -0.98499995, y: 0.345}
+    - {x: -1.025, y: 0.13499999}
+    - {x: -1.015, y: -0.125}
+    - {x: -0.98499995, y: -0.225}
+    - {x: -0.955, y: -0.36499998}
+    - {x: -0.805, y: -0.635}
+    - {x: -0.655, y: -0.835}
+    - {x: -0.475, y: -1.055}
+    - {x: -0.295, y: -1.185}
+    - {x: -0.205, y: -1.225}
+    - {x: -0.095, y: -1.255}
+    - {x: 0.125, y: -1.255}
+    - {x: 0.24499999, y: -1.2149999}
+    - {x: 0.375, y: -1.155}
+    - {x: 0.565, y: -0.97499996}
+  originalShapeCaptured: 1

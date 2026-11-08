@@ -17,7 +17,7 @@ MonoBehaviour:
   sprite: {fileID: 5547417771902212560, guid: 7c4883f30e2044e8afdb953d8df2cee5, type: 3}
   prefab: {fileID: 710001001, guid: a5a8d1e7a5584e0298a3db39d6d74161, type: 3}
   placeholderShape: 0
-  placeholderColor: {r: 1, g: 0.72, b: 0.16, a: 1}
+  placeholderColor: {r: 1, g: 1, b: 1, a: 1}
   placeholderColliderSize: {x: 1.9, y: 0.8}
   draftWeight: 1
   copiesPerCycle: 3
