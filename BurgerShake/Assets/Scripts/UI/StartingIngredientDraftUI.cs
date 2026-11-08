@@ -1,10 +1,15 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class StartingIngredientDraftUI :
     MonoBehaviour
 {
+    [Header("Presentation")]
+    [SerializeField] private bool useGeneratedCards = true;
+    private StartingDraftSelectionView generatedView;
+
     [Header("References")]
     [SerializeField]
     private StartingIngredientDraftController
@@ -61,6 +66,7 @@ public class StartingIngredientDraftUI :
 
     private void OnDisable()
     {
+        if (generatedView != null) generatedView.Hide();
         Unsubscribe();
         RemoveButtonListeners();
     }
@@ -239,9 +245,7 @@ public class StartingIngredientDraftUI :
 
     private void HandleDraftStarted()
     {
-        SetContentVisible(
-            true
-        );
+        if (!useGeneratedCards) SetContentVisible(true);
 
         Refresh();
     }
@@ -252,6 +256,7 @@ public class StartingIngredientDraftUI :
             ingredients
     )
     {
+        if (generatedView != null) generatedView.Hide();
         SetContentVisible(
             false
         );
@@ -259,6 +264,12 @@ public class StartingIngredientDraftUI :
 
     private void Refresh()
     {
+        if (useGeneratedCards)
+        {
+            RefreshGeneratedCards();
+            return;
+        }
+
         if (draftController == null)
         {
             SetContentVisible(
@@ -312,6 +323,35 @@ public class StartingIngredientDraftUI :
                 ingredient
             );
         }
+    }
+
+    private void RefreshGeneratedCards()
+    {
+        // Keep the legacy scene content intact, but do not draw it behind the modal.
+        if (contentRoot != null && !transform.IsChildOf(contentRoot.transform))
+            contentRoot.SetActive(false);
+
+        if (draftController == null || !draftController.DraftActive)
+        {
+            if (generatedView != null) generatedView.Hide();
+            return;
+        }
+
+        if (generatedView == null)
+        {
+            // A scene-root canvas avoids inheriting a small/disabled legacy UI rect.
+            var obj = new GameObject("[Generated] Starting Draft Selection", typeof(RectTransform));
+            if (gameObject.scene.IsValid()) SceneManager.MoveGameObjectToScene(obj, gameObject.scene);
+            generatedView = obj.AddComponent<StartingDraftSelectionView>();
+        }
+        generatedView.Present(draftController);
+    }
+
+    private void OnDestroy()
+    {
+        if (generatedView == null) return;
+        if (Application.isPlaying) Destroy(generatedView.gameObject);
+        else DestroyImmediate(generatedView.gameObject);
     }
 
     private void RefreshSlot(

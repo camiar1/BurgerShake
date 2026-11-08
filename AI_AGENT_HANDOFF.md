@@ -999,4 +999,21 @@ Local verification on Unity 6000.3.8f1:
 
 Editor review command: Tools > Burger Shake > Review Generated UI. It creates isolated preview scenes and saves its temporary report/PNGs under Temp/GeneratedUIReview; it never saves gameplay scenes.
 
+
+## 26. Starting ingredient selection cards — 2026-11-07
+
+User requested an ARAM: Mayhem augment-selection-inspired starting draft, with large ingredient sprites. New StartingDraftSelectionView provides three tall choice cards, a dimmed backdrop, oversized sprite area, category/name/effect/tags/copy count, individual reroll buttons, hover/keyboard-focus lift and warm highlighting, a pick counter, and a picked-ingredient strip. The palette remains Burger Shake cream/brown/gold rather than importing Riot artwork.
+
+StartingIngredientDraftUI routes presentation through the generated card screen by default. Its old serialized references are retained with a useGeneratedCards fallback toggle. Legacy DraftContent is hidden at runtime; no scene asset, supplied UI element or PNG was edited. The generated canvas is a separate root in the same scene so it cannot inherit the legacy 100x100 RectTransform. It is hidden on disable/completion and destroyed with its owning UI.
+
+Draft mechanics are unchanged: two rounds, three current offers, original synergy selection, copies per pick and shared reroll budget from StartingIngredientDraftController. Reroll buttons are siblings of cards so pressing reroll cannot bubble into an ingredient choice. A short input guard prevents a double-click from spending both starting picks.
+
+Art uses the definition sprite, then prefab SpriteRenderer art, then existing placeholder fallback. Tight mesh bounds normalize artwork with transparent padding to the large card image region. One broken Cheese definition sprite reference was repaired to the existing CheeseV2_0 sprite; source artwork/prefabs/import settings were not edited. All 30 definition art lookups now resolve.
+
+Unity 6000.3.8f1 compilation passed. Isolated editor tests exercised the actual StartingIngredientDraftUI, real draft controller, and Button.onClick handlers: opening, reroll replacement/budget exhaustion, pick-one advancement, selected ingredient strip, UI disable/re-enable, pick-two completion exactly once with two unique ingredients, and closing. The live RunManager is never invoked by this test and Random.state is restored.
+
+Layout renders passed at 1920x1080, 1280x720, 1024x768 and 2560x1080. All 30 definitions were rendered on cards with no text overflow or button bounds failures. Full physical pointer/gamepad playtesting and a complete live run remain separate from these editor checks.
+
+Review command: Tools > Burger Shake > Review Starting Draft. Temporary report/screenshots: Temp/StartingDraftReview. Supplied Assets/Art/UI hashes are unchanged. Existing local fruit collider prefab edits remain separate and uncommitted.
+
 End of handoff.
